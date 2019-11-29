@@ -1,0 +1,5 @@
+package com.mystudy.ex04_interface2;
+
+public class WebPhone implements I_WebPhone {
+
+}

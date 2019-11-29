@@ -1,0 +1,17 @@
+package com.mystudy.ex01_arrayList;
+
+import java.util.ArrayList;
+
+public class ArrayListExam {
+
+	public static void main(String[] args) {
+		// List 계열 - 
+		List 인터페이스를 구현한 클래스 
+		//
+		ArrayList list1 = new ArrayList();
+		list1.add("홍길동");
+		
+		
+	}
+
+}

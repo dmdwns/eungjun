@@ -1,0 +1,8 @@
+package com.mystudy.ex02_overriding;
+
+public class Pig extends Animal{
+	void sound() {
+		
+	}
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 2 elements to &apos;14_List_Set_Map/src/com.mystudy.ex01_arrayList&apos;&#x0D;&#x0A;- Original project: &apos;10_javabin&apos;&#x0D;&#x0A;- Destination element: &apos;14_List_Set_Map/src/com.mystudy.ex01_arrayList&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     com.mystudy.ex02_vo.StudentManager.java&#x0D;&#x0A;     com.mystudy.ex02_vo.StudentVO.java" description="Copy compilation units" destination="=14_List_Set_Map/src&lt;com.mystudy.ex01_arrayList" element1="/src&lt;com.mystudy.ex02_vo{StudentManager.java" element2="/src&lt;com.mystudy.ex02_vo{StudentVO.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1571296815435" units="2" version="1.0"/>
+</session>

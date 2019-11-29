@@ -1,0 +1,95 @@
+package orders;
+
+public class OrdersVO {
+	private String resId;
+	private String userId;
+	private int price;
+	private String menuId;
+	private String menuName;
+	private String cardNum;
+	private int menuCnt;
+	
+	public OrdersVO(String resId, String userId, int price, String menuId, String menuName, String cardNum,
+			int menuCnt) {
+		super();
+		this.resId = resId;
+		this.userId = userId;
+		this.price = price;
+		this.menuId = menuId;
+		this.menuName = menuName;
+		this.cardNum = cardNum;
+		this.menuCnt = menuCnt;
+	}
+
+	public String getResId() {
+		return resId;
+	}
+
+	public void setResId(String resId) {
+		this.resId = resId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public String getMenuId() {
+		return menuId;
+	}
+
+	public void setMenuId(String menuId) {
+		this.menuId = menuId;
+	}
+
+	public String getMenuName() {
+		return menuName;
+	}
+
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
+
+	public String getCardNum() {
+		return cardNum;
+	}
+
+	public void setCardNum(String cardNum) {
+		this.cardNum = cardNum;
+	}
+
+	public int getMenuCnt() {
+		return menuCnt;
+	}
+
+	public void setMenuCnt(int menuCnt) {
+		this.menuCnt = menuCnt;
+	}
+
+	@Override//
+	public String toString() {
+//		return "[주문내역]\n주문자ID : 카드번호 레스토랑ID 메뉴이름 메뉴아이디 음식수량 총 결제액" + userId + cardNum + resId + menuName + menuId + menuCnt + price;
+		return "\n●"
+				+
+				"주문자ID	| " + userId + "\n●" + 
+				"카드번호	| " + cardNum + "\n●" +
+				"매장ID	| " + resId + "\n●" +
+				"메뉴이름	| " + menuName + "\n●" +
+				"메뉴ID	| " + menuId + "\n●" +
+				"메뉴수량	| " + menuCnt + "\n●" +
+				"총 금액 	| " + price + "\n-----------------------------";
+	}
+	
+	
+}

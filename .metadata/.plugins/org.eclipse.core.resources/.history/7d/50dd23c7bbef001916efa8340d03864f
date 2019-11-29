@@ -1,0 +1,28 @@
+package com.mystudy.ex04_interface;
+
+public class TypeTest {
+
+	public static void main(String[] args) {
+	    Cat cat = new Cat();
+	    Dog dog = new Dog();
+	
+//	    eat(cat);
+	    sound(cat);
+	    sound(dog);
+	    Animal an = new Cat();
+	    sound(an);
+	}
+	
+	// 인터페이스 타입으로 데이터를 전달받아서 처리 
+	static void sound(I_Animal animal) {
+		animal.sound();
+	}
+	
+	static void eat(Animal animal) {
+		animal.eat();
+	}
+	
+	
+	
+	
+}

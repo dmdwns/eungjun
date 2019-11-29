@@ -1,0 +1,14 @@
+package com.mystudy.ex01_exception;
+
+public class ExceptionEx {
+
+	public static void main(String[] args) {
+		System.out.println("----  main() 시작 ----");
+		int num1 = 0;
+		int num2 = 30;
+		int result = 0;
+		
+		
+		System.out.println("----  main() 종료 ----");
+	}
+}

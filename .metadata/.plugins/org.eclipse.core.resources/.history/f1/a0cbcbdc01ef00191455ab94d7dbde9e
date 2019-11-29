@@ -1,0 +1,57 @@
+package com.mystudy.ex06_type_casting;
+
+public class CarTest {
+
+	public static void main(String[] args) {
+		System.out.println("====Car 클래스 ======");
+		Car car = new Car();
+		car.type="자동차";
+		System.out.println("타입 : " +  car.type);
+		car.drive();
+		car.stop();
+		
+		
+		System.out.println("==== Ambulance ===");
+		Ambulance am = new Ambulance();
+		am.type="구급차";
+		System.out.println("타입 : " + am.type);
+		am.drive();
+		am.stop();
+		am.siren();
+        
+		System.out.println("==== FireEngine ====");
+		FireEngine fe = new FireEngine();
+		fe.type = "소방차";
+		System.out.println("타입 : " + fe.type);
+		fe.drive();
+		fe.stop();
+		fe.siren();
+		fe.water();
+		
+		System.out.println("=============================");
+		Car carTemp = new Car();
+		carTemp.drive();
+		carTemp.stop();
+//		carTemp.siren();  // undefined : Car타입에는 siren() 없음 
+		
+		System.out.println("--- Car <- Ambulance 변경 ");
+		carTemp = am;  // Car <- Ambulance : 자동형변환 처리됨 
+		// (Ambulance) Car : 강제형변환
+		// 부모타입의 car타입에 ambulance를 넣음 
+		// 부모클래스는 자식클래스들을 받아줄 수 있지만 
+		// 그 반대는 안됨 
+	//	am = car;
+		// 반대로는 안됨 
+		carTemp.drive();
+		carTemp.stop();
+		// carTemp.siren(); 타입변환은 했지만  그래도 카타입에 있는것만 쓸 수 있음 
+		
+		
+		
+		
+		
+		
+		
+	}
+
+}

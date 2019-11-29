@@ -1,0 +1,38 @@
+package com.mystudy.ex04_inner_class;
+
+public class StaticClassTest {
+	int a = 10;
+	private int b = 100;
+	
+	static int c = 200;
+	static int sum = 0;
+	static int sNum1 = 20;
+	static int sNum2 = 20;
+	// static은 static만 가능하다 객체생성이고 뭐고 없이;;
+	static void sum() {
+		sum = Inner.d + sNum2;
+		
+	}
+	
+	// 스태틱내부클래스 (Inner class 중 static 클래스)
+	// 내부클래스일지라도 static 아닌거는 객체생성이 아닌한 쓸 수 가 없음 
+	static class Inner {
+		static int d = 1000;
+		int e = 2000;
+		void printData() {
+			System.out.println("static int c  : " + c );
+			System.out.println("inner static int d : " + d);
+		}
+	}
+	
+	public static void main(String[] args) {
+		int num = StaticClassTest.c;
+		StaticClassTest.sum();
+		
+		// static 내부 클래스의 static 필드변수 사용
+		int innerNum = StaticClassTest.Inner.d;
+	    
+		// static 내부클래스의 non-static 필드, 메소드 사용 
+	}
+
+}

@@ -1,0 +1,23 @@
+package com.mystudy.jdbc_dao;
+
+import java.util.List;
+
+public class MemberDAO_Test {
+
+	public static void main(String[] args) {
+		MemberDAO dao = new MemberDAO();
+		List<MemberVO> list = dao.selectAll();
+		for(MemberVO mvo : list) {
+			System.out.println(mvo.toString());
+		}
+		boolean isExist = dao.checkIdPassword("hong11", "234");
+		if(isExist) {
+			System.out.println("-->회원정보 있음 - 로그인 가능");
+		} else {
+			System.out.println("-->회원정보 없음 - 아이디, 비밀번호 확인 하세요");
+		}
+		
+	}
+
+}
+

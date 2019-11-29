@@ -1,0 +1,478 @@
+package reservation;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
+
+import action.AccountManager;
+import play.Display;
+
+
+public class Picks extends Display{
+	
+	String user_id = Display.id;
+	String menu_id = null;
+	int order_number = 0;
+	int rep = 5;
+	
+	private static boolean bl = true;
+	Scanner scan = new Scanner(System.in);
+	AccountManager acm = new AccountManager();
+	//접속 변수들
+	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@192.168.0.72:1521:xe";
+	private static final String USER = "PROJECT";
+	private static final String PASSWORD = "PROJECTPW";
+	
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+	//드라이버 접속
+	static {
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+			System.out.println("드라이버 접속 실패");
+		}
+	}
+	
+	//고른 메뉴 데이터를 select 해서 VO에 저장해서 리턴
+	public PicksVO picksMenu(String res_id, String user_id, String menu_id/*식당아이디,유저아이디, 메뉴아이디받고 실행*/) {
+		//리턴 할 값 변수선언
+		PicksVO ps = null;
+		
+		try {
+			conn = DriverManager.getConnection(URL,USER,PASSWORD);
+			StringBuilder sql = new StringBuilder();
+			//메뉴테이블 에서 선택한 메뉴 select
+			sql.append("SELECT R.RES_NAME, U.CARD_NUMBER, M.* FROM USERS U, RESTAURANTS_MENU M, restaurants r ");
+			sql.append("WHERE m.MENU_ID = ? ");
+			sql.append("AND u.USER_ID = ? ");
+			sql.append("AND r.res_id = m.res_id ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			int count = 0;
+			boolean b = true;
+				
+					
+					while(true) {
+						System.out.println("개수를 입력해주세요");
+						try {
+							Scanner s = new Scanner(System.in);
+							count = s.nextInt();
+							pstmt.setString(1, menu_id);
+							pstmt.setString(2, user_id);
+							//sql 실행
+							rs = pstmt.executeQuery();
+							break;
+						} catch (InputMismatchException e) {
+							System.out.println("잘못된 값입니다 다시 입력해 주세요.");
+							System.out.println();
+					    }
+					}
+						
+						
+					
+				
+			if(rs.next()) {
+				//셀렉한 데이터를 VO에 저장
+				ps = new PicksVO(res_id, user_id, rs.getInt("PRICE")*count, menu_id, rs.getString("MENU_NAME"),count, rs.getString("CARD_NUMBER")
+						, rs.getString("RES_NAME"));
+				
+				System.out.println(ps.toString());
+			}
+			
+			insertOne(ps);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_close.closeConnStmtRs(conn, pstmt, rs);
+		}
+		
+		//리턴 처리
+		return ps;
+	}
+	//VO에 선택한 장바구니 데이터베이스 저장
+	public int insertOne(PicksVO picks) {
+		int result = 0;
+		try {
+			//DB연결 작업
+			conn = DriverManager.getConnection(URL,USER,PASSWORD);
+			
+			//SQL문장을 작성해서 Statement에 전달하고 SQL문 실행 요청
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO PICKS ");
+			sql.append("(RES_ID, USER_ID, MENU_PRICE, MENU_ID, MENU_NAME, MENU_COUNT, CARD_NUMBER ) ");
+			sql.append("VALUES(?, ?, ?, ?, ?, ?, ?) ");
+			pstmt = conn.prepareStatement(sql.toString());
+			//?(바인딩 변수)에  값 매칭 시키기
+			
+			pstmt.setString(1, picks.getRes_id());
+			pstmt.setString(2, picks.getUser_id());
+			pstmt.setInt(3, picks.getPrice());
+			pstmt.setString(4, picks.getMenu_id());
+			pstmt.setString(5, picks.getMenu_name());
+			pstmt.setInt(6, picks.getMenu_count());
+			pstmt.setString(7, picks.getCard_number());
+			
+			//SQL 실행 요청 -INSERT, UPDATE, DELETE : executeUpdate()
+			result = pstmt.executeUpdate();
+			
+			System.out.println("!!음식이 추가 되었습니다!!");
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		} finally {
+			JDBC_close.ConnPstmt(conn, pstmt);
+		}
+		
+		return result;
+	}
+	
+
+	
+	
+	
+	
+	//장바구니 항목 전체 조회
+	public List<PicksVO> selectAll(String user_id) {
+		List<PicksVO> list = new ArrayList<>();
+		
+		//DB연결 - Connection 객체 생성(DB와 연결된)
+		try {
+			conn = DriverManager.getConnection(URL,USER,PASSWORD);
+			//preparedStatement 객체 생성하고 SQL문 실행
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append("SELECT P.*,ROWNUM  FROM ");
+			sql.append(" PR_VIEW P ");
+			sql.append("WHERE USER_ID = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setString(1, user_id);
+			rs = pstmt.executeQuery();
+			
+			//SQL 문 실행 결과에 대한 처리
+			while(rs.next()) {
+				
+				list.add(new PicksVO(rs.getString("USER_ID"),
+						rs.getString("USER_NAME"),
+						rs.getString("RES_NAME"),
+						rs.getInt("MENU_PRICE"),
+						rs.getString("MENU_NAME"),
+						rs.getInt("MENU_COUNT"),
+						rs.getInt("ROWNUM"),
+						rs.getString("MENU_ID")));
+			}
+			
+			if(list.size() == 0) {
+				System.out.println();
+				System.out.println("*장바구니가 비어있습니다*");
+			}
+			
+			System.out.println();
+			for(PicksVO vo : list) {
+				System.out.println(vo.voOutput());
+				System.out.println();
+			}
+			System.out.println();
+			
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			//사용객체 close 처리
+			JDBC_close.closeConnStmtRs(conn, pstmt, rs);
+			back();
+		} 
+		
+		return list;
+	}
+	
+	public int deleteOne(String user_id, String menu_id) {
+		int result = 0;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("DELETE FROM PICKS ");
+			sql.append("WHERE USER_ID = ? ");
+			sql.append("AND MENU_ID = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			
+			pstmt.setString(1, user_id);
+			pstmt.setString(2, menu_id);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_close.ConnPstmt(conn, pstmt);
+		}
+			
+		return result;
+	}
+	
+	public int deleteAll(List<PicksVO> list) {
+		int result = 0;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("DELETE FROM PICKS ");
+			sql.append("WHERE USER_ID = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			for(PicksVO vo : list) {
+				pstmt.setString(1, vo.getUser_id());
+				result += pstmt.executeUpdate();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_close.ConnPstmt(conn, pstmt);
+		}
+		
+		return result;
+		
+	}
+	
+	public int updateCount(String user_id, String menu_id) {
+		int result = 0;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append(" UPDATE PICKS ");
+			sql.append(" SET MENU_COUNT = ? ,");
+			sql.append("  MENU_PRICE = (SELECT PRICE FROM RESTAURANTS_MENU WHERE MENU_ID = ? ) * ? ");
+			sql.append(" WHERE MENU_ID = ? ");
+			sql.append(" AND USER_ID = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			while(true) {
+				try {
+						Scanner s = new Scanner(System.in);
+						System.out.print("변경할 숫자를 입력해주세요 : ");
+						int count = s.nextInt();
+						if(count == 0) {
+							System.out.print("상품을 삭제 하시겠습니까? 1.예/2.아니요 \n >> ");
+							int choice = s.nextInt();
+							if(choice == 1) {
+								deleteOne(user_id, menu_id);
+								break;
+							} else {
+								break;
+							}
+						} else {
+							pstmt.setInt(1, count);
+							pstmt.setString(2, menu_id);
+							pstmt.setInt(3, count);
+							pstmt.setString(4, menu_id);
+							pstmt.setString(5, user_id);
+							result = pstmt.executeUpdate();
+							break;
+						}
+				
+				} catch(InputMismatchException e) {
+					System.out.println("잘못 입력 하셨습니다.");
+					System.out.println();
+			    } 
+			  }
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_close.ConnPstmt(conn, pstmt);
+		}
+			
+		return result;
+	}
+	
+	public List<PicksVO> selectAllofOne(String user_id) {
+		List<PicksVO> list = new ArrayList<>();
+		menu_id = null;
+		//DB연결 - Connection 객체 생성(DB와 연결된)
+		try {
+			conn = DriverManager.getConnection(URL,USER,PASSWORD);
+			//preparedStatement 객체 생성하고 SQL문 실행
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append("SELECT P.*,ROWNUM  FROM ");
+			sql.append(" PR_VIEW P ");
+			sql.append("WHERE USER_ID = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setString(1, user_id);
+			rs = pstmt.executeQuery();
+			
+			//SQL 문 실행 결과에 대한 처리
+			while(rs.next()) {
+				
+				list.add(new PicksVO(rs.getString("USER_ID"),
+						rs.getString("USER_NAME"),
+						rs.getString("RES_NAME"),
+						rs.getInt("MENU_PRICE"),
+						rs.getString("MENU_NAME"),
+						rs.getInt("MENU_COUNT"),
+						rs.getInt("ROWNUM"),
+						rs.getString("MENU_ID")));
+			}
+			for(PicksVO vo : list) {
+				System.out.println(vo.voOutput());
+			}
+			System.out.println();
+			System.out.print("상품을 선택해 주세요. 0번 뒤로가기  \n >>");
+			Scanner s = new Scanner(System.in);
+			int choice = 0;
+			choice = s.nextInt();
+			if(choice == 0) {
+				back();
+				rep = 5;
+			} else if(list.size() >= choice) {
+				user_id = Display.id;
+				for(PicksVO vo : list) {
+					if(vo.getOrder_number() == choice) {
+						menu_id = vo.getMenu_id();
+					}
+				}
+			} else {
+				System.out.println("잘못된 입력입니다");
+				rep = 1;
+			}
+
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			//사용객체 close 처리
+			JDBC_close.closeConnStmtRs(conn, pstmt, rs);
+		} 
+		
+		return list;
+	}
+	//전체딜리트 전용 셀렉
+	public List<PicksVO> dselectAll(String user_id) {
+		List<PicksVO> list = new ArrayList<>();
+		
+		//DB연결 - Connection 객체 생성(DB와 연결된)
+		try {
+			conn = DriverManager.getConnection(URL,USER,PASSWORD);
+			//preparedStatement 객체 생성하고 SQL문 실행
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append("SELECT P.*,ROWNUM  FROM ");
+			sql.append(" PR_VIEW P ");
+			sql.append("WHERE USER_ID = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setString(1, user_id);
+			rs = pstmt.executeQuery();
+			
+			//SQL 문 실행 결과에 대한 처리
+			while(rs.next()) {
+				
+				list.add(new PicksVO(rs.getString("USER_ID"),
+						rs.getString("USER_NAME"),
+						rs.getString("RES_NAME"),
+						rs.getInt("MENU_PRICE"),
+						rs.getString("MENU_NAME"),
+						rs.getInt("MENU_COUNT"),
+						rs.getInt("ROWNUM"),
+						rs.getString("MENU_ID")));
+			}
+			
+			for(PicksVO vo : list) {
+				System.out.println(vo);
+				System.out.println();
+			}
+			System.out.println();
+			
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			//사용객체 close 처리
+			JDBC_close.closeConnStmtRs(conn, pstmt, rs);
+		} 
+		
+		return list;
+	}
+	
+	public void back() {
+		int choice = 0;
+			while(true) {
+				try {
+					System.out.print("1.선택메뉴 삭제   2.개수 변경   3.전체 삭제   0.메인으로 \n >>");
+					Scanner s = new Scanner(System.in);
+					choice = s.nextInt();
+					s.nextLine();
+					break;
+				} catch(InputMismatchException e) {
+					System.out.println("잘못된 입력입니다");
+				}
+			}
+		
+			
+			
+		if(choice == 1) {
+			selectAllofOne(user_id);
+			if(menu_id != null)
+			deleteOne(user_id, menu_id);
+			System.out.println("삭제되었습니다");
+		} else if(choice == 2) {
+			selectAllofOne(user_id);
+			if(menu_id != null)
+			updateCount(user_id, menu_id);
+			System.out.println("수정되었습니다");
+		} else if(choice == 3) {
+			int c = 0;
+			while(true) {
+				try {
+					System.out.println("정말로 다 삭제 하시겠습니까?  1.예/2.아니요 \n >>");
+					Scanner s = new Scanner(System.in);
+					c = s.nextInt();
+					s.nextLine();
+					break;
+				}catch(InputMismatchException e) {
+					System.out.println("잘못된 입력입니다");
+				}
+			}
+			if(c == 1) {
+			List<PicksVO> list = dselectAll(user_id);
+			deleteAll(list);
+			System.out.println("정상적으로 다 삭제 되었습니다.");
+			} else {
+				
+			}
+			
+		} else if(choice == 0) {
+			return;
+		} else {
+			System.out.println("잘못된 입력입니다.");
+		}
+		
+	}
+
+}
+
+

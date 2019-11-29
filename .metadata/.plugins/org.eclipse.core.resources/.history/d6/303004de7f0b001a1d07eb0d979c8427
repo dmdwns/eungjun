@@ -1,0 +1,399 @@
+package com.projectone.account.remittance;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import com.projectone.common.OptCreate;
+import com.projectone.common.ProjectOneConstant;
+import com.projectone.jdbc.DBUtil;
+import com.projectone.jdbc.vo.RemittanceVO;
+
+public class RemittanceDAO {
+
+	public int selectAccountCheck(int selectAccount){
+		
+		int count = 0;
+		
+		try {
+			DBUtil.conn=DriverManager.getConnection(DBUtil.URL,DBUtil.USER,DBUtil.PASSWORD);
+			
+			//계좌가 있는지 확인
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT count(*) CNT ");
+			sql.append("  FROM ACCOUNT ");
+			sql.append("WHERE IDX = ? ");
+			
+			DBUtil.pstmt = DBUtil.conn.prepareStatement(sql.toString());
+			
+			DBUtil.pstmt.setInt(1, selectAccount);
+			
+			DBUtil.rs = DBUtil.pstmt.executeQuery();
+			
+			while (DBUtil.rs.next()) {
+				
+				count = DBUtil.rs.getInt("CNT");
+				
+			}
+			
+			DBUtil.conn.setAutoCommit(true);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			DBUtil.free(DBUtil.conn, DBUtil.pstmt, DBUtil.rs);
+		}
+		
+		
+		return count;
+		
+	}
+	
+	//계좌랑 비밀번호 체크
+	public boolean accountPasswordChk(int idx, String password) {
+		
+		boolean isOk = false;
+		int count=0;
+		int result = 0;
+		
+		try {
+			DBUtil.conn=DriverManager.getConnection(DBUtil.URL,DBUtil.USER,DBUtil.PASSWORD);
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT count(*) CNT ");
+			sql.append("  FROM ACCOUNT ");
+			sql.append("WHERE IDX = ? AND ACCOUNT_PASSWORD = ? ");
+			
+			DBUtil.pstmt = DBUtil.conn.prepareStatement(sql.toString());
+			DBUtil.pstmt.setInt(1, idx);
+			DBUtil.pstmt.setString(2, password);
+			
+			DBUtil.rs = DBUtil.pstmt.executeQuery();
+			
+			while (DBUtil.rs.next()) {
+				
+				count = DBUtil.rs.getInt("CNT");
+				
+			}
+			
+			if(count>0) {
+				isOk = true;
+			}
+			
+			DBUtil.conn.setAutoCommit(true);
+			
+		} catch (SQLException e) {
+			try {
+				DBUtil.conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} //전체데이터 롤백처리
+			result = 0;
+			try {
+				DBUtil.conn.setAutoCommit(true);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} //autocommit 상태로 전환
+			e.printStackTrace();
+		} finally {
+			DBUtil.free(DBUtil.conn, DBUtil.pstmt, DBUtil.rs);
+		}
+		
+		return isOk;
+		
+	}
+	
+	//계좌 정지
+	public void accountStop(int idx) {
+		
+		int result = 0;
+		
+		try {
+			DBUtil.conn=DriverManager.getConnection(DBUtil.URL,DBUtil.USER,DBUtil.PASSWORD);
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE ACCOUNT ");
+			sql.append(" SET ACCOUNT_STATE = ? ");
+			sql.append("WHERE IDX=?");
+			
+			
+			DBUtil.pstmt = DBUtil.conn.prepareStatement(sql.toString());
+			
+			
+			
+			// ?(바인딩변수)에 값 매칭 시키기
+			DBUtil.pstmt.setString(1, ProjectOneConstant.ACCOUNT_STATE[1]);
+			DBUtil.pstmt.setInt(2, idx);
+			
+			//SQL 실행 요청 - INSERT, UPDATE, DELETE : executeUpdate()
+			
+			try {
+				DBUtil.pstmt.executeUpdate();
+				//System.out.println(">  ");
+			} catch (SQLException e) {
+				//System.out.println("> 출금처리 실패 ");
+			}
+			
+			DBUtil.conn.setAutoCommit(true);
+			
+		} catch (SQLException e) {
+			try {
+				DBUtil.conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} //전체데이터 롤백처리
+			result = 0;
+			try {
+				DBUtil.conn.setAutoCommit(true);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} //autocommit 상태로 전환
+			e.printStackTrace();
+		} finally {
+			DBUtil.free(DBUtil.conn, DBUtil.pstmt);
+		}
+		
+	}
+	
+	
+	public int isDepositAccount(String accountNumber) {
+		
+		int idx = 0;
+		
+		try {
+			DBUtil.conn=DriverManager.getConnection(DBUtil.URL,DBUtil.USER,DBUtil.PASSWORD);
+		
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT IDX ");
+			sql.append("  FROM ACCOUNT ");
+			sql.append("WHERE ACCOUNT_NUMBER = ? ");
+			
+			DBUtil.pstmt = DBUtil.conn.prepareStatement(sql.toString());
+			DBUtil.pstmt.setString(1, accountNumber);
+			
+			DBUtil.rs = DBUtil.pstmt.executeQuery();
+			
+			while (DBUtil.rs.next()) {
+				
+				idx = DBUtil.rs.getInt("IDX");
+				
+			}
+			
+			
+			DBUtil.conn.setAutoCommit(true);
+			
+		} catch (SQLException e) {
+			try {
+				DBUtil.conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} //전체데이터 롤백처리
+				idx = 0;
+			try {
+				DBUtil.conn.setAutoCommit(true);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} //autocommit 상태로 전환
+			e.printStackTrace();
+		} finally {
+			DBUtil.free(DBUtil.conn, DBUtil.pstmt, DBUtil.rs);
+		}
+		
+		
+		
+		return idx;
+		
+	}
+	
+	
+	//계좌이체
+	
+	public boolean transferMoney(RemittanceVO accountInfo) {
+		
+		boolean isTransferSuccess = false;
+		boolean isOptCreate = false;
+		String createOpt = null;
+		//db 작업 전에 다시한번 opt 비교
+		
+		while(isOptCreate==false){
+			
+			try {
+				createOpt = OptCreate.create();
+				isOptCreate=true;
+				break;
+			} catch (Exception e) {
+				isOptCreate=false;
+				System.out.println("* ");
+				System.out.println("* OPT가 생성이 되지 않았습니다.");
+			}
+			
+		}
+		
+		
+		
+		//if(createOpt.equals(accountInfo.getOptNumber())) {
+			
+			int result = 0;
+			
+			try {
+				
+				DBUtil.conn=DriverManager.getConnection(DBUtil.URL,DBUtil.USER,DBUtil.PASSWORD);
+				
+				//트랜잭션 처리를 위해 autocommit 해제
+				DBUtil.conn.setAutoCommit(false); //트랜잭션시작
+				
+				StringBuilder sql1 = new StringBuilder(); //출금처리
+				sql1.append("UPDATE ACCOUNT ");
+				sql1.append(" SET ACCOUNT_TOTAL_MONEY = ACCOUNT_TOTAL_MONEY-? ");
+				sql1.append("WHERE IDX=?");
+				DBUtil.pstmt = DBUtil.conn.prepareStatement(sql1.toString());			
+				
+				DBUtil.pstmt.setLong(1, accountInfo.getDepositMoney());
+				DBUtil.pstmt.setInt(2, accountInfo.getWithdrawalAccountIdx());
+				
+				//SQL 실행 요청 - INSERT, UPDATE, DELETE : executeUpdate()
+				
+				try {
+					result += DBUtil.pstmt.executeUpdate();
+					//System.out.println("> 출금처리 성공 ");
+				} catch (SQLException e) {
+					//System.out.println("> 출금처리 실패 ");
+				}
+				
+//				StringBuilder sql2 = new StringBuilder(); //출금내역
+//				sql2.append("INSERT INTO ACCOUNT_DEALINGS_BREAKDOWN ");
+//				sql2.append(" (IDX, ACCOUNT_IDX, DEAL_TYPE, MONEY, REGDATETIME) ");
+//				sql2.append("VALUES( ACCOUNT_DEALINGS_BREAKDOWN_SEQ.NEXTVAL,?,?,?,TO_DATE(?,'YYYY-MM-DD HH24:MI:SS'))");
+//				DBUtil.pstmt = DBUtil.conn.prepareStatement(sql2.toString());
+				
+				String sql2 = "INSERT INTO ACCOUNT_DEALINGS_BREAKDOWN "
+						+"(IDX, ACCOUNT_IDX, DEAL_TYPE, MONEY, REGDATETIME ) " 
+						+" VALUES( ACCOUNT_DEALINGS_BREAKDOWN_SEQ.NEXTVAL,?,?,?,TO_DATE(?,'yyyy-mm-dd hh24:mi:ss') )";
+				
+				DBUtil.pstmt = DBUtil.conn.prepareStatement(sql2);
+				
+				
+				String regdate = ProjectOneConstant.getTimeYMDHIS();
+				String delType = ProjectOneConstant.DEAL_TYPE[1];
+		
+				
+				DBUtil.pstmt.setInt(1, accountInfo.getWithdrawalAccountIdx());
+				DBUtil.pstmt.setString(2, delType);
+				DBUtil.pstmt.setLong(3, accountInfo.getDepositMoney());
+				DBUtil.pstmt.setString(4, regdate);
+				
+				DBUtil.pstmt.executeUpdate();
+				
+				try {
+					result += DBUtil.pstmt.executeUpdate();
+					//System.out.println("> 출금 내역 처리 성공 ");
+				} catch (SQLException e) {
+					//System.out.println("> 출금 내역 처리 실패 ");
+				}
+				
+				
+				StringBuilder sql3 = new StringBuilder(); //입금처리
+				sql3.append("UPDATE ACCOUNT ");
+				sql3.append(" SET ACCOUNT_TOTAL_MONEY = ACCOUNT_TOTAL_MONEY+? ");
+				sql3.append("WHERE IDX=?");
+				DBUtil.pstmt = DBUtil.conn.prepareStatement(sql3.toString());			
+				
+				DBUtil.pstmt.setLong(1, accountInfo.getDepositMoney());
+				DBUtil.pstmt.setInt(2, accountInfo.getDepositAccountIdx());
+				
+				//SQL 실행 요청 - INSERT, UPDATE, DELETE : executeUpdate()
+				
+				try {
+					result += DBUtil.pstmt.executeUpdate();
+					//System.out.println("> 입금처리 성공 ");
+				} catch (SQLException e) {
+					//System.out.println("> 입금처리 실패 ");
+				}
+				
+				
+				//StringBuilder sql4 = new StringBuilder(); //입금내역
+				
+				String sql4 = "INSERT INTO ACCOUNT_DEALINGS_BREAKDOWN "
+						+"(IDX, ACCOUNT_IDX, DEAL_TYPE, MONEY, REGDATETIME ) " 
+						+" VALUES( ACCOUNT_DEALINGS_BREAKDOWN_SEQ.NEXTVAL,?,?,?,TO_DATE(?,'yyyy-mm-dd hh24:mi:ss') )";
+				
+				DBUtil.pstmt = DBUtil.conn.prepareStatement(sql2);
+				
+				//System.out.println(sql2);
+				
+				String regdate2 = ProjectOneConstant.getTimeYMDHIS();
+				String delType2 = ProjectOneConstant.DEAL_TYPE[0];
+		
+				
+				DBUtil.pstmt.setInt(1, accountInfo.getDepositAccountIdx());
+				DBUtil.pstmt.setString(2, delType2);
+				DBUtil.pstmt.setLong(3, accountInfo.getDepositMoney());
+				DBUtil.pstmt.setString(4, regdate2);
+				
+				try {
+					result += DBUtil.pstmt.executeUpdate();
+					//System.out.println("> 입금 내역 처리 성공 ");
+				} catch (SQLException e) {
+					//System.out.println("> 입금 내역 처리 실패 ");
+				}
+				
+				if(result==4) {
+				DBUtil.conn.commit();
+				
+				isTransferSuccess = true;
+				}else {
+					
+					try {
+						DBUtil.conn.rollback();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} //전체데이터 롤백처리
+						result = 0;
+					try {
+						DBUtil.conn.setAutoCommit(true);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} //autocommit 상태로 전환
+					
+				}
+				
+			} catch (SQLException e) {
+				try {
+					DBUtil.conn.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} //전체데이터 롤백처리
+					result = 0;
+				try {
+					DBUtil.conn.setAutoCommit(true);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} //autocommit 상태로 전환
+				e.printStackTrace();
+			} finally {
+				DBUtil.free(DBUtil.conn, DBUtil.pstmt);
+			}
+			
+			
+//		}else {
+//			System.out.println("Opt 보안 시간이 초과 하셨습니다. 다시 시도해 주세요");
+//		}
+		
+		
+		
+		return isTransferSuccess;
+		
+	}
+	
+}

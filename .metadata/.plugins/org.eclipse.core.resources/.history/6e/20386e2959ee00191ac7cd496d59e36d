@@ -1,0 +1,11 @@
+package com.mystudy.ex02_extends;
+
+ class PhoneTest {
+
+	public static void main(String[] args) {
+		// Phone, Mp3Phone 객체 생성 후 기능 테스트 
+		System.out.println("==== phone =====");
+        
+	}
+
+}

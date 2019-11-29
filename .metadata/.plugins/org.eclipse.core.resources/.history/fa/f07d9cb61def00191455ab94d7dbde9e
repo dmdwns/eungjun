@@ -1,0 +1,16 @@
+package com.mystudy.ex02_overriding;
+
+class Animal {
+ String name; // æ∆∏ß ,∏Ìƒ™
+ int legCnt; //¥Ÿ∏Æ ∞πºˆ 
+ 
+ void eat() {
+	 System.out.println(" >> ∏‘¥¬¥Ÿ ");
+ }
+ void sleep() {
+	 System.out.println(">> ¿·¿ª ¿‹¥Ÿ ");
+ }
+ 
+ 
+
+}

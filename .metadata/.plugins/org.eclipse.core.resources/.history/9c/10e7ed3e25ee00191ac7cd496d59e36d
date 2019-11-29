@@ -1,0 +1,16 @@
+package com.mystudy.ex01_bean;
+
+public class StudentMain {
+
+	public static void main(String[] args) {
+		Student stu = new Student();
+//		stu.name = "홍길동 ";
+//		System.out.println(stu.name);
+		stu.setName("홍길동2");  //값을 읽고
+		System.out.println(stu.getName());  // 값을 설정 
+		
+		stu.setKor(100);
+
+	}
+
+}

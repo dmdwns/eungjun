@@ -1,0 +1,20 @@
+package com.mystudy.ex02_vo;
+/* 자바빈(JavaBean) 형태의 클래스 작성 
+ * 
+ * 
+ * 
+ */
+
+public class StudentVO {
+	private String name; 
+    private int kor;
+	private int eng;
+	private int math;
+	
+	private int tot;   
+	private double avg; 
+	
+	
+	
+	
+}

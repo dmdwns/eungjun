@@ -1,0 +1,15 @@
+package com.mystudy.ex03_sungjuk;
+
+public class StudentVO {
+	
+	// 鞘靛 (加己) 
+	private String name;
+    private int kor;
+    private int eng;
+    private int math;
+    private int tot;
+    private double avg;
+    
+    // 积己磊 
+    // 扁夯积己磊 
+}

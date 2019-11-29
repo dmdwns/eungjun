@@ -1,0 +1,102 @@
+package com.mystudy.stringbuilder;
+
+public class Ex01_StringBuffer {
+
+	public static void main(String[] args) {
+		// String Buffer 클래스 
+		String str1 = "Hello";
+		String str = new String("Hello Java!!!");
+		System.out.println(str);
+		System.out.println(str1);
+	    
+		// StringBuffer sb1 = "Hello"; <- 이거 못씀  
+		StringBuffer sb = new StringBuffer("Hello Java!!!");
+		
+		System.out.println(sb);
+		System.out.println(sb.toString());
+				
+		String sbValue = sb.toString();
+		System.out.println("sb.toString() :" +sbValue);
+	    
+		System.out.println(sb.length());
+		System.out.println("sb.length() : " + sb.length());
+		
+		System.out.println(sb.capacity());
+	    System.out.println("sb.capacity() : " + sb.capacity());
+	    // hello java를 넣어서 이렇게 된거임 
+	    
+	    System.out.println("-----------------------------");
+	    System.out.println(sb.append("반갑습니다"));
+	    // 지금은 String 데이터의 값이 완전히 바뀐것임    이전의 스트링메소드와는 다름 
+	    System.out.println(sb.append("반갑습니다").append("안녕하세요"));
+	    // append 계속 붙일 수 있음 
+	    
+	    sb.reverse(); // 문자열 뒤집기 
+	    System.out.println(sb);
+        System.out.println(sb.reverse());
+	    // 역순으로 정렬 	    
+        System.out.println(sb);
+        
+        System.out.println();
+        System.out.println();
+        System.out.println("======== delete(), insert(), replace() =======,");
+        // Hello Java!!!반갑습니다반갑습니다안녕하세요
+        System.out.println("sb.delete(0,6)" +sb.delete(0,6));
+        System.out.println(sb); //6이전까지 
+        
+        sb.insert(0,"Hello ");
+        System.out.println("sb.insert(0,\"Hello\") :" +sb);
+         // 다시 넣어줌 
+        sb.replace(0 , 5 , "Hi,");
+        System.out.println("sb.replace(0 , 5 , \"Hi,\") : " + sb);
+        
+        System.out.println("sb.length() : " +sb.length());
+        System.out.println("sb.capacity() : " + sb.capacity());
+        sb.append("자바공부 재밌네요 ~~~~ 나만 재밌을까요");
+        System.out.println("sb.length() : " +sb.length());
+        System.out.println("sb.capacity() : " + sb.capacity());
+                
+        // ====================================================
+            
+        System.out.println("------------- trimToSize() ----------------");
+       sb.trimToSize();
+       System.out.println("sb.length() : " +sb.length());
+       System.out.println("sb.capacity() : " + sb.capacity());
+        // 저장공간을 길이크기만큼 줄인다 
+       
+       System.out.println("=================================");
+       StringBuffer sb2 = new StringBuffer(100);
+       // 100 같은 숫자를 쓰면 데이터는 없음   크기만 지정해주는 것 
+       System.out.println("sb2.length() : " +sb2.length());
+       System.out.println("sb2.capacity() : " + sb2.capacity());
+       sb2.append(" 안녕하세요 ").append(" 반갑습니다");
+       // append는    StringBuffer 클래스의 메소드이기에만 가능 
+	   System.out.println("sb2: " + sb2);
+	   System.out.println("sb2.length() : " +sb2.length());
+       System.out.println("sb2.capacity() : " + sb2.capacity());
+	
+	   // 
+       System.out.println(">>  trimTosize() -------------");
+       sb.trimToSize();
+       System.out.println("sb2.length() : " + sb2.length());
+       System.out.println("sb2.capacity(): " + sb2.capacity());
+	   
+       System.out.println(">> append() 실행후 ");
+	   sb2.append("자바 공부중 ~~~~~~");
+	   System.out.println("sb2.length() : " + sb2.length());
+       System.out.println("sb2.capacity(): " + sb2.capacity());
+	   
+       System.out.println(" >> setlength() 실행후 -----");
+	   sb2.setlength(S);
+	
+	
+	
+	}
+	
+	
+	
+	
+	
+	
+	
+}

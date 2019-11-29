@@ -1,0 +1,152 @@
+package com.mystudy.ex01_bean;
+/* 자바빈(Java Bean) 
+ * - 멤버변수 (property)의  접근제한자(제어자) private 선언 
+ * - 멤버변수 (property) 마다 get과 / set 메소드를 제공 때에따라서 메소드제공 필요에따라
+ * - get/set 메소드는 public 으로  선언   다봐야 하니까 
+ * - get 메소드 파라미터 없고  set 메소드에는 하나이상의 파라미터 값이 있어야한다 
+ * - 외부에서 멤버변수(property) 접근시에는 get/set 메소드를 통해 접근(사용)  
+ * - 
+ */
+
+public class Student extends Object {
+	private String name; // 이름 
+    private int kor;
+	private int eng;
+	private int math;
+	
+	private int tot;   //setter /getter
+	private double avg; // setter /getter 
+	
+	// private 쓰는 순간 이 클래스에서만 클래스내부만 가능함   동일패키지 못씀 
+    
+    // 생성자 영역 ----------------------------------
+	public Student() {
+	// 디폴트 생성자 
+    //super:   
+    //   그냥 부모클래스라고 보면된다고함 
+    //super() 부모클래스의 생성자임 일반적으로는 생략해서 컴파일러가 자동으로 생성함 
+	
+		
+	}
+	public Student(String name, int kor , int eng, int math) {
+		//현재 객체의 생성자 호출 (String 데이타 하나 전달 )
+		this(name); // 생성자 호출 
+		
+		//this.name=name;
+		this.kor=kor;
+		this.eng=eng;
+		this.math=math;
+		
+		computeAvg(); //tot, avg 계산처리 
+		
+	}
+
+	public Student(String name) {
+	//	super(); //맨 첫 줄에 작성  생략됨  - 부모클래스의 생성자 호출 
+		this.name=name;
+	
+	
+	}
+	
+	
+	)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// 메소드영역 -----------------------------------------
+	// 명칭 : set메소드, setter, set property() 라고도 불림  값설정
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
+	// 명칭 : get메소드, getter, get property() 라고도 함  갑을 읽을때
+	public String getName() {
+		return this.name;
+	}
+	// kor에 대한 setter / getter 
+	public void setKor(int kor) {
+		if (kor >=0 && kor <= 100) {
+			this.kor = kor;
+		}else {
+		   System.out.println("예외kor 0~100 범위가 아님 ");
+		}
+		
+		// this는 현재객체 세터에서 반드시 들어간다고함 
+	}
+	public int getKor() {
+		return kor;
+		}
+	
+	public void setEng(int eng) {
+		if (eng >=0 && eng <= 100) {
+			this.eng = eng;
+		}else {
+		   System.out.println("예외eng 0~100 범위가 아님 ");
+		}
+	
+	}
+	public int getEng() {
+		return this.eng;
+	}
+	
+	public void setMath(int math) {
+		if (math >=0 && math <= 100) {
+			this.math = math;
+		}else {
+		   System.out.println("예외math 0~100 범위가 아님 ");
+		}
+	}
+	
+	public int getMath() {
+		return math;
+	}
+	
+	
+	// 세터나 게터 선택적으로 
+//	public void setTot(int a ,int b ,int c) {
+//		this.tot= a+b+c;
+//	    
+//	}
+	
+	
+
+	
+	public int getTot() {
+		return tot;
+	}
+    
+	
+	
+//	public void setAvg(int a , int b ,int c) {
+//		this.avg= (a+b+c)/3;
+//		
+//	}
+	public void computeTot() {
+		tot = kor+eng+math;
+	}
+	
+	
+	public void computeAvg() {
+		computeTot();
+		this.avg = tot*100/3/100.0;
+	}
+	public double getAvg() {
+    	return avg;
+    }
+	
+	// 게터세터를 써서 값을 건드리는 이유는  변경시 잘못된 내용을 걸러내기위함 
+	
+	
+	
+
+}

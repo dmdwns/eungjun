@@ -1,0 +1,30 @@
+package com.mystudy.ex03_abstract_class;
+
+/* 추상클래스 : abstract class 
+ * 구현메소드와 추상메소드가 함께 있는 클래스 (추상메소드가 하나라도 있으면)
+ * 추상클래스는 추상메소드가 있어서 객체(인스턴스)를 생성 할 수 없음 
+ * 
+ * 
+ */
+
+
+abstract class Animal {
+ String name; // 이름 ,명칭
+ int legCnt; //다리 갯수 
+ 
+ 
+ 
+ void eat() {
+	 System.out.println(" >> 먹는다 ");
+}
+ void sleep() {
+	 System.out.println(">> 잠을 잔다 ");
+}
+  // 메소드재정의란 부모클래스의 메소드가 자식클래스에서 동일한 이름이지만 재정의 되는것 
+ 
+  abstract void sound(); 
+ 
+ 
+ 
+
+}

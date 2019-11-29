@@ -1,0 +1,35 @@
+package com.mystudy.ex04_inner_class;
+
+class A {
+	
+	// 실제로는 인코딩된다고 하는데.. 이클립스에서 볼때는 그런게 없다고함 ;;
+}
+
+//  퍼블릭 클래스는 하나만 
+public class InstanceClassTest {
+
+	int a = 100;
+	private int b = 10;
+	static int c = 200;
+	int sum = 0;
+	
+	void sum() {
+		sum = a + b;
+	}
+	
+	// 내부클래스 : 인스턴스 내부클래스
+	class Inner {
+		
+		
+	}
+	
+	
+	
+	
+	public static void main(String[] args) {
+		
+		
+
+	}
+
+}

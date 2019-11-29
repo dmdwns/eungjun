@@ -1,0 +1,17 @@
+package com.mystudy.ex04_interface;
+
+public abstract class Animal implements I_Animal{
+
+	@Override
+	public void eat() {
+		System.out.println(">> ∏‘¥¬¥Ÿ");
+		
+	}
+	@Override
+	public void sleep() {
+		System.out.println(">> ¿·¿ª¿‹¥Ÿ");
+		
+	}
+	
+	
+}

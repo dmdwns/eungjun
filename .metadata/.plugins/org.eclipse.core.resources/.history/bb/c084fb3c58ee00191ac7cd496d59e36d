@@ -1,0 +1,6 @@
+package com.mystudy.ex02_extends;
+
+//Phone 클래스를 상속받아(extends: 확장해서  ) Mp3Phone 만들기  
+ class Mp3Phone extends Phone {
+  
+}

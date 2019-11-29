@@ -1,0 +1,34 @@
+package com.mystudy.ex02_vo;
+
+public class StudentManager {
+
+	public static void main(String[] args) {
+		/* 3명의 성적 처리 
+		 * 홍길동 , 100, 90 , 81
+		 * 이순신,  95,   88 ,  92
+		 * 김유신,  90,   87,   77
+		 *
+		 *=========================
+		 *결과출력 (tab탭만큼 간격 처리 )  
+		        국어            영어        수학
+		 *홍길동   100      90    81            271 90.33
+		 *이순신,  95,   88 ,  92  
+		 * 김유신,  90,   87,   77
+		 *
+		 */
+		StudentVO p1= new StudentVO ("홍길동", 100,90, 81);
+		StudentVO p2= new StudentVO ("이순신", 95, 88, 92);
+		StudentVO p3= new StudentVO ("김유신", 90, 87, 77);
+		System.out.println();
+		
+		System.out.println(p1.getName()+"	"+p1.getKor()+"	"+p1.getEng()+"	"+p1.getMath()+
+			"	"+ p1.getTot()+"	"+Math.round(p1.getAvg()*100)/100.0	);
+		System.out.println(p2.getName()+"	"+p2.getKor()+"	"+p2.getEng()+"	"+p2.getMath()+
+				"	"+ p2.getTot()+"	"+Math.round(p2.getAvg()*100)/100.0	);
+		System.out.println(p3.getName()+"	"+p3.getKor()+"	"+p3.getEng()+"	"+p3.getMath()+
+				"	"+ p3.getTot()+"	"+Math.round(p3.getAvg()*100)/100.0	);
+		
+	
+	}
+
+}

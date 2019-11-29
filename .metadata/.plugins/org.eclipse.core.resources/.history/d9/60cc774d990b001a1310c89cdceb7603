@@ -1,0 +1,88 @@
+package action;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Scanner;
+
+public class DateTimeAction {
+	public String nowString = "";
+	
+	public String time() {
+		String result = "";
+		Scanner scan = new Scanner(System.in);
+
+		int dts = 0;
+
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 a h시 m분 s초");
+		nowString = now.format(dateTimeFormatter);
+
+		LocalDateTime timeChange = LocalDateTime.now();
+		LocalDateTime addtim1 = timeChange.plusMinutes(30);
+		String add30m = addtim1.format(dateTimeFormatter);
+
+		LocalDateTime addtim2 = timeChange.plusHours(1);
+		String add1h = addtim2.format(dateTimeFormatter);
+
+		LocalDateTime addtim3 = timeChange.plusHours(1).plusMinutes(30);
+		String add1h30m = addtim3.format(dateTimeFormatter);
+
+		LocalDateTime addtim4 = timeChange.plusHours(2);
+		String add2h = addtim4.format(dateTimeFormatter);
+
+		LocalDateTime addtim5 = timeChange.plusHours(2).plusMinutes(30);
+		String add2h30m = addtim5.format(dateTimeFormatter);
+
+		LocalDateTime addtim6 = timeChange.plusHours(3);
+		String add3h = addtim6.format(dateTimeFormatter);
+		
+		while (true) {
+			System.out.println("----------------------------------------------------------------");
+			System.out.println("방문시간을 입력해 주세요(예약은 주문 시간 기준 30분 후 3시간 이내만 가능합니다.");
+			System.out.println("-----------------------------------------------------------------");
+			System.out.println("1. 30분 후 2. 1시간 후 3. 1시간 30분 후 4. 2시간 후 5. 2시간 30분 후 6. 3시간 후 ");
+			System.out.print(">> ");
+			dts = Integer.parseInt(scan.nextLine());
+			
+			if (dts == 1) {
+				System.out.println("주문 시간 : " + nowString);
+				System.out.println("방문 시간(30분 후) : " + add30m);
+				result = add30m;
+				break;
+			} else if (dts == 2) {
+				System.out.println("주문 시간 : " + nowString);
+				System.out.println("방문 시간(1시간 후) : " + add1h);
+				result = add1h;
+				break;			
+			} else if (dts == 3) {
+				System.out.println("주문 시간 : " + nowString);
+				System.out.println("방문 시간(1시간 30분 후) : " + add1h30m);
+				result = add1h30m;
+				break;		
+			} else if (dts == 4) {
+				System.out.println("주문 시간 : " + nowString);
+				System.out.println("방문 시간(2시간 후) : " + add2h);
+				result = add2h;
+				break;				
+			} else if (dts == 5) {
+				System.out.println("주문 시간 : " + nowString);
+				System.out.println("방문 시간(2시간 30분 후) : " + add2h30m);
+				result = add2h30m;
+				break;				
+			} else if (dts == 6) {
+				System.out.println("주문 시간 : " + nowString);
+				System.out.println("방문 시간(3시간 후) : " + add3h);
+				result = add3h;
+				break;			
+			} else {
+				System.out.println("잘못 누르셨습니다.");
+			}
+			
+		}
+		return result;
+
+	}
+
+}

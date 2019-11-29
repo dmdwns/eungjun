@@ -1,0 +1,5 @@
+package com.mystudy.ex04_interface;
+
+public abstract class Animal implements I_Animal{
+
+}

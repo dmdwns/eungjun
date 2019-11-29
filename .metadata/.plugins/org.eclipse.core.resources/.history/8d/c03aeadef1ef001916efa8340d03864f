@@ -1,0 +1,27 @@
+package com.mystudy.ex04_inner_class;
+
+public class StaticClassTest {
+	int a = 10;
+	private int b = 100;
+	
+	static int c = 200;
+	static int sum = 0;
+	static int sNum1 = 20;
+	static int sNum2 = 20;
+	
+	static void sum() {
+		
+	}
+	
+	// 스태틱내부클래스 (Inner class 중 static 클래스)
+	static class Inner {
+		static int d = 100;
+		int e = 2000;
+		
+	}
+	
+	public static void main(String[] args) {
+		
+	}
+
+}

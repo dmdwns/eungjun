@@ -1,0 +1,14 @@
+package com.mystudy.wrapper;
+
+public class Ex02_Wrapper_Character {
+
+	public static void main(String[] args) {
+		// Character Å¬·¡½º 
+		char ch = 'a';
+		
+		
+		
+
+	}
+
+}

@@ -1,0 +1,13 @@
+package com.mystudy.ex03_sungjuk;
+
+// 내가 사용할 예외(Exception) 만들기 
+public class JumsuOufOfValueException extends SungjukProcessException {
+     public JumsuOufOfValueException() {
+    	 super("점수범위(0~100) 벗어난 값입니다");
+    	 
+     }
+     
+     
+	
+	
+}

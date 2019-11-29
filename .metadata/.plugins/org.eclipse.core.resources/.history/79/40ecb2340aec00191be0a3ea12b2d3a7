@@ -1,0 +1,46 @@
+package exam.array2dim;
+
+import java.text.DecimalFormat;
+
+public class SungjukExam {
+
+	public static void main(String[] args) {
+		
+		DecimalFormat format = new DecimalFormat();
+		format.applyLocalizedPattern("0.00");
+		
+
+
+		
+		//2차원 배열을 사용한 성적 처리
+				//실습문제. 
+				//  국어, 영어, 수학 점수 3개를 저장한 2차원 배열(sungjuk) 만들고
+				//  성적을 입력하고 개인별 총점과 평균을 계산 하여 화면에 데이터 출력
+				/*
+					국어\t영어	  수학  총점     평균
+					--------------------------
+					100  90  80  270   90.0      소수점 이하 2번째자리 까지 
+					100  90  81  271   90.33
+					100  90  80  270   90.0
+					--------------------------
+				*/               //0   1   2 
+		int[][] sungjuk = {/*0*/ {100, 90, 85}, 
+	                       /*1*/ {100, 70, 75}, 
+	                       /*2*/ {95 , 85, 80} };
+		                          
+		double score = (double) (sungjuk[0][0] +sungjuk[0][1]+sungjuk[0][2])/3;  
+	  
+	    double score1 = (double) (sungjuk[1][0] +sungjuk[1][1]+sungjuk[1][2])/3;
+	    
+	    double score2 = (double) (sungjuk[2][0] +sungjuk[2][1]+sungjuk[2][2])/3;
+	   
+	    System.out.println(score);
+	
+	
+	    
+	    
+	
+	
+	}
+
+}

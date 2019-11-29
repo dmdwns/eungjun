@@ -1,0 +1,6 @@
+package school;
+
+public abstract class Animal {
+	public String kind;
+
+}

@@ -1,0 +1,22 @@
+package com.mystudy.ex04_inner_class;
+
+public class LocalClassTest {
+    int a = 100;
+    
+    void innerTest(int k ) {
+    	int b = 200; // 지역변수 (local variable)
+    	int c = k;
+    	
+    	class Inner {
+    		
+    	}
+    	
+    	
+    }
+	
+	public static void main(String[] args) {
+		
+
+	}
+
+}

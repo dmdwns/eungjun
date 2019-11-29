@@ -1,0 +1,30 @@
+package com.mystudy.ex02_vo;
+
+public class StudentManager {
+
+	public static void main(String[] args) {
+		/* 3명의 성적 처리 
+		 * 홍길동 , 100, 90 , 81
+		 * 이순신,  95,   88 ,  92
+		 * 김유신,  90,   87,   77
+		 *
+		 *=========================
+		 *결과출력 (tab탭만큼 간격 처리 )  
+		 *홍길동   100      90    81            271 90.33
+		 *이순신,  95,   88 ,  92  
+		 * 김유신,  90,   87,   77
+		 *
+		 */
+		StudentVO p1= new StudentVO ("홍길동", 100,90, 81);
+		StudentVO p2= new StudentVO ("이순신", 95, 88, 92);
+		StudentVO p3= new StudentVO ("김유신", 90, 87, 77);
+		
+		p1.result();
+		p2.result();
+		p3.result();
+		
+		
+		
+	}
+
+}

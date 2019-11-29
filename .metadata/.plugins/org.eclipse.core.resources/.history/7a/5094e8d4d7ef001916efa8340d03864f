@@ -1,0 +1,11 @@
+package com.mystudy.ex01_exception;
+
+public class Exception_throw {
+
+	public static void main(String[] args) {
+		// 예외처리 throw : 예외를 발생시킬 때 사용ㄴ
+		throw new ArithmeticException();
+
+	}
+
+}

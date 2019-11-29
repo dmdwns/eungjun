@@ -1,0 +1,27 @@
+package com.mystudy.ex04_inner_class;
+
+class A {
+	
+}
+
+public class InstaceClassTest {
+
+	int a = 100;
+	private int b = 10;
+	static int c = 200;
+	int sum = 0;
+	
+	void sum() {
+		sum = a + b;
+	}
+	
+	// 내부클래스 : 인스턴스 내부클래스
+	 
+	
+	public static void main(String[] args) {
+		
+		
+
+	}
+
+}

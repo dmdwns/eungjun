@@ -1,0 +1,15 @@
+package com.mystudy.ex02_extends;
+/* 클래스의 상속(extends) 실습 
+ * 실습1: Phone 클래스 상속 확장 (extends) 
+ * WebPhone 클래스 작성  
+ *        - Phone 클래스 상속 확장해서 만들기
+ *        - 생성자 정의
+ *             * 폰번호 ( phoneNo) 만 받아서 객체( 인스턴스 ) 생성 
+ * 
+ * 
+ */
+
+public class WebPhone {
+	
+
+}

@@ -1,0 +1,11 @@
+package school;
+import java.util.*;
+
+public class Practice {
+public static void main(String[] args) {
+	List<Board> list = new Vector<Board>();
+	
+}
+
+
+}

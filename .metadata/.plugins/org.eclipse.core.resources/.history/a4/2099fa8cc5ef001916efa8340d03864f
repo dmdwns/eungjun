@@ -1,0 +1,8 @@
+package com.mystudy.ex01_exception;
+
+public class ExceptionEx {
+
+	public static void main(String[] args) {
+		System.out.println("--- main() Ω√¿€ ----");
+	}
+}

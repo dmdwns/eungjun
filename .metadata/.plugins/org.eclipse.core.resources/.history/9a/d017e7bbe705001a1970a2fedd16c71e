@@ -1,0 +1,16 @@
+package com.mystudy.jdbc_dao;
+
+import java.util.List;
+
+public class MemberDAO_Test {
+
+	public static void main(String[] args) {
+		MemberDAO dao = new MemberDAO();
+		List<MemberVO> list = dao.selectAll();
+		for(MemberVO mvo : list) {
+			System.out.println(mvo.toString());
+		}
+	}
+
+}
+

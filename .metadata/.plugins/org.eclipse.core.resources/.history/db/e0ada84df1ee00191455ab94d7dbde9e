@@ -1,0 +1,10 @@
+package com.mystudy.ex04_interface2;
+
+public class PhoneTest {
+
+	public static void main(String[] args) {
+		
+
+	}
+
+}

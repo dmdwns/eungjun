@@ -1,0 +1,10 @@
+package com.mystudy.jdbc_dao;
+
+public class MemberDAO_Test {
+
+	public static void main(String[] args) {
+		MemberDAO dao = new MemberDAO();
+		dao.selectAll();
+	}
+
+}

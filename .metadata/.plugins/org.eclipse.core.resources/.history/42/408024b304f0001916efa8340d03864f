@@ -1,0 +1,26 @@
+package school;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+
+public class Board {
+	
+	public static void main(String[] args) {
+		
+		Map <String, Integer> map = new HashMap<String, Integer>();
+		
+		map.put("½Å¿ë±Ç ", 85);
+		map.put("µ¿Àå±º ", 85);
+		map.put("È«±æµ¿ ", 80);
+		map.put("ÀÌ¼ø½Å ", 85);
+		System.out.println(" ÃÑ entry : " + map.size());
+		
+		System.out.println("È«±æµ¿ : " + map.get("È«±æµ¿"));
+		System.out.println();
+		
+		
+	}
+
+}

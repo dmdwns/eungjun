@@ -1,0 +1,66 @@
+package com.projectone.account.management;
+
+import com.projectone.common.CommonVO;
+import com.projectone.common.ProjectOneConstant;
+import com.projectone.show.management.PrintModifyAccountMenu;
+
+public class ModifyAccount {
+	 
+		public void modifyAcc() {
+			if (!new PrintModifyAccountMenu().printModifyAccountMenu()) {
+				// 계좌삭제 메뉴 문구 출력 및
+				// 현재 계좌 생성 수를 확인하여 boolean값을 반환받아온다.
+				return;
+			}
+			ProjectOneConstant.accountView();
+			
+			int selectAccount = new AccountUtil().modifyAccount();
+
+			
+			if (selectAccount == 0) {
+				return;
+			}
+
+			if(!new AccountUtil().checkAccountPassword(CommonVO.accountList.get(selectAccount - 1))) {
+				////계좌 비밀번호 실패했을경우 정지처리
+				new ManagementDAO().UpdateDeleteAccount(CommonVO.accountList.get(selectAccount - 1),
+						ProjectOneConstant.ACCOUNT_STATE[1]);
+
+				new ManagementDAO().InsertAccountLog(CommonVO.accountList.get(selectAccount - 1), "정지: 한도수정 비밀번호 5회 비 일치",
+						ProjectOneConstant.MODIFY_STATE[3]);
+				CommonVO.accountList.remove(selectAccount - 1);
+				return;
+			}
+			
+			//금액 한도 설정
+			int withDrawLimit,creditLimit;
+			System.out.println("*");
+			System.out.println("*----------------------------------------------------");
+			System.out.println("*");
+			System.out.println("* 1회출금액과 1일이체의 한도를 설정해주세요");
+			do {
+				System.out.println("*----------------------------------------------------");
+				System.out.printf("* 기존 1회 출금 한도 : %,d\n",CommonVO.accountList.get(selectAccount-1).getWithDrawLimit());
+				withDrawLimit = new AccountUtil().checkLimit("1회 출금액 한도: ");
+				
+				System.out.println("*----------------------------------------------------");
+				System.out.printf("* 기존 1일 이체 한도 : %,d\n",CommonVO.accountList.get(selectAccount-1).getCreditLimit());
+				creditLimit = new AccountUtil().checkLimit("1일 이체액 한도: ");
+			} while (! new AccountUtil().checkWithDrawAndCreditLimit(withDrawLimit,creditLimit)); // 1회출금금액 & 이체한도 유효성체크
+
+			
+			if (!new AccountUtil().checkModifyAccount()) {
+				return;
+			}
+			
+			//accList.get(selectAcc-1)의 한도값들을 바꾸는 UPDATE DAO호출
+			//Account테이블값 변경
+			//String content=String.format(format, args)
+			new ManagementDAO().updateModifyAccount( CommonVO.accountList.get(selectAccount-1),withDrawLimit,creditLimit);
+			new ManagementDAO().InsertAccountLog(CommonVO.accountList.get(selectAccount - 1), "한도수정: ",
+												ProjectOneConstant.MODIFY_STATE[1]);
+			CommonVO.accountList.get(selectAccount-1).setWithDrawLimit(withDrawLimit);
+			CommonVO.accountList.get(selectAccount-1).setCreditLimit(creditLimit);
+			CommonVO.accountList.remove(selectAccount-1);
+		}
+}

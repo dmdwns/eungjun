@@ -1,0 +1,17 @@
+package com.mystudy.ex02_overriding;
+
+class Cat extends Animal{
+	/*
+	 * 메소드 오버라이딩(method overriding)
+	 * 상속관계(확장, extends) 에 있는 
+	 */
+	
+	@Override
+	void sound() {
+		System.out.println(">> 야옹   야옹");
+	}
+	
+	
+	
+
+}

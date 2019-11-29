@@ -1,0 +1,527 @@
+//package com.mystudy.concert;
+//import java.sql.Connection;
+//import java.sql.DriverManager;
+//import java.sql.PreparedStatement;
+//import java.sql.ResultSet;
+//import java.sql.SQLException;
+//import java.util.Scanner;
+////È¸¿ø°¡ÀÔ
+//public class CustomerDAO {
+//	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+//	private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+//	private static final String USER = "mdguest";
+//	private static final String PASSWORD = "mdguest";
+//
+//	private Connection conn;
+//	private PreparedStatement pstmt;
+//	private ResultSet rs;
+//	
+//	Scanner scan = new Scanner(System.in);
+//	private String id;
+//	private String pw;
+//
+////	---------------------------------------------------------------------------------------µå¶óÀÌ¹ö ·Îµù
+//	static {
+//		try {
+//			Class.forName(DRIVER);
+//		} catch (ClassNotFoundException e) {
+//		}
+//		
+//	}
+////	---------------------------------------------------------------------------------------DB¿¡ ÀÔ·ÂÃ³¸®
+//	
+//	
+////	---------------------------------------------------------------------------------------join½ÃÀÛ
+//	public void joinStart() {
+//
+//		CustomerVO vo = null;
+//		CustomerDAO dao = new CustomerDAO();
+//		int result = 0;
+//		int select = 0;
+//
+//		String id = null;
+//		String password;
+//		String name;
+//		String tel;
+//
+//		//¾ÆÀÌµð, ºñ¹Ð¹øÈ£, ÀÌ¸§ Á¶°Ç
+//		String idpwForm = "^[a-zA-Z0-9]{3,8}$"; //¾Æ¾Æµð ºñ¹Ð¹øÈ£ Á¶°Ç : 3~8ÀÚ¸®, ¿µ¹®¼Ò¹®ÀÚ, ´ë¹®ÀÚ, ¼ýÀÚ °¡´É
+//		String nameForm = "^[°¡-ÆR]{1,12}$"; //ÀÌ¸§ Á¶°Ç : ÇÑ±Û¸¸ °¡´É, 1~12ÀÚ¸®
+//		String telForm = "^010-\\d{4}-\\d{4}$";//ÀüÈ­¹øÈ£ ÀÔ·Â Á¶°Ç
+//
+//		while (true) {
+//			System.out.println("========== ¹Ý°©½À´Ï´Ù È¸¿ø°¡ÀÔ ÆäÀÌÁö ÀÔ´Ï´Ù. ==========");
+//			System.out.println(" [1.È¸¿ø°¡ÀÔ    2.È¸¿ø Á¤º¸ ¼öÁ¤    3.È¸¿ø Å»Åð    4.°¡ÀÔÁ¾·á]");
+//			System.out.println("==============================================");
+//			System.out.println("[¸Þ´º ¼±ÅÃ]");
+//			select = Integer.parseInt(scan.nextLine());
+//
+//
+//			switch (select) {
+//			case 1:
+//				while (true) {
+//					System.out.print("¾ÆÀÌµð : ");
+//					id = scan.nextLine();
+//					if (id.matches(idpwForm)) {
+//						if (dao.checkId(id)) {
+//							System.out.println("Á¸ÀçÇÏ´Â ¾ÆÀÌµð ÀÔ´Ï´Ù!");
+//						} else {
+//							break;
+//						}
+//					} else {
+//						System.out.println("´Ù¸¥ ¾ÆÀÌµð¸¦ ÀÔ·ÂÇÏ¼¼¿ä.");
+//					}
+//				}
+//
+//				while (true) {
+//					System.out.print("ºñ¹Ð¹øÈ£ :");
+//					password = scan.nextLine();
+//					if (password.matches(idpwForm)) {
+//						break;
+//					} else {
+//						System.out.println("Á¶°Ç¿¡ ¸ÂÁö ¾Ê½À´Ï´Ù ´Ù½Ã ÀÔ·ÂÇÏ¼¼¿ä");
+//					}
+//				}
+//
+//				while (true) {
+//					System.out.print("ÀÌ¸§ : ");
+//					name = scan.nextLine();
+//					if (name.matches(nameForm)) {
+//						break;
+//					} else {
+//						System.out.println("ÀÌ¸§À» È®ÀÎÇÏ¼¼¿ä");
+//					}
+//				}
+//
+//				while (true) {
+//					System.out.print("ÇÚµåÆù ¹øÈ£ : ");
+//					tel = scan.nextLine();
+//					if (tel.matches(telForm)) {
+//						if (dao.checkTel(tel)) {
+//							System.out.println("Á¸ÀçÇÏ´Â ÇÚµåÆù¹øÈ£ ÀÔ´Ï´Ù.");
+//						} else {
+//							break;
+//						}
+//					} else {
+//						System.out.println("´Ù½Ã ÀÔ·Â ÇÏ¼¼¿ä.");
+//					}
+//				}
+//				vo = new CustomerVO(id, password, name, tel);
+//				dao.join(vo);
+//				System.out.println(" ·Î±×ÀÎ È­¸éÀ¸·Î ³Ñ¾î°©´Ï´Ù");
+//				break;
+//
+//			case 2:
+//				while (true) {
+//					System.out.print("¾ÆÀÌµð : ");
+//					id = scan.nextLine();
+//					System.out.print("ºñ¹Ð¹øÈ£ :");
+//					password = scan.nextLine();
+//					if (!dao.checkIdPassword(id, password)) {
+//						System.out.println("°¡ÀÔ³»¿ªÀÌ ¾ø½À´Ï´Ù.");
+//					} else {
+//						break;
+//					}
+//				}
+//
+//				while (true) {
+//					System.out.println("================ È¸¿ø Á¤º¸ º¯°æ ===================");
+//					System.out.println("[1.ºñ¹Ð¹øÈ£ º¯°æ    2.ÀÌ¸§ º¯°æ    3.ÀüÈ­¹øÈ£ º¯°æ    4.¸ÞÀÎÈ­¸éÀ¸·Î]");
+//					System.out.println("==============================================");
+//					select = Integer.parseInt(scan.nextLine());
+//
+//					if (select == 1) {
+//						while (true) {
+//							System.out.print("º¯°æÇÒ ºñ¹Ð¹øÈ£ : ");
+//							password = scan.nextLine();
+//							if (password.matches(idpwForm)) {
+//								dao.updatePassword(password, id);
+//								System.out.println(password + "·Î ¹Ù²î¾ú½À´Ï´Ù");
+//								break;
+//							} else {
+//								System.out.println("ºñ¹Ð¹øÈ£ È®ÀÎ");
+//							}
+//						}
+//					}
+//					if (select == 2) {
+//						while (true) {
+//							System.out.print("º¯°æÇÒ ÀÌ¸§ : ");
+//							name = scan.nextLine();
+//							if (name.matches(nameForm)) {
+//								dao.updateName(name, id);
+//								System.out.println(name + "À¸·Î ¹Ù²î¾ú½À´Ï´Ù.");
+//								break;
+//							} else {
+//								System.out.println("ÀÌ¸§È®ÀÎ");
+//							}
+//						}
+//					}
+//					if(select == 3) {
+//						while(true) {
+//							System.out.print("º¯°æÇÒ ÀüÈ­¹øÈ£ : ");
+//							tel = scan.nextLine();
+//							if(tel.matches(telForm)) {
+//								dao.updatetel(tel, id);
+//								System.out.println(tel +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+//								break;
+//							} else {
+//								System.out.println("ÀüÈ­¹øÈ£È®ÀÎ");
+//							}
+//						}
+//					}
+//					if(select == 4) {
+//						System.out.println("Ã³À½È­¸é");
+//						break;
+//					}
+//				}
+//				break;
+//
+//			case 3:
+//				while (true) {
+//					System.out.print("¾ÆÀÌµð : ");
+//					id = scan.nextLine();
+//					System.out.print("ºñ¹Ð¹øÈ£ :");
+//					password = scan.nextLine();
+//					if (!dao.checkIdPassword(id, password)) {
+//						System.out.println("¾ø´Â È¸¿øÀÔ´Ï´Ù");
+//					} else {
+//						vo = new CustomerVO(id, password);
+//						dao.delete(vo);
+//						System.out.println("Å»Åð µÇ¾ú½À´Ï´Ù.");
+//						break;
+//					}
+//				}
+//				break;
+//			case 4:
+//				System.out.print("°¡ÀÔÁ¾·á");
+//				System.out.println(" ·Î±×ÀÎ È­¸éÀ¸·Î ³Ñ¾î°©´Ï´Ù");
+//				CustomerLogMethod cl = new CustomerLogMethod();
+//				cl.inputIdPw();
+//				break;			
+//			}
+//			break;
+//		}
+//	}
+////	--------------------------------------------------------------------------------------------
+//	public int join(CustomerVO Customer_Join) {
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("INSERT INTO CUSTOMER ");
+//			sql.append("	(CUSTOMER_ID, CUSTOMER_PW, CUSTOMER_NAME, CUSTOMER_TEL) ");
+//			sql.append("VALUES (?, ?, ?, ?) ");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			int idx = 1;
+//			pstmt.setString(idx++, Customer_Join.getId());
+//			pstmt.setString(idx++, Customer_Join.getPassword());
+//			pstmt.setString(idx++, Customer_Join.getName());
+//			pstmt.setString(idx++, Customer_Join.getTel());
+//
+//			return pstmt.executeUpdate();
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmt(conn, pstmt);
+//		}
+//		return -1;
+//	}
+//
+//	//ºñ¹Ð¹øÈ£ ¼öÁ¤ ¸Þ¼Òµå
+//	public int updatePassword(String password, String id) {
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("UPDATE CUSTOMER SET CUSTOMER_PW = ? WHERE CUSTOMER_ID = ?");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			pstmt.setString(1, password);
+//			pstmt.setString(2, id);
+//
+//			return pstmt.executeUpdate();
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmt(conn, pstmt);
+//		}
+//		return -1;
+//	}
+//
+//	//ÀÌ¸§ ¼öÁ¤ ¸Þ¼Òµå
+//	public int updateName(String name, String id) {
+//
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("UPDATE CUSTOMER SET CUSTOMER_NAME = ? WHERE CUSTOMER_ID = ?");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			pstmt.setString(1, name);
+//			pstmt.setString(2, id);
+//
+//			return pstmt.executeUpdate();
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmt(conn, pstmt);
+//		}
+//		return -1;	
+//	}
+//
+//	//ÀüÈ­¹øÈ£ ¼öÁ¤ ¸Þ¼Òµå
+//	public int updatetel(String tel, String id) {
+//
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("UPDATE CUSTOMER SET CUSTOMER_TEL = ? WHERE CUSTOMER_ID = ?");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			pstmt.setString(1, tel);
+//			pstmt.setString(2, id);
+//
+//			return pstmt.executeUpdate();
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmt(conn, pstmt);
+//		}
+//		return -1;	
+//	}
+//
+//	public int delete(CustomerVO Customer_Join) {
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("DELETE FROM CUSTOMER ");
+//			sql.append("	WHERE CUSTOMER_ID = ? AND CUSTOMER_PW = ?");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			pstmt.setString(1, Customer_Join.getId());
+//			pstmt.setString(2, Customer_Join.getPassword());
+//
+//			return pstmt.executeUpdate();
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmt(conn, pstmt);
+//		}
+//		return -1;
+//	}
+//
+//	public boolean checkId(String id) {
+//		boolean result = false;
+//
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("SELECT CUSTOMER_ID FROM CUSTOMER WHERE CUSTOMER_ID = ?");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			pstmt.setString(1, id);
+//
+//			rs = pstmt.executeQuery();
+//
+//			if (rs.next()) {
+//				result = true;
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+//		}		
+//		return result;
+//	}
+//
+//	public boolean checkIdPassword(String id, String password) {
+//		boolean result = false;
+//
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("SELECT CUSTOMER_ID, CUSTOMER_PW FROM CUSTOMER WHERE CUSTOMER_ID = ? AND CUSTOMER_PW = ?");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			pstmt.setString(1, id);
+//			pstmt.setString(2, password);
+//
+//			rs = pstmt.executeQuery();
+//
+//			if (rs.next()) {
+//				result = true;
+//			}
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+//		}		
+//		return result;
+//	}
+//
+//	public boolean checkTel(String tel) {
+//		boolean result = false;
+//
+//		try {
+//			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//			StringBuilder sql = new StringBuilder();
+//			sql.append("SELECT CUSTOMER_TEL FROM CUSTOMER WHERE CUSTOMER_TEL = ?");
+//			pstmt = conn.prepareStatement(sql.toString());
+//
+//			pstmt.setString(1, tel);
+//
+//			rs = pstmt.executeQuery();
+//
+//			if (rs.next()) {//µ¥ÀÌÅÍ°¡ ÀÖÀ¸¸é
+//				result = true;
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+//		}		
+//		return result;
+//	}
+////	--------------------------------------------------------------------------------------------·Î±×ÀÎ½ÃÀÛ
+//	protected boolean inputIdPw() {
+//		boolean inputLog = false;
+//		System.out.println("========================");
+//		System.out.println("[È¯¿µÇÕ´Ï´Ù ·Î±×ÀÎÀ» ½ÃÀÛÇÕ´Ï´Ù]");
+//		System.out.println("========================");
+//		
+//		while(true) {
+//			System.out.print("¾ÆÀÌµð : ");
+//			id = scan.nextLine(); // ¾ÆÀÌµð ÀÔ·Â
+//			
+//			System.out.print("ºñ¹Ð¹øÈ£ : ");
+//			pw = scan.nextLine(); // ºñ¹Ð¹øÈ£ ÀÔ·Â
+//			
+//			CustomerLogVO lvo = new CustomerLogVO(id, pw);
+//			 
+//			boolean logTrue = new CustomerLogDAO().checkIdPassword(lvo);
+//			
+//			if (logTrue) {
+//				inputLog = true;
+//				break;
+//			} else {
+//				System.out.println("´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+//			}			
+//		}
+//		return inputLog;
+//	}
+////	·Î±×ÀÎ °ü·Ã ¸Þ¼Òµå
+//	
+//	// ·Î±×ÀÎÃ³¸®¸¦ À§ÇÑ id, password Ã¼Å©
+//	// boolean checkIdPassword(id, password)
+//	public boolean checkIdPassword(CustomerLogVO lvo) {
+//		boolean result = false;
+//		String inputId = "";
+//		String inputPw = "";
+//
+//		if (lvo.getId() != null && lvo.getPassword() != null) {
+//			try {
+//				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+//
+//				StringBuffer sql = new StringBuffer();
+//				sql.append("SELECT CUSTOMER_ID, CUSTOMER_PW ");
+//				sql.append("  FROM CUSTOMER ");
+//				sql.append(" WHERE CUSTOMER_ID = ? ");
+//
+//				pstmt = conn.prepareStatement(sql.toString());
+//				String str = lvo.getId();
+//				pstmt.setString(1, str);
+//
+//				rs = pstmt.executeQuery();
+//
+//				if (rs.next()) {
+//					inputId = rs.getString(1);
+//					inputPw = rs.getString(2);
+//
+//					if (checkIdPassword2(inputPw, lvo.getPassword())) {
+//						result = true;
+//						System.out.println("[·Î±×ÀÎ ÇÏ¼Ì½À´Ï´Ù]");
+//					} else {
+//						System.out.println("[ºñ¹Ð¹øÈ£°¡ Æ²·È½À´Ï´Ù.]");
+//					}
+//
+//				} else {
+//					System.out.println("[¾ÆÀÌµð°¡ ¾ø½À´Ï´Ù.]");
+//				}
+//
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			} catch (NullPointerException e) {
+//			} finally {
+//				closeCnPsRs(conn, pstmt, rs);
+//			}
+//		} else {
+//			System.out.println("[Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù.]");
+//		}
+//
+//		return result;
+//	}
+//
+//	private boolean checkIdPassword2(String inputPw, String inputPw1) {
+//
+//		boolean result1 = false;
+//		if (inputPw.equals(inputPw1)) {
+//			result1 = true;
+//		}
+//		return result1;
+//	}
+//
+//	private void closeCnPsRs(Connection conn, PreparedStatement pstmt, ResultSet rs) {
+//
+//		try {
+//			if (rs != null)
+//				rs.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		try {
+//			if (pstmt != null)
+//				pstmt.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		try {
+//			if (conn != null)
+//				conn.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	private void closeCnPsRs(Connection conn, PreparedStatement pstmt) {
+//
+//		try {
+//			if (pstmt != null)
+//				pstmt.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		try {
+//			if (conn != null)
+//				conn.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
+////	--------------------------------------------------------------------------------------------
+//
+//
+//}
+//

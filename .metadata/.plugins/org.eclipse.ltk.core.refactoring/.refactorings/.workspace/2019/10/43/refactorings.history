@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename Java project &apos;19_Reader_Writer&apos; to &apos;19_IO_Reader_Writer&apos;&#x0D;&#x0A;- Original element: &apos;19_Reader_Writer&apos;&#x0D;&#x0A;- Renamed element: &apos;19_Reader_Writer&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename Java project &apos;19_Reader_Writer&apos;" flags="7" id="org.eclipse.jdt.ui.rename.java.project" input="=19_Reader_Writer" name="19_IO_Reader_Writer" references="true" stamp="1571970779363" version="1.0"/>
+</session>

@@ -1,0 +1,7 @@
+package com.mystudy.ex03_interface;
+
+public interface Phone {
+	// 클래스 자리에 interface쓰면 인터페이스됨 
+	
+
+}

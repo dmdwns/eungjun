@@ -1,0 +1,5 @@
+package com.mystudy.ex04_interface;
+
+abstract class Animal {
+
+}

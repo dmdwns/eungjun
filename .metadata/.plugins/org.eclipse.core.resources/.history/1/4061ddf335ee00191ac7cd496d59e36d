@@ -1,0 +1,14 @@
+package com.mystudy.ex02_vo;
+
+public class StudentManager {
+
+	public static void main(String[] args) {
+		/* 3명의 성적 처리 
+		 * 홍길동 , 100 , 90 , 81
+		 * 이순신, 95, 88 , 92
+		 * 김유신, 90, 87, 77
+		 */
+		
+	}
+
+}

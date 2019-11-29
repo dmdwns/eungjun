@@ -1,0 +1,10 @@
+package com.mystudy.ex02_extends;
+/* 클래스의 상속(extends) 실습 
+ * 
+ * 
+ */
+
+public class WebPhone {
+	
+
+}

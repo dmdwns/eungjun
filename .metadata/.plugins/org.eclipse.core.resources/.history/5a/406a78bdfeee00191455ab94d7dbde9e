@@ -1,0 +1,7 @@
+package com.mystudy.ex06_type_casting;
+
+// ±¸±ÞÂ÷ 
+public class Ambulance extends Car {
+
+	
+}

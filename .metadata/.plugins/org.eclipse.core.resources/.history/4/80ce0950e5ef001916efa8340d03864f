@@ -1,0 +1,22 @@
+package com.mystudy.ex03_sungjuk;
+
+public class StudentVO {
+	
+	// 필드 (속성) 
+	private String name;
+    private int kor;
+    private int eng;
+    private int math;
+    private int tot;
+    private double avg;
+    
+    // 생성자 만들기 (기본)
+    // 기본생성자 
+    // name, kor, eng, math 값을 전달 받는 생성자
+    // 전체 필드값을 받는 생성자 
+    
+    // 메소드 만들기 (실습) : getter, setter 만들기 
+    
+    
+    
+}

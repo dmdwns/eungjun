@@ -1,0 +1,7 @@
+package com.mystudy.ex03_sungjuk;
+
+public class JumsuOufOfValueException extends Exception {
+     
+	
+	
+}

@@ -1,0 +1,139 @@
+package com.mystudy.jdbc_dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+//DAO, Dao : Data Access Object / Database Access Object
+//데이터(데이터베이스 - DB)와 연동해서 CRUD를 구현한 클래스
+public class MemberDAO {
+	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+	private static final String USER = "mystudy";
+	private static final String PASSWORD = "mystudypw";
+	
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+	//드라이버로딩처리
+	//static 초기화 구문
+	static {
+		try {
+			Class.forName(DRIVER);
+			System.out.println(">>JDBC드라이버 로딩 성공");
+		} catch (ClassNotFoundException e) {
+			System.out.println(">>JDBC드라이버 로딩 실패");
+		}
+	}
+	
+	//SELECT : 테이블 전체 데이터 조회 - selectALL : List<MemberVO>
+	//SELECT : 하나의 데이터 조회(ID) - selectOne : MemberVO
+	//SELECT : 하나의 데이터 조회(VO) - selectOne : MemberVO
+	//INSERT : VO객체를 받아서 입력 - insertOne : int
+	//UPDATE : VO객체를 받아서 수정 - updateOne : int
+	//DELETE : VO객체를 받아서 삭제 - deleteOne : int
+	//DELETE : 키값(id) 받아서 삭제 - deleteOne : int
+	
+	//로그인처리 : id, password 값을 받아서 동일한 데이터가 있으면 true
+	//		없으면 false 리턴
+	//boolean checkIdPassword(id, password)
+	//---------------------------------------------------
+	
+	//SELECT : 테이블 전체 데이터 조회 - selectALL : List<MemberVO>
+	public List<MemberVO> selectAll() {
+		List<MemberVO> list = new ArrayList<>();
+		
+		try {
+			//DB연결 - Connection 객체 생성(DB와 연결된)
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			//PreparedStatment 객체 생성하고  SQL문 실행
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT ID, NAME, PASSWORD, PHONE, ADDRESS");
+			sql.append("  FROM MEMBER");
+			sql.append(" ORDER BY ID");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			rs = pstmt.executeQuery();
+			
+			//SQL문 실행 결과에 대한 처리
+			while (rs.next()) {
+				/*
+				MemberVO mvo = new MemberVO(
+						rs.getString("ID"),
+						rs.getString("NAME"),
+						rs.getString("PASSWORD"),
+						rs.getString("PHONE"),
+						rs.getString("ADDRESS"));
+				list.add(mvo);
+				*/
+				list.add(new MemberVO(
+						rs.getString("ID"),
+						rs.getString("NAME"),
+						rs.getString("PASSWORD"),
+						rs.getString("PHONE"),
+						rs.getString("ADDRESS")));
+			}
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			//사용한객체 close
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}
+		
+		return list;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

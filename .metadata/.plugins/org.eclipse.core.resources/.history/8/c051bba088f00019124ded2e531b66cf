@@ -1,0 +1,38 @@
+package com.mystudy.ex01_arrayList;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class ArrayListExam {
+
+	public static void main(String[] args) {
+		// List 계열 - ArrayList - 배열의 속성과 List 속성을 가짐 
+	    //	- List 인터페이스를 상속 구현(implements)한 클래스 
+        //	- List 인터페이스를 확장 (extends)해서 인터페이스
+		
+		ArrayList list1 = new ArrayList();
+		System.out.println("list1.size() : " + list1.size());
+		
+		
+		list1.add(new Integer(5)); // 크기가 아니라 지금 값넣고 있는것임 
+		list1.add(1); // int -> Integer 자동형변환 되어 입력됨 
+		list1.add(new Integer(5)); // 값에 대한 중복은 허용 
+		list1.add(new Integer(6));
+		list1.add(new Integer(7));
+		
+		
+		System.out.println(list1.toString());
+		System.out.println("list1.size() : " + list1.size());
+		
+		list1.add(0.100); // 인덱스 위치에 데이터 추가 (삽입)
+		
+		// 데이터 바꾸기 거꾸로 다시 정렬 
+		Collections.reverse(list1);
+		System.out.println(list1.toString());
+		System.out.println("-----------------------------");
+		
+		
+		
+	}
+
+}

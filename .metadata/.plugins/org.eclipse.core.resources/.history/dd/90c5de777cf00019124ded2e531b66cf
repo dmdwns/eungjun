@@ -1,0 +1,52 @@
+package com.mystudy.ex04_inner_class;
+
+interface TestInter {
+	int DATA = 100;
+	void printData(); //추상메소드
+}
+
+
+class TestInerImpl implements TestInter {
+	
+	public void printData() {
+		System.out.println(">>> 구현한 메소드 ");
+	}
+	
+	
+	
+}
+
+
+
+
+
+
+public class AnonymousClassTest {
+    
+	void test() {
+        new TestInter() {  //  객체는 만들어졌지만 . 어딘가에 저장은 아님 ;;
+			@Override
+			public void printData() {
+				System.out.println("익명클래스 printData() Data : " +DATA);
+				
+			}
+        	
+        };  // 세미콜론으로 마무리.. 
+            
+	
+	}   
+	
+	      
+    public static void main(String[] args) {
+    TestInerImpl imp = new TestInerImpl();
+    imp.printData();
+}
+	
+       
+       
+       
+       
+       
+}
+
+

@@ -1,0 +1,127 @@
+package com.kang;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import com.hong.Location;
+import com.hong.LocationDAO;
+import com.hong.Movie;
+import com.hong.MovieDAO;
+import com.hong.Theater;
+import com.hong.TheaterDAO;
+
+public class Reserve {
+
+	LocationDAO lo = new LocationDAO();
+	TheaterDAO td = new TheaterDAO();
+	MovieDAO md = new MovieDAO();
+	ArrayList<Theater> list2 = new ArrayList<Theater>();
+	CinemaReserve cr = new CinemaReserve();
+	CinemaReserve cr2 = new CinemaReserve();
+	CinemaOrdersDAO or = new CinemaOrdersDAO();
+	String custid;
+	
+	public Reserve (String custid) {
+		this.custid = custid;
+	}
+
+	public void TheaterChoice() {
+		Scanner sc = new Scanner(System.in);
+		List<Location> list = lo.selectAll();
+		String thNum = null;
+		String moNum = null;
+		String nSeat = null;
+		int i = 0;
+		while(true) {
+			i = 0;
+			System.out.println("=====영화관=====");
+			for (Location movie : list) {
+
+				System.out.print("[번호]" + list.get(i).getLocationId() + " ");
+				System.out.print("[지역]" + list.get(i).getTheaterName());
+				System.out.println();
+				i++;
+			}
+			System.out.println("================");
+			
+			System.out.print(">> 영화관 번호를 선택하세요: ");
+
+				thNum = sc.nextLine();
+			
+			
+			list2 = td.select(thNum);
+			if(list2.size() > 0) {
+				break;
+			}
+			System.out.println("올바르지 않은 영화관 번호입니다.");
+			System.out.println("==============");
+		}
+	
+		System.out.println("영화 번호\t" + "영화 이름\t\t\t" + "[상영 날짜][시작시간]\t" + "[상영 날짜][끝나는시간]");
+		while(true) {
+			for (Theater t : list2) {
+				
+				System.out.println(
+						t.getMovieId() + "\t" +md.select(t.getMovieId()).getMovieName() + " \t\t" +t.getStartTime() + "\t\t" + t.getEndTime());
+				
+				/*System.out.print(t.getMovieId() + "\t\t");
+				
+				String str = md.select(t.getMovieId()).getMovieName();
+				System.out.print(str);
+				for(i = str.length(); i < 20; i++) {
+					System.out.print("  ");
+				}
+				System.out.println("\t" +t.getStartTime() + "\t\t" + t.getEndTime());*/
+				
+			}
+			System.out.print(">> 예매할 영화 번호를 선택해주세요: ");
+			moNum = sc.nextLine();
+			int num = Integer.parseInt(moNum);
+			System.out.println("==============");
+			Theater temp = td.select(thNum, moNum);
+			if(temp != null) {
+				cr.setDbSeat(temp.getSeat());
+				break;
+			}
+			System.out.println("올바르지 않은 영화 번호입니다.");
+			System.out.println("==============");
+		}
+		
+
+		//System.out.println(list2.get(num).getSeat());
+		
+			//cr.setDbSeat(list2.get(num).getSeat()); // 데이터베이스에서 좌석정보 가져오기
+			
+		
+			cr.movieSeat(); // 배열로 초기화 하기
+			cr.seatjs2(); // 좌석 출력
+			System.out.println("=================");
+			while(true) {
+				System.out.print(">>예매할 좌석을 선택해주세요: ");
+				nSeat = sc.nextLine();
+				String pt1 = "^[A-D][0-9]$";
+				if(nSeat.matches(pt1)) {
+					cr.seatjs(nSeat);
+					break;
+				} 
+				System.out.println("올바르지 않은 좌석 번호입니다.");
+			}
+			
+			System.out.println(">>선택하신좌석으로 예매할까요?(Y/N)");
+			
+			String str = sc.nextLine();
+			if(str.equalsIgnoreCase("Y") ) {
+				td.update(new Theater(thNum, moNum, cr.dbmovieSeat2()));
+				System.out.println("예매가 완료되었습니다.");
+//				cr.setDbSeat(td.select(thNum, moNum).getSeat()); // 데이터베이스에서 좌석정보 가져오기
+//				cr.movieSeat(); // 배열로 초기화 하기
+//				cr.seatjs2();
+				or.insertData2(custid, moNum, nSeat, 12000, thNum);
+				
+			} else {
+				System.out.println("예매를 취소합니다.");
+				//return;
+			}				
+			}
+	}

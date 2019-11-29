@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;TCPClientEchoWhile.java&apos; to &apos;24_Socket_Multi/src/com.mystudy.net_multi&apos;&#x0D;&#x0A;- Original project: &apos;22_Socket&apos;&#x0D;&#x0A;- Destination element: &apos;24_Socket_Multi/src/com.mystudy.net_multi&apos;&#x0D;&#x0A;- Original element: &apos;com.mystudy.socket04_echo_while.TCPClientEchoWhile.java&apos;" description="Copy compilation unit" destination="=24_Socket_Multi/src&lt;com.mystudy.net_multi" element1="/src&lt;com.mystudy.socket04_echo_while{TCPClientEchoWhile.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1572403276142" units="1" version="1.0"/>
+</session>

@@ -1,0 +1,19 @@
+package com.mystudy.ex01_class;
+
+  class Phone {
+      // 필드(속성) ---------------------------
+	  private String type; // 전화기타입(형태)
+	  private String phoneNo; // 전화번호 
+	  
+	  // 생성자 ------------------------------
+	  public Phone(String phoneNO) {
+		  this.type = "Phone 타입";
+		  this.phoneNo = phoneNo;  
+	  }
+	 
+	  
+	  // 메소드(기능) -------------------------
+	  
+	  
+	  
+}

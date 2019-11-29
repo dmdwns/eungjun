@@ -1,0 +1,54 @@
+package reservation;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+import play.Display;
+
+public class RecommendTest extends Display{
+
+	public static void Recommendp() {
+		Recommend recommend = new Recommend();
+		int res_kind_id = 0;
+		while(true) {
+			try {
+				Scanner s = new Scanner(System.in);
+				System.out.println("종류를 선택해 주세요");
+				System.out.println("1.한식, 2.중식, 3.일식, 4.분식, 5.기타");
+				res_kind_id = s.nextInt();
+				s.nextLine();
+				break;
+			} catch(InputMismatchException e) {
+				System.out.println("잘못된 입력입니다");
+			}
+		}
+		recommend.recommendmenu(res_kind_id);
+		int choice = 0;
+		
+		if(Display.id.equalsIgnoreCase("")) {
+		while(true) {
+			try {
+				Scanner s = new Scanner(System.in);
+				System.out.println("로그인 하시겠습니까? 1.예/2.아니요");
+				choice = s.nextInt();
+				s.nextLine();
+				break;
+			} catch (InputMismatchException e) {
+				System.out.println("잘못된 입력입니다");
+			}
+		}
+			if(choice == 1) {
+				recommend.login();
+			} else {
+				recommend.start();
+			}
+		}
+		
+		
+		
+		
+		
+		
+	}
+
+}

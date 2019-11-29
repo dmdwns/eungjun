@@ -1,0 +1,7 @@
+package school;
+
+public class Practice {
+	Thread thread = new Thread(Runnable target);
+	
+
+}

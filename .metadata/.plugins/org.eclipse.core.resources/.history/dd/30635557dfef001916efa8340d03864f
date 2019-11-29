@@ -1,0 +1,5 @@
+package com.mystudy.ex02_myexception;
+
+public class MyException {
+
+}

@@ -1,0 +1,60 @@
+package com.mystudy.ex04_inner_class;
+
+interface TestInter {
+	int DATA = 100;
+	void printData(); //추상메소드
+}
+
+
+class TestInerImpl implements TestInter {
+	
+	public void printData() {
+		System.out.println(">>> 구현한 메소드 ");
+	}
+	
+	
+	
+}
+
+
+
+
+
+
+public class AnonymousClassTest {
+    
+	void test() {
+        // 익명클래스 
+		(new TestInter() {  //  객체는 만들어졌지만 . 어딘가에 저장은 아님 
+			@Override
+			public void printData() {
+				System.out.println("익명클래스 printData() Data : " +DATA);
+				
+			}
+        	
+        }).printData();  // 이런식으로 사용하는 익명클래스
+        // 밑에처럼 간단히 요약해서 하는식도 가능함 
+            
+	
+	}   
+	
+	      
+    public static void main(String[] args) {
+    TestInerImpl imp = new TestInerImpl();
+    imp.printData();
+    
+    new TestInerImpl().printData();// 이런건 딱 한번만 사용가능한 객체스타일임 
+    
+    
+    System.out.println(" =========================");
+    System.out.println(" new TestInerImpl().printData() : " + new TestInerImpl().printData());
+    
+}
+   
+	
+    
+       
+       
+}
+
+

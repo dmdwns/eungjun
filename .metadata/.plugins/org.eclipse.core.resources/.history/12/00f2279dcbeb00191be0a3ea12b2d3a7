@@ -1,0 +1,79 @@
+package com.mystudy.split;
+
+import java.util.StringTokenizer;
+
+public class Ex01_StringTokenizer {
+
+	public static void main(String[] args) {
+	    // String.split() vs StringTokenizer
+		System.out.println("------String.split()-------");
+		String str = "사과 ,배 ,복숭아,,포도";
+		System.out.println("str : " + str );
+		
+	    str.split(",");
+		String[] strSplit = str.split(",");
+        // 받는 타입 신경쓰기  타입 같아야 나옴 
+		System.out.println("strSplit.length: "+strSplit.length);
+	    
+		System.out.println("-------str.split(\",\") 실행 결과  ------- ");
+		for (int i = 0 ; i < strSplit.length; i++) {
+			System.out.println(i + " : - " + strSplit[i] + "-");
+		}
+		System.out.println();
+		
+		// 계산된 for문 (다른언어 : forEach문 )
+		// for(데이터타입 변수명: 집합객체) { }
+		// String[] 같은  집합객체 
+		
+		System.out.println("---- 개선된 for문으로 ------");
+		for(String str2 : strSplit ) {
+			System.out.println("-"+ str2 +"-");
+  		}
+		
+		
+		System.out.println("---------------------");
+		
+	    int idx = 0 ;
+	    for (String str2 : strSplit) {
+	    	System.out.println(idx + " : - " +str2 + "-" );
+	    	idx++ ;
+	    }
+	    // ,를 기준으로도 짜름 
+	    System.out.println("============================");
+	    
+	    System.out.println("------ StringTokenize 사용 -------");
+	    System.out.println("str : "  + str  );
+	    StringTokenizer strToken = new StringTokenizer(str,",");
+	    System.out.println("strToken.countTokens() : " +strToken.countTokens());
+	    
+	    while(strToken.hasMoreTokens()) { //토큰이 더 있냐?
+	    	String token = strToken.nextToken(); //토근값 사용 
+	        System.out.println("-" + token + "-");
+	    }
+	    
+	    
+	    System.out.println("strToken.countTokens() : " +strToken.countTokens());
+	    // 토큰을 계속 사용하면 다음에 쓸수 없음 
+	    
+	    System.out.println("====== for 문 사용 토큰값 조화 ======");
+	    strToken = new StringTokenizer(str, ",");
+	    System.out.println("저장된 토큰 갯수 : " + strToken.countTokens());
+	    
+	    // 토큰값이 하나씩 줄어들음 
+	    for(int i = 0 ; i < strToken.countTokens(); i++) {
+	    	System.out.println(i + " - 토큰 갯수 : " +strToken.countTokens());
+	    	String token = strToken.nextToken();
+	    	System.out.println( (i + 1) + " : " + token );
+	     }
+	    
+	   
+	    
+	    
+	    
+		
+		
+		
+		
+	}
+
+}

@@ -1,0 +1,1217 @@
+package com.mystudy.concert;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+//È¸¿ø°¡ÀÔ
+public class ConcertAll {
+	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+	private static final String USER = "mdguest";
+	private static final String PASSWORD = "mdguest";
+
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+	Scanner scan = new Scanner(System.in);
+	private String pw;
+
+	int seat_price;
+	Integer num;
+	String have_seat;
+	int concert_num ; //ÀÓ½Ã·Î ¼³Á¤
+	
+	int select = 0;
+	int delete = 0;
+	String tryYesNo;
+	String customer_id;
+	String grade;
+
+	
+	//	---------------------------------------------------------------------------------------µå¶óÀÌ¹ö ·Îµù
+	static {
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+		}
+
+	}
+	//	---------------------------------------------------------------------------------------DB¿¡ ÀÔ·ÂÃ³¸®
+
+
+	//	---------------------------------------------------------------------------------------join½ÃÀÛ
+	public void joinStart() {
+
+		CustomerVO vo = null;
+		ConcertAll dao = new ConcertAll();
+		int result = 0;
+		int select = 0;
+
+		String customer_id = null;
+		String password;
+		String name;
+		String tel;
+
+		//¾ÆÀÌµð, ºñ¹Ð¹øÈ£, ÀÌ¸§ Á¶°Ç
+		String idpwForm = "^[a-zA-Z0-9]{3,8}$"; //¾Æ¾Æµð ºñ¹Ð¹øÈ£ Á¶°Ç : 3~8ÀÚ¸®, ¿µ¹®¼Ò¹®ÀÚ, ´ë¹®ÀÚ, ¼ýÀÚ °¡´É
+		String nameForm = "^[°¡-ÆR]{1,12}$"; //ÀÌ¸§ Á¶°Ç : ÇÑ±Û¸¸ °¡´É, 1~12ÀÚ¸®
+		String telForm = "^010-\\d{4}-\\d{4}$";//ÀüÈ­¹øÈ£ ÀÔ·Â Á¶°Ç
+
+		while (true) {
+			System.out.println("===================== È¸¿ø°ü¸® ÆäÀÌÁö ============");
+			System.out.println(" [1.È¸¿ø°¡ÀÔ    2.È¸¿ø Á¤º¸ ¼öÁ¤    3.È¸¿ø Å»Åð    4.°¡ÀÔÁ¾·á]");
+			System.out.println("==============================================");
+			System.out.println("[¸Þ´º ¼±ÅÃ]");
+			select = Integer.parseInt(scan.nextLine());
+
+
+			switch (select) {
+			case 1:
+				while (true) {
+					System.out.print("¾ÆÀÌµð : ");
+					customer_id = scan.nextLine();
+					if (customer_id.matches(idpwForm)) {
+						if (dao.checkId(customer_id)) {
+							System.out.println("Á¸ÀçÇÏ´Â ¾ÆÀÌµð ÀÔ´Ï´Ù.");
+						} else {
+							break;
+						}
+					} else {
+						System.out.println("´Ù¸¥ ¾ÆÀÌµð¸¦ ÀÔ·ÂÇÏ¼¼¿ä.");
+					}
+				}
+
+				while (true) {
+					System.out.print("ºñ¹Ð¹øÈ£ :");
+					password = scan.nextLine();
+					if (password.matches(idpwForm)) {
+						break;
+					} else {
+						System.out.println("Á¶°Ç¿¡ ¸ÂÁö ¾Ê½À´Ï´Ù ´Ù½Ã ÀÔ·ÂÇÏ¼¼¿ä");
+					}
+				}
+
+				while (true) {
+					System.out.print("ÀÌ¸§ : ");
+					name = scan.nextLine();
+					if (name.matches(nameForm)) {
+						break;
+					} else {
+						System.out.println("ÀÌ¸§À» È®ÀÎÇÏ¼¼¿ä");
+					}
+				}
+
+				while (true) {
+					System.out.print("ÇÚµåÆù ¹øÈ£ : ");
+					tel = scan.nextLine();
+					if (tel.matches(telForm)) {
+						if (dao.checkTel(tel)) {
+							System.out.println("Á¸ÀçÇÏ´Â ÇÚµåÆù¹øÈ£ ÀÔ´Ï´Ù.");
+						} else {
+							break;
+						}
+					} else {
+						System.out.println("´Ù½Ã ÀÔ·Â ÇÏ¼¼¿ä.");
+					}
+				}
+				vo = new CustomerVO(customer_id, password, name, tel);
+				dao.join(vo);
+				
+
+			case 2:
+				while (true) {
+					System.out.print("¾ÆÀÌµð : ");
+					customer_id = scan.nextLine();
+					System.out.print("ºñ¹Ð¹øÈ£ :");
+					password = scan.nextLine();
+					if (!dao.checkIdPassword(customer_id, password)) {
+						System.out.println("°¡ÀÔ³»¿ªÀÌ ¾ø½À´Ï´Ù.");
+					} else {
+						break;
+					}
+				}
+
+				while (true) {
+					System.out.println("================== È¸¿ø Á¤º¸ ¼öÁ¤ =====================");
+					System.out.println("[1.ºñ¹Ð¹øÈ£ º¯°æ    2.ÀÌ¸§ º¯°æ    3.ÀüÈ­¹øÈ£ º¯°æ    4.¸ÞÀÎÈ­¸éÀ¸·Î]");
+					System.out.println("==================================================");
+					select = Integer.parseInt(scan.nextLine());
+
+					if (select == 1) {
+						while (true) {
+							System.out.print("º¯°æÇÒ ºñ¹Ð¹øÈ£ : ");
+							password = scan.nextLine();
+							if (password.matches(idpwForm)) {
+								dao.updatePassword(password, customer_id);
+								System.out.println(password + "·Î ¹Ù²î¾ú½À´Ï´Ù");
+								break;
+							} else {
+								System.out.println("ºñ¹Ð¹øÈ£ È®ÀÎ");
+							}
+						}
+					}
+					if (select == 2) {
+						while (true) {
+							System.out.print("º¯°æÇÒ ÀÌ¸§ : ");
+							name = scan.nextLine();
+							if (name.matches(nameForm)) {
+								dao.updateName(name, customer_id);
+								System.out.println(name + "À¸·Î ¹Ù²î¾ú½À´Ï´Ù.");
+								break;
+							} else {
+								System.out.println("ÀÌ¸§È®ÀÎ");
+							}
+						}
+					}
+					if(select == 3) {
+						while(true) {
+							System.out.print("º¯°æÇÒ ÀüÈ­¹øÈ£ : ");
+							tel = scan.nextLine();
+							if(tel.matches(telForm)) {
+								dao.updatetel(tel, customer_id);
+								System.out.println(tel +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+								break;
+							} else {
+								System.out.println("ÀüÈ­¹øÈ£È®ÀÎ");
+							}
+						}
+					}
+					if(select == 4) {
+						System.out.println("Ã³À½È­¸é");
+						break;
+					}
+				}
+				break;
+
+			case 3:
+				while (true) {
+					System.out.print("¾ÆÀÌµð : ");
+					customer_id = scan.nextLine();
+					System.out.print("ºñ¹Ð¹øÈ£ :");
+					password = scan.nextLine();
+					if (!dao.checkIdPassword(customer_id, password)) {
+						System.out.println("¾ø´Â È¸¿øÀÔ´Ï´Ù");
+					} else {
+						vo = new CustomerVO(customer_id, password);
+						dao.delete(vo);
+						System.out.println("Å»Åð µÇ¾ú½À´Ï´Ù.");
+						break;
+					}
+				}
+				break;
+				
+			case 4:
+				System.out.print("°¡ÀÔÁ¾·á. ");
+				System.out.println("·Î±×ÀÎ È­¸éÀ¸·Î ³Ñ¾î°©´Ï´Ù.");
+				inputIdPw();
+				
+			}			
+			break;
+		}
+	}
+	//	--------------------------------------------------------------------------------------------
+	public int join(CustomerVO Customer_Join) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO CUSTOMER ");
+			sql.append("	(CUSTOMER_ID, CUSTOMER_PW, CUSTOMER_NAME, CUSTOMER_TEL) ");
+			sql.append("VALUES (?, ?, ?, ?) ");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			int idx = 1;
+			pstmt.setString(idx++, Customer_Join.getId());
+			pstmt.setString(idx++, Customer_Join.getPassword());
+			pstmt.setString(idx++, Customer_Join.getName());
+			pstmt.setString(idx++, Customer_Join.getTel());
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;
+	}
+
+	//ºñ¹Ð¹øÈ£ ¼öÁ¤ ¸Þ¼Òµå
+	public int updatePassword(String password, String id) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE CUSTOMER SET CUSTOMER_PW = ? WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, password);
+			pstmt.setString(2, id);
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;
+	}
+
+	//ÀÌ¸§ ¼öÁ¤ ¸Þ¼Òµå
+	public int updateName(String name, String id) {
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE CUSTOMER SET CUSTOMER_NAME = ? WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, name);
+			pstmt.setString(2, id);
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;	
+	}
+
+	//ÀüÈ­¹øÈ£ ¼öÁ¤ ¸Þ¼Òµå
+	public int updatetel(String tel, String id) {
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE CUSTOMER SET CUSTOMER_TEL = ? WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, tel);
+			pstmt.setString(2, id);
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;	
+	}
+
+	public int delete(CustomerVO Customer_Join) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("DELETE FROM CUSTOMER ");
+			sql.append("	WHERE CUSTOMER_ID = ? AND CUSTOMER_PW = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, Customer_Join.getId());
+			pstmt.setString(2, Customer_Join.getPassword());
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;
+	}
+
+	public boolean checkId(String id) {
+		boolean result = false;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CUSTOMER_ID FROM CUSTOMER WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, id);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}		
+		return result;
+	}
+
+	public boolean checkIdPassword(String id, String password) {
+		boolean result = false;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CUSTOMER_ID, CUSTOMER_PW FROM CUSTOMER WHERE CUSTOMER_ID = ? AND CUSTOMER_PW = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, id);
+			pstmt.setString(2, password);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}		
+		return result;
+	}
+
+	public boolean checkTel(String tel) {
+		boolean result = false;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CUSTOMER_TEL FROM CUSTOMER WHERE CUSTOMER_TEL = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, tel);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {//µ¥ÀÌÅÍ°¡ ÀÖÀ¸¸é
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}		
+		return result;
+	}
+	//	--------------------------------------------------------------------------------------------·Î±×ÀÎ½ÃÀÛ
+	protected boolean inputIdPw() {
+		boolean inputLog = false;
+		System.out.println("========================");
+		System.out.println("[È¯¿µÇÕ´Ï´Ù ·Î±×ÀÎÀ» ½ÃÀÛÇÕ´Ï´Ù]");
+		System.out.println("========================");
+
+		while(true) {
+			System.out.print("¾ÆÀÌµð : ");
+			customer_id = scan.nextLine(); // ¾ÆÀÌµð ÀÔ·Â
+
+			System.out.print("ºñ¹Ð¹øÈ£ : ");
+			pw = scan.nextLine(); // ºñ¹Ð¹øÈ£ ÀÔ·Â
+
+			CustomerLogVO lvo = new CustomerLogVO(customer_id, pw);
+
+			boolean logTrue = checkIdPassword(lvo);
+
+			if (logTrue) {
+				inputLog = true;
+				break;
+			} else {
+				System.out.println("´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+			}			
+		}
+		return inputLog;
+	}
+	//	·Î±×ÀÎ °ü·Ã ¸Þ¼Òµå
+
+	// ·Î±×ÀÎÃ³¸®¸¦ À§ÇÑ id, password Ã¼Å©
+	// boolean checkIdPassword(id, password)
+	public boolean checkIdPassword(CustomerLogVO lvo) {
+		boolean result = false;
+		String inputId = "";
+		String inputPw = "";
+
+		if (lvo.getCustomer_id() != null && lvo.getPassword() != null) {
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+				StringBuffer sql = new StringBuffer();
+				sql.append("SELECT CUSTOMER_ID, CUSTOMER_PW ");
+				sql.append("  FROM CUSTOMER ");
+				sql.append(" WHERE CUSTOMER_ID = ? ");
+
+				pstmt = conn.prepareStatement(sql.toString());
+				String str = lvo.getCustomer_id();
+				pstmt.setString(1, str);
+
+				rs = pstmt.executeQuery();
+
+				if (rs.next()) {
+					inputId = rs.getString(1);
+					inputPw = rs.getString(2);
+
+					if (checkIdPassword2(inputPw, lvo.getPassword())) {
+						result = true;
+						System.out.println("[·Î±×ÀÎ ÇÏ¼Ì½À´Ï´Ù]");
+					} else {
+						System.out.println("[ºñ¹Ð¹øÈ£°¡ Æ²·È½À´Ï´Ù.]");
+					}
+
+				} else {
+					System.out.println("[¾ÆÀÌµð°¡ ¾ø½À´Ï´Ù.]");
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+			} finally {
+				closeCnPsRs(conn, pstmt, rs);
+			}
+		} else {
+			System.out.println("[Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù.]");
+		}
+
+		return result;
+	}
+
+	private boolean checkIdPassword2(String inputPw, String inputPw1) {
+
+		boolean result1 = false;
+		if (inputPw.equals(inputPw1)) {
+			result1 = true;
+		}
+		return result1;
+	}
+
+	private void closeCnPsRs(Connection conn, PreparedStatement pstmt, ResultSet rs) {
+
+		try {
+			if (rs != null)
+				rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (pstmt != null)
+				pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (conn != null)
+				conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void closeCnPsRs(Connection conn, PreparedStatement pstmt) {
+
+		try {
+			if (pstmt != null)
+				pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (conn != null)
+				conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	//	--------------------------------------------------------------------------------------------ÄÜ¼­Æ® Æ¼ÄÏ Á¶È¸ 
+	//SELECT : ÇÏ³ªÀÇ µ¥ÀÌÅÍ Á¶È¸(VO) - selectOne : MemberVO
+	public ConcertInfoVO selectOne(int concert_num) {
+		ConcertInfoVO member = null;
+		List<ConcertInfoVO> list = new ArrayList<ConcertInfoVO>();
+
+		try {
+			//DB¿¬°á - Connection °´Ã¼ »ý¼º(DB¿Í ¿¬°áµÈ)
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			//PreparedStatement °´Ã¼ »ý¼ºÇÏ°í SQL¹® ½ÇÇà
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CONCERT_DATE,CONCERT_NUM,HALL_NUM,CONCERT_NAME ");
+			sql.append("  FROM SCHEDULE_INFO");
+			sql.append(" WHERE CONCERT_NUM = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setInt(1, concert_num);
+			rs = pstmt.executeQuery();
+
+			//SQL¹® ½ÇÇà °á°ú¿¡ ´ëÇÑ Ã³¸®
+			if (rs.next()) {
+				member = new ConcertInfoVO(
+						rs.getDate("CONCERT_DATE"),
+						rs.getInt("CONCERT_NUM"),
+						rs.getInt("HALL_NUM"),
+						rs.getString("CONCERT_NAME"));
+
+				list.add(member);
+
+				System.out.println("ÄÜ¼­Æ® ÀÏÀÚ	 " + member.concert_date+"\t"+
+						"ÄÜ¼­Æ® ¹øÈ£  " + member.concert_num+"\t"+
+						"ÄÜ¼­Æ® È¦ ¹øÈ£  " + member.hall_num+"\t"+
+						"ÄÜ¼­Æ®ÀÌ¸§   " + member.concert_name);
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			//»ç¿ë°´Ã¼ close
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}
+
+		return member;
+	}	
+
+	//---------------------------------------------------------------------------------
+	//SELECT : Å×ÀÌºí ÀüÃ¼ µ¥ÀÌÅÍ Á¶È¸ - selectAll : List<MemberVO>
+	public List<ConcertInfoVO> selectAll() {
+		ConcertInfoVO member = null;
+		List<ConcertInfoVO> list = new ArrayList<>();
+
+		try {
+			//DB¿¬°á - Connection °´Ã¼ »ý¼º(DB¿Í ¿¬°áµÈ)
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			//PreparedStatement °´Ã¼ »ý¼ºÇÏ°í SQL¹® ½ÇÇà
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CONCERT_DATE,CONCERT_NUM,HALL_NUM,CONCERT_NAME ");
+			sql.append("  FROM SCHEDULE_INFO");
+			sql.append(" ORDER BY CONCERT_NUM");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				member = new ConcertInfoVO(
+						rs.getDate("CONCERT_DATE"),
+						rs.getInt("CONCERT_NUM"),
+						rs.getInt("HALL_NUM"),
+						rs.getString("CONCERT_NAME"));
+
+				list.add(member);
+
+				System.out.println("ÄÜ¼­Æ® ÀÏÀÚ	 " + member.getConcert_date()+"\t"+
+						"ÄÜ¼­Æ® ¹øÈ£  " + member.getConcert_num()+"\t"+
+						"ÄÜ¼­Æ® È¦ ¹øÈ£  " + member.getHall_num()+"\t"+
+						"ÄÜ¼­Æ®ÀÌ¸§   " + member.getConcert_name());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			//»ç¿ë°´Ã¼ close
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}
+
+		return list;
+	}
+
+	//---------------------------------------------------------------
+	public void SelectConcert() {
+
+		Scanner scan = new Scanner(System.in);
+		System.out.println("°ü¶÷ÇÏ½Ç ÄÜ¼­Æ®¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä");
+		System.out.println("1.BTS  2.³»ÀÏÀº ¹Ì½ºÆ®·Ô  3.¾Çµ¿¹ÂÁö¼Ç  4.½´ÆÛ¹êµå 5.½ÎÀÌ¿¬¸»ÄÜ¼­Æ®");
+		concert_num = Integer.parseInt(scan.nextLine());
+		switch(concert_num) {
+		case 1:
+			selectOne(1);
+			break;
+		case 2:
+			selectOne(2);
+			break;
+		case 3:
+			selectOne(3);
+			break;
+		case 4:
+			selectOne(4);
+			break;
+		case 5:
+			selectOne(5);
+			break;
+		}
+
+	}
+	//	-------------------------------------------------------------------------------¿¹¸Å½ÃÀÛ
+	//¸Þ´º ¼±ÅÃ
+	public void menu() {
+		System.out.println("======================= ÄÜ¼­Æ® ¿¹¸Å ½Ã½ºÅÛ =======================");
+		System.out.println("");
+		System.out.println("[1]¿¹¸Å                [2]Ãë¼Ò                [3]Á¶È¸                [4]Á¾·á                ");
+		System.out.println("");
+		System.out.println("============================================================");
+	}
+	//------------------------------------------------------------------------------------
+	int seatNum[] = new int[25];
+	String seatVip[] = new String[25];
+	String seatSr[] = new String[25];
+	String seatR[] = new String[25];
+	String seatS[] = new String[25];
+	
+
+	ConcertAll()  {
+		for (int i = 0; i < seatVip.length; i++) {
+			seatNum[i] = i + 1;
+			seatVip[i] = "¡à\t";
+			seatSr[i] = "¡à\t";
+			seatR[i] = "¡à\t";
+			seatS[i] = "¡à\t";
+		}
+	}
+
+	public void startReserv() {
+		boolean bool = true;
+		System.out.println("<<< ÄÜ¼­Æ® ¿¹¸Å°¡ ½ÃÀÛµÇ¾ú½À´Ï´Ù");
+		while (bool) {
+			Integer choice;
+			try {
+				menu();
+				System.out.print("¿øÇÏ´Â ÀÛ¾÷À» ¼±ÅÃÇØÁÖ¼¼¿ä(1~4) : ");		
+				choice = Integer.parseInt(scan.nextLine());
+				switch (choice) {
+				case 1: //¿¹¸ÅÀÛ¾÷
+					showSeat();
+					grade();
+					bool = false;
+					break;
+				case 2: //Ãë¼ÒÀÛ¾÷
+					cancel();	
+					bool = false;
+					break;
+				case 3: //¿¹¸Å ³»¿ª Á¶È¸
+					showSeat();
+					bool = false;
+					break;
+				case 4: //ÇÁ·Î±×·¥ Á¾·á
+					System.out.println("<<< ÄÜ¼­Æ® ¿¹¸Å°¡ Á¾·áµÇ¾ú½À´Ï´Ù.");
+					bool = false;
+					break;
+				default:
+					System.out.println("[ÁÖÀÇ] 1~4 »çÀÌÀÇ ¼ýÀÚ¸¦ ¼±ÅÃÇÏ¼¼¿ä");
+				}
+			}
+			catch(Exception e) {
+				System.out.println("[ÁÖÀÇ] ¼ýÀÚ¸¸ ÀÔ·Â °¡´ÉÇÕ´Ï´Ù.");
+			}
+		}
+
+		SEAT_INFO_VO svo = new SEAT_INFO_VO(customer_id, (grade + num), grade, concert_num, seat_price, have_seat);
+		SEAT_INFO_DAO sdao = new SEAT_INFO_DAO();
+		insert(svo);
+
+	}
+
+	//Ãë¼Ò ¸Þ¼Òµå
+	public void cancel() {
+		//¾ÆÀÌµð, ºñ¹ø Ã¼Å© ÀÏÄ¡ÇÒ °æ¿ì ÇØ´ç ÁÂ¼® Ãë¼Ò
+		System.out.println("Ãë¼Ò¸¦ À§ÇØ ¾ÆÀÌµð¿Í ºñ¹Ð¹øÈ£¸¦ ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä");
+		inputIdPw1();	
+		deleteData(customer_id);
+	}
+
+	//¿¹¸Å Ãë¼ÒÈÄ delete¹®
+	public int deleteData(String customer_id) {
+		int result = 0;
+		try {
+			conn = DriverManager.getConnection(
+					"jdbc:oracle:thin:@localhost:1521:xe", 
+					"mdguest", "mdguest");
+			
+			String sql = "";
+			sql += "DELETE FROM SEAT_INFO ";
+			sql += "  WHERE CUSTOMER_ID = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, customer_id);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}	
+		return result;
+	}
+	
+	//·Î±×ÀÎ - Ãë¼Ò ¸Þ¼Òµå
+	protected boolean inputIdPw1() {
+		boolean inputLog = false;
+
+		while(true) {
+			System.out.print("¾ÆÀÌµð : ");
+			customer_id = scan.nextLine(); // ¾ÆÀÌµð ÀÔ·Â
+
+			System.out.print("ºñ¹Ð¹øÈ£ : ");
+			pw = scan.nextLine(); // ºñ¹Ð¹øÈ£ ÀÔ·Â
+
+			CustomerLogVO lvo = new CustomerLogVO(customer_id, pw);
+
+			boolean logTrue = checkIdPassword(lvo);
+
+			if (logTrue) {
+				inputLog = true;
+				System.out.println(grade + num + " ÁÂ¼®ÀÌ Á¤»óÀûÀ¸·Î Ãë¼ÒµÇ¾ú½À´Ï´Ù.");
+				if (grade.equalsIgnoreCase("VIP")) {
+					seatVip[num - 1] = "¡à\t";
+					showSeat();
+					break;
+				}
+				if (grade.equalsIgnoreCase("SR")) {
+					seatSr[num - 1] = "¡à\t";			
+					showSeat();
+					break;
+				}
+				if (grade.equalsIgnoreCase("R")) {
+					seatR[num - 1] = "¡à\t";
+					showSeat();
+					break;
+				}
+				if (grade.equalsIgnoreCase("S")) {
+					seatS[num - 1] = "¡à\t";
+					showSeat();
+					break;
+				}
+				break;
+			} else {
+				System.out.println("´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+			}			
+		}
+		return inputLog;
+	}
+
+	//¿¹¾àÇÒ ÁÂ¼® µî±Þ ¼±ÅÃ ¸Þ¼Òµå
+	public void grade() {
+		while (true) {
+			System.out.print("ÁÂ¼® µî±ÞÀ» ¼±ÅÃÇØÁÖ¼¼¿ä(VIP/SR/R/S) : ");			
+			grade = scan.nextLine();
+			if (grade.equalsIgnoreCase("VIP")) {
+				seatNum(seatVip);
+				showSeat();
+				break;
+			}
+			if (grade.equalsIgnoreCase("SR")) {
+				seatNum(seatSr);				
+				showSeat();
+				break;
+			}
+			if (grade.equalsIgnoreCase("R")) {
+				seatNum(seatR);
+				showSeat();
+				break;
+			}
+			if (grade.equalsIgnoreCase("S")) {
+				seatNum(seatS);
+				showSeat();
+				break;
+			}
+			else {
+				System.out.println("[ÁÖÀÇ] ¾ø´Â ÁÂ¼® µî±ÞÀÔ´Ï´Ù.");
+			}
+
+		}	
+	}
+
+	//¿¹¾àÇÒ ÁÂ¼® ¹øÈ£ ¼±ÅÃ ¸Þ¼Òµå
+	String seat[];
+	public void seatNum(String seat[]) {
+		while (true) {
+			try {
+				System.out.print("ÁÂ¼® ¹øÈ£¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä(1~25) : ");
+				num = Integer.parseInt(scan.nextLine());
+
+				if (num < 1 || num > 25) {
+					System.out.println("¾ø´Â ÁÂ¼® ¹øÈ£ÀÔ´Ï´Ù.");
+
+				} 
+				else {
+					if (seat == seatVip) {
+						if (seatVip[num - 1].toString().equals("¡á\t")) {
+							System.out.println("ÀÌ¹Ì ¼±ÅÃµÈ ÀÚ¸®ÀÔ´Ï´Ù");
+							continue;
+						} 
+						else {
+							seatVip[num - 1] = "¡á\t";								
+						}
+					}
+					if (seat == seatSr) {
+						if (seatSr[num - 1].toString().equals("¡á\t")) {
+							System.out.println("ÀÌ¹Ì ¼±ÅÃµÈ ÀÚ¸®ÀÔ´Ï´Ù");
+							continue;
+						} 
+						else {
+							seatSr[num - 1] = "¡á\t";								
+						}
+					}
+					if (seat == seatR) {
+						if (seatR[num - 1].toString().equals("¡á\t")) {
+							System.out.println("ÀÌ¹Ì ¼±ÅÃµÈ ÀÚ¸®ÀÔ´Ï´Ù");
+							continue;
+						} 
+						else {
+							seatR[num - 1] = "¡á\t";								
+						}
+					}
+					if (seat == seatS) {
+						if (seatS[num - 1].toString().equals("¡á\t")) {
+							System.out.println("ÀÌ¹Ì ¼±ÅÃµÈ ÀÚ¸®ÀÔ´Ï´Ù");
+							continue;
+						} 
+						else {
+							seatS[num - 1] = "¡á\t";
+						}
+					}
+					break;
+				}				
+			}
+			catch (Exception e) {
+				System.out.println("[ÁÖÀÇ] ¼ýÀÚ¸¸ ÀÔ·Â °¡´ÉÇÕ´Ï´Ù.");
+			}	
+		}
+		
+		if (seat == seatVip) {
+			seat_price = 150000;
+		}
+		if (seat == seatSr) {
+			seat_price = 130000;
+		}
+		if (seat == seatR) {
+			seat_price = 100000;
+		}
+		if (seat == seatS) {
+			seat_price = 90000;
+		}
+
+		if (seat[num-1].toString().equals("¡à")) {
+			have_seat = "¹èÁ¤¾ÈµÊ";
+		}
+		else {
+			have_seat = "¹èÁ¤µÊ";
+		}
+	}
+
+
+	//ÁÂ¼® Á¶È¸
+	public void showSeat() {
+		System.out.println();
+		System.out.print("\t");
+		for (int i = 0; i < seatVip.length; i++) {
+			System.out.print(seatNum[i] + "\t");
+		}
+		System.out.println();
+		System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+		System.out.print("VIP\t");
+		for (int i = 0; i < seatVip.length; i++) {
+			System.out.print(seatVip[i]);
+		}
+		System.out.println();
+		System.out.print("SR\t");
+		for (int i = 0; i < seatSr.length; i++) {
+			System.out.print(seatSr[i]);
+		}
+		System.out.println();
+		System.out.print("R\t");
+		for (int i = 0; i < seatR.length; i++) {
+			System.out.print(seatR[i]);
+		}
+		System.out.println();
+		System.out.print("S\t");
+		for (int i = 0; i < seatS.length; i++) {
+			System.out.print(seatS[i]);
+		}
+		System.out.println();
+	}
+//	--------------------------------------------------------------------------- payment ½ÃÀÛ
+//	-----------------------------------------------------------------------È¸¿øid·Î Á¶È¸
+	public void selectOne(String customer_id) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			String sql = "";
+			sql += "SELECT PAYMENT_UID, CUSTOMER_ID, PAYMENT_CREDIT, TOTAL_PRICE, PAYMENT_DATE, RESERVATION_NUM ";
+			sql += "  FROM PAYMENT ";
+			sql += " WHERE customer_id = ? ";
+			pstmt = conn.prepareStatement(sql);
+
+			// ? (¹ÙÀÎµå º¯¼ö)¿¡ °ª ¼³Á¤
+			pstmt.setString(1, customer_id);
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				String str = "";
+				str += "°áÁ¦¹øÈ£: "+rs.getInt(1) + "\n";
+				str += "È¸¿øID: "+rs.getString(2) + "\n";
+				str += "°áÁ¦Á¤º¸: "+rs.getString(3) + "\n";
+				str += "°áÁ¦±Ý¾×: "+rs.getInt(4) + "\n";
+				str += "°áÁ¦ÀÏÀÚ: "+rs.getDate(5) + "\n";
+				str += "¿¹¾à¹øÈ£: "+rs.getInt(6);
+
+				System.out.println(str);
+			} else {
+				System.out.println(customer_id + " - µ¥ÀÌÅÍ ¾øÀ½");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+	//	---------------------------------------------------------------------È¸¿øid·Î ÀÔ·Â
+	public void insertOne(String customer_id) {
+		//	private void insertOne(PaymentVO payment) {	
+		int result = 0 ;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			//SQL¹®ÀåÀ» ÀÛ¼ºÇØ¼­ Statement¿¡ Àü´ÞÇÏ°í SQL¹® ½ÇÇà ¿äÃ»
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO PAYMENT");
+			sql.append("	(PAYMENT_UID, CUSTOMER_ID, PAYMENT_CREDIT, TOTAL_PRICE, PAYMENT_DATE, RESERVATION_NUM) ");
+			sql.append("VALUES (PAYMENT_UID.NEXTVAL,?, ?, ?, SYSDATE, RESERVATION_NUM.NEXTVAL) ");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			// ? (¹ÙÀÎµùº¯¼ö)¿¡ °ª ¸ÅÄª customer_id
+			pstmt.setString(1, customer_id); // È¸¿ø°¡ÀÔ ½Ã cumtomer_uid°´Ã¼ ¹Þ¾Æ¿À±â
+			if (select == 1) {
+				pstmt.setString(2, "Çö±Ý");
+			} else {
+				pstmt.setString(2, "Ä«µå");
+			}
+			if (grade.equalsIgnoreCase("VIP")) {
+				pstmt.setInt(3, 150000); // ÁÂ¼®¼±ÅÃ ½Ã seat_price °´Ã¼ ¹Þ¾Æ¿À±â
+			} else if (grade.equalsIgnoreCase("SR")) {
+				pstmt.setInt(3, 130000); 
+			} else if (grade.equalsIgnoreCase("R")) {
+				pstmt.setInt(3, 100000);
+			} else if (grade.equalsIgnoreCase("S")) {
+				pstmt.setInt(3, 90000);
+			}  
+			
+			//SQL ½ÇÇà ¿äÃ» - INSERT, UPDATE, DELETE : executeUpdate()
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+	//	---------------------------------------------------------------------È¸¿øid·Î »èÁ¦
+	public void deleteOne(String customer_id) {
+		int result = 0;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			String sql = "";
+			sql = "DELETE FROM PAYMENT WHERE CUSTOMER_ID = ? ";
+			pstmt = conn.prepareStatement(sql);
+
+			// ?(¹ÙÀÎµåº¯¼ö) À§Ä¡¿¡ °ª ¼³Á¤
+			pstmt.setString(1, customer_id);
+
+			result = pstmt.executeUpdate(); //SQL¹® ½ÇÇà
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+//	---------------------------------------------------------------------È¸¿øid·Î Æ¼ÄÏÁ¤º¸ÀÔ·Â(join)
+	public void insertTicket(int concert_num, String customer_id, String grade) {
+		int result = 0 ;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			//SQL¹®ÀåÀ» ÀÛ¼ºÇØ¼­ Statement¿¡ Àü´ÞÇÏ°í SQL¹® ½ÇÇà ¿äÃ»
+			StringBuilder sql = new StringBuilder();
+			sql.append(" INSERT INTO TICKET ");
+			sql.append("        (TICKET_NUM, PAYMENT_UID, CONCERT_DATE, CONCERT_NAME, CONCERT_NUM, HALL_NUM, SEAT_NUM, SEAT_PRICE, CUSTOMER_ID, RESERVATION_NUM) ");
+			sql.append(" VALUES (TICKET_NUM.NEXTVAL, ");
+			sql.append(" (SELECT PAYMENT_UID FROM PAYMENT WHERE CUSTOMER_ID = '"+ customer_id +"') , ");
+			sql.append(" (SELECT CONCERT_DATE FROM SCHEDULE_INFO  WHERE CONCERT_NUM = "+ concert_num +") , ");
+			sql.append(" (SELECT CONCERT_NAME FROM SCHEDULE_INFO  WHERE CONCERT_NUM = "+ concert_num +") , ");
+			sql.append(concert_num + " ," );
+			sql.append(" (SELECT HALL_NUM FROM SCHEDULE_INFO WHERE  CONCERT_NUM = "+ concert_num +" ) , ");
+			sql.append(" (SELECT SEAT_NUM FROM SEAT_INFO WHERE CUSTOMER_ID = '"+ customer_id +"' ) , ");
+			sql.append(" (SELECT SEAT_PRICE FROM SEAT_INFO WHERE CUSTOMER_ID = '"+ customer_id +"' ) , ");
+			sql.append("'"+ customer_id + "' ," );
+			sql.append("(SELECT RESERVATION_NUM FROM PAYMENT WHERE CUSTOMER_ID = '" +customer_id+"') )");
+
+			pstmt = conn.prepareStatement(sql.toString());
+
+			//SQL ½ÇÇà ¿äÃ» - INSERT, UPDATE, DELETE : executeUpdate()
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}		
+//	---------------------------------------------------------------------È¸¿øid·Î Æ¼ÄÏÁ¤º¸ºÒ·¯¿À±â(join)
+	public void selectTicketInfo(String customer_id) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			String sql = "";
+			sql += "SELECT t.ticket_num, t.hall_num, s.seat_grade, t.seat_num, t.concert_name, t.seat_price ";
+			sql += "  FROM TICKET T, SEAT_INFO S ";
+			sql += " WHERE t.seat_num=  s.seat_num";
+			sql += " AND t.customer_id = '"+customer_id+"' " ;
+			pstmt = conn.prepareStatement(sql);
+
+			// ? (¹ÙÀÎµå º¯¼ö)¿¡ °ª ¼³Á¤
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				String str = "";
+				str += "Æ¼ÄÏ¹øÈ£: "+rs.getInt(1) + "\n";
+				str += "°ø¿¬Àå¹øÈ£: "+rs.getInt(2) + "\n";
+				str += "ÁÂ¼®µî±Þ: "+rs.getString(3) + "\n";
+				str += "ÁÂ¼®¹øÈ£: "+rs.getString(4) + "\n";
+				str += "ÄÜ¼­Æ®Á¦¸ñ: "+rs.getString(5) + "\n";
+				str += "ÁÂ¼®°¡°Ý: "+rs.getInt(6) ;
+
+				System.out.println(str);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+	
+	//	-----------------------------------------------------------------------°áÁ¦¸Þ¼¼Áö1
+	//	static Scanner scan = new Scanner(System.in);
+	public void startPayment() {
+
+		while(true){
+			while (true) {
+				if (!startPayment2(concert_num, customer_id, grade)) {
+					break;
+				}
+				System.out.println();
+			}//while¹® ¾ÈÂÊ
+			System.out.println("---------------------------");
+
+			System.out.println(" [1.°áÁ¦Ãë¼Ò]   [2.³ª°¡±â] ");
+			delete=Integer.parseInt(scan.nextLine());
+			try {
+				select = Integer.parseInt(scan.nextLine());			
+			} catch (NumberFormatException e) {
+				System.out.println("[¿¹¿Ü¹ß»ý] Àß¸øµÈ °ªÀÌ ÀÔ·ÂµÇ¾ú½À´Ï´Ù.\n ¸Þ´º(1,2) ¼ýÀÚ¸¸ ÀÔ·ÂÇÏ¼¼¿ä");
+			}
+			if (delete == 1) {
+				deleteOne(customer_id);
+				System.out.println("°áÁ¦°¡ Ãë¼ÒµÇ¾ú½À´Ï´Ù. ´Ù½Ã ÁøÇàÇÏ½Ã°Ú½À´Ï±î?(y/n) ");
+				tryYesNo = scan.nextLine();
+				if("n".equalsIgnoreCase(tryYesNo)) {
+					System.out.println(" *** Áñ°Å¿î ½Ã°£ µÇ¼¼¿ä :-) *** ");
+					break;
+				} else continue;
+			}
+			if (delete == 2) {
+				scan.close();
+				System.out.println(" *** Áñ°Å¿î ½Ã°£ µÇ¼¼¿ä :-) *** ");
+				break;
+			} 
+		}//while¹® ¹Ù±ù
+	}
+	//	-----------------------------------------------------------------------°áÁ¦¸Þ¼¼Áö2
+	private boolean startPayment2(int concert_num, String customer_id, String grade) {
+
+		boolean isContinue = true;
+
+		//¸Þ´º Ãâ·Â
+		System.out.println(" [°áÁ¦ ÇÏ½Ã°Ú½À´Ï±î?] ");
+		System.out.println("1)Çö±Ý°áÁ¦   2)Ä«µå°áÁ¦  3)Á¾·á : ");
+
+		//ÀÛ¾÷¼±ÅÃ
+		try {
+			select = Integer.parseInt(scan.nextLine());			
+		} catch (NumberFormatException e) {
+			System.out.println("[¿¹¿Ü¹ß»ý] Àß¸øµÈ °ªÀÌ ÀÔ·ÂµÇ¾ú½À´Ï´Ù.\n ¸Þ´º(1,2) ¼ýÀÚ¸¸ ÀÔ·ÂÇÏ¼¼¿ä");
+		}
+		if (select == 1) {
+			System.out.println("---------------------------");
+			System.out.println("1)Çö±Ý°áÁ¦°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù ");
+			System.out.println("---------------------------");
+			insertOne(customer_id);
+			selectOne(customer_id);
+			System.out.println("---------------------------");
+			insertTicket(concert_num, customer_id, grade);
+			selectTicketInfo(customer_id);
+			isContinue = false;
+		}
+		if (select == 2) {
+			System.out.println("---------------------------");
+			System.out.println("2)Ä«µå°áÁ¦°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù ");
+			System.out.println("---------------------------");
+			insertOne(customer_id);
+			selectOne(customer_id);
+			System.out.println("---------------------------");
+			insertTicket(concert_num, customer_id, grade);
+			selectTicketInfo(customer_id);
+			isContinue = false;
+		}
+		if (select == 3) {
+			isContinue = false;
+		}
+		return isContinue;
+	}
+	//	----------------------------------------------------------------------------SEAT_INFO ÀÎ¼­Æ®¹®		
+	//INSERT¹®
+	public int insert(SEAT_INFO_VO seat) {
+		int result = 0;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO SEAT_INFO ");
+			sql.append(" VALUES(?, ?, ?, ?, ?, ?) ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			pstmt.setString(1, seat.getCustomer_id());
+			pstmt.setString(2, seat.getSeat_num());
+			pstmt.setString(3, seat.getSeat_grade());
+			pstmt.setInt(4, concert_num);
+			pstmt.setInt(5, seat.getSeat_price());
+			pstmt.setString(6, seat.getHaveseat());
+
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		
+		return result;
+	}
+	
+}
+

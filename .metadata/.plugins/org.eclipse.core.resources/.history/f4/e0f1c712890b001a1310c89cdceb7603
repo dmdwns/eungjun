@@ -1,0 +1,1252 @@
+package com.mystudy.concert;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import admin.Admin;
+import admin.AdminLogMethod;
+
+public class ConcertAll {
+	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+	private static final String USER = "mdguest";
+	private static final String PASSWORD = "mdguest";
+
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+	Scanner scan = new Scanner(System.in);
+	private String pw;
+
+	int seat_price;
+	Integer num;
+	String have_seat;
+	int concert_num ; 
+	
+	int select = 0;
+	int delete = 0;
+	String tryYesNo;
+	String customer_id;
+	String grade;
+	
+	//	---------------------------------------------------------------------------------------드라이버 로딩
+	static {
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+		}
+	}
+	
+	//	---------------------------------------------------------------------------------------join시작
+	public void joinStart() {
+
+        CustomerVO vo = null;
+        ConcertAll dao = new ConcertAll();
+        int result = 0;
+        int select = 0;
+
+        String customer_id = null;
+        String password;
+        String name;
+        String tel;
+
+        // 아이디, 비밀번호, 이름 조건
+        String idpwForm = "^[a-zA-Z0-9]{3,8}$"; // 아아디 비밀번호 조건 : 3~8자리, 영문소문자, 대문자, 숫자 가능
+        String nameForm = "^[가-힇]{1,12}$"; // 이름 조건 : 한글만 가능, 1~12자리
+        String telForm = "^010-\\d{4}-\\d{4}$";// 전화번호 입력 조건
+
+    while (true) {
+        System.out.println("===================== 회원관리 페이지 =======================");
+        System.out.println("[1.회원가입    2.회원 정보 수정    3.회원 탈퇴    4.로그인    5.관리자 페이지]");
+        System.out.println("========================================================");
+        System.out.println("[메뉴 선택]");
+        select = Integer.parseInt(scan.nextLine());
+
+        switch (select) {
+        case 1:
+            while (true) {
+                    System.out.print("아이디 : ");
+                    customer_id = scan.nextLine();
+                    if (customer_id.matches(idpwForm)) {
+                            if (dao.checkId(customer_id)) {
+                                    System.out.println("존재하는 아이디 입니다.");
+                            } else {
+                                    break;
+                            }
+                    } else {
+                            System.out.println("다른 아이디를 입력하세요.");
+                    }
+            }
+
+            while (true) {
+                    System.out.print("비밀번호 :");
+                    password = scan.nextLine();
+                    if (password.matches(idpwForm)) {
+                            break;
+                    } else {
+                            System.out.println("조건에 맞지 않습니다 다시 입력하세요");
+                    }
+            }
+
+            while (true) {
+                    System.out.print("이름 : ");
+                    name = scan.nextLine();
+                    if (name.matches(nameForm)) {
+                            break;
+                    } else {
+                            System.out.println("이름을 확인하세요");
+                    }
+            }
+
+            while (true) {
+                    System.out.print("핸드폰 번호 : ");
+                    tel = scan.nextLine();
+                    if (tel.matches(telForm)) {
+                            if (dao.checkTel(tel)) {
+                                    System.out.println("존재하는 핸드폰번호 입니다.");
+                            } else {
+                                    break;
+                            }
+                    } else {
+                            System.out.println("다시 입력 하세요.");
+                    }
+            }
+            vo = new CustomerVO(customer_id, password, name, tel);
+            dao.join(vo);
+            break;
+
+        case 2:
+            while (true) {
+                    System.out.print("아이디 : ");
+                    customer_id = scan.nextLine();
+                    System.out.print("비밀번호 :");
+                    password = scan.nextLine();
+                    if (!dao.checkIdPassword(customer_id, password)) {
+                            System.out.println("가입내역이 없습니다.");
+                    } else break;
+            }
+
+            while (true) {
+
+                System.out.println("================== 회원 정보 수정 =====================");
+                System.out.println("[1.비밀번호 변경    2.이름 변경    3.전화번호 변경    4.메인화면으로]");
+                System.out.println("==================================================");
+                select = Integer.parseInt(scan.nextLine());
+
+                if (select == 1) {
+                        while (true) {
+                                System.out.print("변경할 비밀번호 : ");
+                                password = scan.nextLine();
+                                if (password.matches(idpwForm)) {
+                                        dao.updatePassword(password, customer_id);
+                                        System.out.println(password + "로 바뀌었습니다");
+                                        break;
+                                } else {
+                                        System.out.println("비밀번호 확인");
+                                }
+                        }
+                }
+                if (select == 2) {
+                        while (true) {
+                                System.out.print("변경할 이름 : ");
+                                name = scan.nextLine();
+                                if (name.matches(nameForm)) {
+                                        dao.updateName(name, customer_id);
+                                        System.out.println(name + "으로 바뀌었습니다.");
+                                        break;
+                                } else {
+                                        System.out.println("이름확인");
+                                }
+                        }
+                }
+                if (select == 3) {
+                        while (true) {
+                                System.out.print("변경할 전화번호 : ");
+                                tel = scan.nextLine();
+                                if (tel.matches(telForm)) {
+                                        dao.updatetel(tel, customer_id);
+                                        System.out.println(tel + "으로 변경되었습니다.");
+                                        break;
+                                } else {
+                                        System.out.println("전화번호확인");
+                                }
+                        }
+                }
+                if (select == 4) {
+                        System.out.println("처음화면");
+                        break;
+                }
+            }
+            break;
+
+        case 3:
+            while (true) {
+                System.out.print("아이디 : ");
+                customer_id = scan.nextLine();
+                System.out.print("비밀번호 :");
+                password = scan.nextLine();
+                if (!dao.checkIdPassword(customer_id, password)) {
+                        System.out.println("없는 회원입니다");
+                } else {
+                        vo = new CustomerVO(customer_id, password);
+                        dao.delete(vo);
+                        System.out.println("탈퇴 되었습니다.");
+                        break;
+                }
+            }
+            break;
+
+        case 4:
+            inputIdPw();// 로그인 메소드
+            return;
+        case 5:
+                new AdminLogMethod().inputIdPw();
+                new Admin().AdminMenu();
+        } // switch 문의 끝
+    }
+}
+	//	--------------------------------------------------------------------------------------------
+	public int join(CustomerVO Customer_Join) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO CUSTOMER ");
+			sql.append("	(CUSTOMER_ID, CUSTOMER_PW, CUSTOMER_NAME, CUSTOMER_TEL) ");
+			sql.append("VALUES (?, ?, ?, ?) ");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			int idx = 1;
+			pstmt.setString(idx++, Customer_Join.getId());
+			pstmt.setString(idx++, Customer_Join.getPassword());
+			pstmt.setString(idx++, Customer_Join.getName());
+			pstmt.setString(idx++, Customer_Join.getTel());
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;
+	}
+
+	//비밀번호 수정 메소드
+	public int updatePassword(String password, String id) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE CUSTOMER SET CUSTOMER_PW = ? WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, password);
+			pstmt.setString(2, id);
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;
+	}
+
+	//이름 수정 메소드
+	public int updateName(String name, String id) {
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE CUSTOMER SET CUSTOMER_NAME = ? WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, name);
+			pstmt.setString(2, id);
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;	
+	}
+
+	//전화번호 수정 메소드
+	public int updatetel(String tel, String id) {
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE CUSTOMER SET CUSTOMER_TEL = ? WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, tel);
+			pstmt.setString(2, id);
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;	
+	}
+
+	public int delete(CustomerVO Customer_Join) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("DELETE FROM CUSTOMER ");
+			sql.append("	WHERE CUSTOMER_ID = ? AND CUSTOMER_PW = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, Customer_Join.getId());
+			pstmt.setString(2, Customer_Join.getPassword());
+
+			return pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return -1;
+	}
+
+	public boolean checkId(String id) {
+		boolean result = false;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CUSTOMER_ID FROM CUSTOMER WHERE CUSTOMER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, id);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}		
+		return result;
+	}
+
+	public boolean checkIdPassword(String id, String password) {
+		boolean result = false;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CUSTOMER_ID, CUSTOMER_PW FROM CUSTOMER WHERE CUSTOMER_ID = ? AND CUSTOMER_PW = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, id);
+			pstmt.setString(2, password);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}		
+		return result;
+	}
+
+	public boolean checkTel(String tel) {
+		boolean result = false;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CUSTOMER_TEL FROM CUSTOMER WHERE CUSTOMER_TEL = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setString(1, tel);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {//데이터가 있으면
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}		
+		return result;
+	}
+	//	--------------------------------------------------------------------------------------------로그인시작
+	protected boolean inputIdPw() {
+		boolean inputLog = false;
+		System.out.println("========================");
+		System.out.println("[환영합니다 로그인을 시작합니다]");
+		System.out.println("========================");
+
+		while(true) {
+			System.out.print("아이디 : ");
+			customer_id = scan.nextLine(); // 아이디 입력
+
+			System.out.print("비밀번호 : ");
+			pw = scan.nextLine(); // 비밀번호 입력
+
+			CustomerLogVO lvo = new CustomerLogVO(customer_id, pw);
+
+			boolean logTrue = checkIdPassword(lvo);
+
+			if (logTrue) {
+				inputLog = true;
+				break;
+			} else {
+				System.out.println("다시 입력해주세요.");
+			}			
+		}
+		return inputLog;
+	}
+	//	로그인 관련 메소드
+
+	// 로그인처리를 위한 id, password 체크
+	// boolean checkIdPassword(id, password)
+	public boolean checkIdPassword(CustomerLogVO lvo) {
+		boolean result = false;
+		String inputId = "";
+		String inputPw = "";
+
+		if (lvo.getCustomer_id() != null && lvo.getPassword() != null) {
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+				StringBuffer sql = new StringBuffer();
+				sql.append("SELECT CUSTOMER_ID, CUSTOMER_PW ");
+				sql.append("  FROM CUSTOMER ");
+				sql.append(" WHERE CUSTOMER_ID = ? ");
+
+				pstmt = conn.prepareStatement(sql.toString());
+				String str = lvo.getCustomer_id();
+				pstmt.setString(1, str);
+
+				rs = pstmt.executeQuery();
+
+				if (rs.next()) {
+					inputId = rs.getString(1);
+					inputPw = rs.getString(2);
+
+					if (checkIdPassword2(inputPw, lvo.getPassword())) {
+						result = true;
+						System.out.println("[로그인 하셨습니다]");
+					} else {
+						System.out.println("[비밀번호가 틀렸습니다.]");
+					}
+
+				} else {
+					System.out.println("[아이디가 없습니다.]");
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+			} finally {
+				closeCnPsRs(conn, pstmt, rs);
+			}
+		} else {
+			System.out.println("[잘못 입력하셨습니다.]");
+		}
+
+		return result;
+	}
+
+	private boolean checkIdPassword2(String inputPw, String inputPw1) {
+
+		boolean result1 = false;
+		if (inputPw.equals(inputPw1)) {
+			result1 = true;
+		}
+		return result1;
+	}
+
+	private void closeCnPsRs(Connection conn, PreparedStatement pstmt, ResultSet rs) {
+
+		try {
+			if (rs != null)
+				rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (pstmt != null)
+				pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (conn != null)
+				conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void closeCnPsRs(Connection conn, PreparedStatement pstmt) {
+
+		try {
+			if (pstmt != null)
+				pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			if (conn != null)
+				conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	//	--------------------------------------------------------------------------------------------콘서트 티켓 조회 
+	//SELECT : 하나의 데이터 조회(VO) - selectOne : MemberVO
+	public ConcertInfoVO selectOne(int concert_num) {
+		ConcertInfoVO member = null;
+		List<ConcertInfoVO> list = new ArrayList<ConcertInfoVO>();
+
+		try {
+			//DB연결 - Connection 객체 생성(DB와 연결된)
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			//PreparedStatement 객체 생성하고 SQL문 실행
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT CONCERT_DATE,CONCERT_NUM,HALL_NUM,CONCERT_NAME ");
+			sql.append("  FROM SCHEDULE_INFO");
+			sql.append(" WHERE CONCERT_NUM = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setInt(1, concert_num);
+			rs = pstmt.executeQuery();
+
+			//SQL문 실행 결과에 대한 처리
+			while (rs.next()) {
+                member = new ConcertInfoVO(
+                                rs.getDate("CONCERT_DATE"),
+                                rs.getInt("CONCERT_NUM"),
+                                rs.getInt("HALL_NUM"),
+                                rs.getString("CONCERT_NAME"));
+                
+                list.add(member);
+        
+		    }
+		} catch (SQLException e) {
+		        e.printStackTrace();
+		} finally {
+		        //사용객체 close
+		        JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}
+		return member;
+	}	
+
+
+	//---------------------------------------------------------------
+	public void SelectConcert() {
+        boolean run = true;
+        while(run) {
+        	try {
+                Scanner scan = new Scanner(System.in);
+                System.out.println(">>>관람하실 콘서트를 선택해주세요");
+                System.out.println("1.BTS  2.내일은 미스트롯  3.악동뮤지션  4.슈퍼밴드 5.싸이연말콘서트");
+                concert_num = Integer.parseInt(scan.nextLine());
+        
+		        switch(concert_num) {
+		        
+			        case 1:
+			                selectOne(1);
+			                run = false;
+			                break;
+			        case 2:
+			                selectOne(2);
+			                run = false;
+			                break;
+			        case 3:
+			                selectOne(3);
+			                run = false;
+			                break;
+			        case 4:
+			                selectOne(4);
+			                run = false;
+			                break;
+			        case 5:
+			                selectOne(5);
+			                run = false;
+			                break;
+			        default :
+			                System.out.println("1-5까지의 숫자만 입력해주세요.");
+		        }
+        
+            }
+        	catch(Exception e) {
+	                System.out.println("숫자만 입력해주세요.");
+	        }
+        }
+	}
+	//	-------------------------------------------------------------------------------예매시작
+	//메뉴 선택
+	public void menu() {
+		System.out.println("======================= 콘서트 예매 시스템 =======================");
+		System.out.println("");
+		System.out.println("[1]예매                [2]취소                [3]조회                [4]종료                ");
+		System.out.println("");
+		System.out.println("============================================================");
+	}
+	//------------------------------------------------------------------------------------
+	int seatNum[] = new int[25];
+	String seatVip[] = new String[25];
+	String seatSr[] = new String[25];
+	String seatR[] = new String[25];
+	String seatS[] = new String[25];
+	
+
+	ConcertAll()  {
+		for (int i = 0; i < seatVip.length; i++) {
+			seatNum[i] = i + 1;
+			seatVip[i] = "□";
+			seatSr[i] = "□";
+			seatR[i] = "□";
+			seatS[i] = "□";
+		}
+	}
+
+	public void startReserv() {	
+		
+		boolean bool = true;
+		System.out.println("<<< 콘서트 예매가 시작되었습니다");
+		
+		while (bool) {
+			Integer choice;
+			menu();
+			System.out.print("원하는 작업을 선택해주세요(1~4) : ");		
+			try {
+				choice = Integer.parseInt(scan.nextLine());
+				switch (choice) {
+					case 1: //예매작업
+						checkSeat();
+						grade();
+						SEAT_INFO_VO svo = new SEAT_INFO_VO(customer_id, (concert_num+ ":" + grade +"-"+ num), grade, concert_num, seat_price, have_seat);
+						insert(svo);
+						startPayment();
+						bool = false;
+						break;
+					case 2: //취소작업
+						cancel();
+						bool = false;
+						break;
+					case 3: //예매 내역 조회
+						checkSeat();
+						break;
+					case 4: //프로그램 종료
+						System.out.println("<<< 콘서트 예매가 종료되었습니다.");
+						bool = false;
+						break;
+					default:
+						System.out.println("[주의] 1~4 사이의 숫자를 선택하세요");
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.out.println("[주의] 숫자만 입력 가능합니다.");
+			}
+		}
+	}
+
+	//취소 메소드
+	public void cancel() {
+		//아이디, 비번 체크 일치할 경우 해당 좌석 취소
+		System.out.println("취소를 위해 아이디와 비밀번호를 다시 입력해주세요");
+		cancelLogIn();	
+		deleteData(customer_id);
+		deleteOne(customer_id);
+		System.out.print("다시 예매하시겠습니까? (y/n) ");
+		tryYesNo = scan.nextLine();
+		if("y".equalsIgnoreCase(tryYesNo)) {
+			startReserv();
+			//SelectConcert();
+		}
+		else {
+			System.out.println("<<< 프로그램이 종료됩니다");
+		}
+	}
+
+	//예매 취소후 delete문
+	public int deleteData(String customer_id) {
+		int result = 0;
+		try {
+			conn = DriverManager.getConnection(
+					"jdbc:oracle:thin:@localhost:1521:xe", 
+					"mdguest", "mdguest");
+			
+			String sql = "";
+			sql += "DELETE FROM SEAT_INFO ";
+			sql += "  WHERE CUSTOMER_ID = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, customer_id);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}	
+		return result;
+	}
+	
+	//로그인 - 취소 메소드
+	protected boolean cancelLogIn() {
+		boolean inputLog = false;
+
+		while(true) {
+			System.out.print("아이디 : ");
+			customer_id = scan.nextLine(); // 아이디 입력
+
+			System.out.print("비밀번호 : ");
+			pw = scan.nextLine(); // 비밀번호 입력
+
+			CustomerLogVO lvo = new CustomerLogVO(customer_id, pw);
+
+			boolean logTrue = checkIdPassword(lvo);
+
+			if (logTrue) {
+				inputLog = true;
+				System.out.println("콘서트가 정상적으로 취소되었습니다.");
+				
+				try {
+					conn = DriverManager.getConnection(URL, USER, PASSWORD);
+					
+					StringBuilder sql = new StringBuilder();
+					sql.append("SELECT SUBSTR(SEAT_NUM, 1, INSTR(SEAT_NUM, '-') - 1) as DBGRADE" );
+					sql.append(" 	  ,TO_NUMBER(SUBSTR(SEAT_NUM, INSTR(SEAT_NUM, '-') + 1)) DBNUM ");		
+					sql.append("  FROM SEAT_INFO ");		
+					sql.append(" WHERE CONCERT_NUM = ? ");
+					
+					pstmt = conn.prepareStatement(sql.toString());
+					
+					pstmt.setInt(1, concert_num);
+					
+					rs = pstmt.executeQuery();
+					
+					while (rs.next()) {
+						
+						String gradeDb;
+						int numDb;
+						gradeDb = rs.getString(1);				
+						numDb = rs.getInt(2);
+										
+						if (gradeDb.equalsIgnoreCase("VIP")) {
+							seatVip[numDb - 1] = "□";
+						}
+						if (gradeDb.equalsIgnoreCase("SR")) {
+							seatSr[numDb - 1] = "□";
+						}
+						if (gradeDb.equalsIgnoreCase("R")) {
+							seatR[numDb - 1] = "□";
+						}
+						if (gradeDb.equalsIgnoreCase("S")) {
+							seatS[numDb - 1] = "□";
+						}
+						
+					}
+				} catch(Exception e) {
+					System.out.println("오류발생");
+				}
+					break;
+			} else {
+				System.out.println("다시 입력해주세요.");
+			}			
+		}
+		return inputLog;
+	}
+
+	//예약할 좌석 등급 선택 메소드
+	public void grade() {
+		while (true) {
+			System.out.print("좌석 등급을 선택해주세요(VIP/SR/R/S) : ");			
+			grade = scan.nextLine();
+			if (grade.equalsIgnoreCase("VIP")) {
+				seatNum(seatVip);
+				checkSeat();
+				break;
+			}
+			if (grade.equalsIgnoreCase("SR")) {
+				seatNum(seatSr);				
+				checkSeat();
+				break;
+			}
+			if (grade.equalsIgnoreCase("R")) {
+				seatNum(seatR);
+				checkSeat();
+				break;
+			}
+			if (grade.equalsIgnoreCase("S")) {
+				seatNum(seatS);
+				checkSeat();
+				break;
+			}
+			else {
+				System.out.println("[주의] 없는 좌석 등급입니다.");
+			}
+
+		}	
+	}
+
+	//예약할 좌석 번호 선택 메소드
+	String seat[];
+	public void seatNum(String seat[]) {
+		while (true) {
+			try {
+				System.out.print("좌석 번호를 선택해주세요(1~25) : ");
+				num = Integer.parseInt(scan.nextLine());
+
+				if (num < 1 || num > 25) {
+					System.out.println("없는 좌석 번호입니다.");
+
+				} 
+				else {
+					if (seat == seatVip) {
+						if (seatVip[num - 1].toString().equals("■")) {
+							System.out.println("이미 선택된 자리입니다");
+							continue;
+						} 
+						else {
+							seatVip[num - 1] = "■";								
+						}
+					}
+					if (seat == seatSr) {
+						if (seatSr[num - 1].toString().equals("■")) {
+							System.out.println("이미 선택된 자리입니다");
+							continue;
+						} 
+						else {
+							seatSr[num - 1] = "■";								
+						}
+					}
+					if (seat == seatR) {
+						if (seatR[num - 1].toString().equals("■")) {
+							System.out.println("이미 선택된 자리입니다");
+							continue;
+						} 
+						else {
+							seatR[num - 1] = "■";								
+						}
+					}
+					if (seat == seatS) {
+						if (seatS[num - 1].toString().equals("■")) {
+							System.out.println("이미 선택된 자리입니다");
+							continue;
+						} 
+						else {
+							seatS[num - 1] = "■";
+						}
+					}
+					break;
+				}				
+			}
+			catch (Exception e) {
+				System.out.println("[주의] 숫자만 입력 가능합니다.");
+			}	
+		}
+		
+		if (seat == seatVip) {
+			seat_price = 150000;
+		}
+		if (seat == seatSr) {
+			seat_price = 130000;
+		}
+		if (seat == seatR) {
+			seat_price = 100000;
+		}
+		if (seat == seatS) {
+			seat_price = 90000;
+		}
+
+		if (seat[num-1].toString().equals("□")) {
+			have_seat = "배정안됨";
+		}
+		else {
+			have_seat = "배정됨";
+		}
+	}
+
+	//좌석 조회
+	public void checkSeat() {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT SUBSTR(SEAT_NUM, INSTR(SEAT_NUM, ':') + 1, INSTR(SEAT_NUM, '-') - 3) AS DBGRADE " );
+			sql.append(" 	 , TO_NUMBER(SUBSTR(SEAT_NUM, INSTR(SEAT_NUM, '-') + 1)) DBNUM ");		
+			sql.append("  FROM SEAT_INFO ");		
+			sql.append(" WHERE CONCERT_NUM = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			pstmt.setInt(1, concert_num);
+			
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				
+				String gradeDb;
+				int numDb;
+				gradeDb = rs.getString(1);				
+				numDb = rs.getInt(2);
+								
+				if (gradeDb.equalsIgnoreCase("VIP")) {
+					seatVip[numDb - 1] = "■";
+				}
+				if (gradeDb.equalsIgnoreCase("SR")) {
+					seatSr[numDb - 1] = "■";
+				}
+				if (gradeDb.equalsIgnoreCase("R")) {
+					seatR[numDb - 1] = "■";
+				}
+				if (gradeDb.equalsIgnoreCase("S")) {
+					seatS[numDb - 1] = "■";
+				}
+				
+			}
+			
+			System.out.println("<<<<<<<<<<<<<< 남은 좌석 상태");
+			System.out.print("\t");
+			for (int i = 0; i < seatVip.length; i++) {
+				System.out.print(seatNum[i] + "\t");
+			}
+			System.out.println();
+			System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+			System.out.print("VIP\t");
+			for (int i = 0; i < seatVip.length; i++) {
+				System.out.print(seatVip[i] + "\t");
+			}
+			System.out.println();
+			System.out.print("SR\t");
+			for (int i = 0; i < seatSr.length; i++) {
+				System.out.print(seatSr[i] + "\t");
+			}
+			System.out.println();
+			System.out.print("R\t");
+			for (int i = 0; i < seatR.length; i++) {
+				System.out.print(seatR[i] + "\t");
+			}
+			System.out.println();
+			System.out.print("S\t");
+			for (int i = 0; i < seatS.length; i++) {
+				System.out.print(seatS[i] + "\t");
+			}
+			System.out.println();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+//	--------------------------------------------------------------------------- payment 시작
+//	-----------------------------------------------------------------------회원id로 조회
+	public void selectOne(String customer_id) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			String sql = "";
+			sql += "SELECT PAYMENT_UID, CUSTOMER_ID, PAYMENT_CREDIT, TOTAL_PRICE, PAYMENT_DATE, RESERVATION_NUM ";
+			sql += "  FROM PAYMENT ";
+			sql += " WHERE customer_id = ? ";
+			pstmt = conn.prepareStatement(sql);
+
+			// ? (바인드 변수)에 값 설정
+			pstmt.setString(1, customer_id);
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				String str = "";
+				str += "결제번호: "+rs.getInt(1) + "\n";
+				str += "회원ID: "+rs.getString(2) + "\n";
+				str += "결제정보: "+rs.getString(3) + "\n";
+				str += "결제금액: "+rs.getInt(4) + "\n";
+				str += "결제일자: "+rs.getDate(5) + "\n";
+				str += "예약번호: "+rs.getInt(6);
+
+				System.out.println(str);
+				
+			} else {
+				System.out.println(customer_id + " - 데이터 없음");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+	//	---------------------------------------------------------------------회원id로 입력
+	public void insertOne(String customer_id) {
+		//	private void insertOne(PaymentVO payment) {	
+		int result = 0 ;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			//SQL문장을 작성해서 Statement에 전달하고 SQL문 실행 요청
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO PAYMENT");
+			sql.append("	(PAYMENT_UID, CUSTOMER_ID, PAYMENT_CREDIT, TOTAL_PRICE, PAYMENT_DATE, RESERVATION_NUM) ");
+			sql.append("VALUES (PAYMENT_UID.NEXTVAL,?, ?, ?, SYSDATE, RESERVATION_NUM.NEXTVAL) ");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			// ? (바인딩변수)에 값 매칭 customer_id
+			pstmt.setString(1, customer_id); // 회원가입 시 cumtomer_uid객체 받아오기
+			if (select == 1) {
+				pstmt.setString(2, "현금");
+			} else {
+				pstmt.setString(2, "카드");
+			}
+			if (grade.equalsIgnoreCase("VIP")) {
+				pstmt.setInt(3, 150000); // 좌석선택 시 seat_price 객체 받아오기
+			} else if (grade.equalsIgnoreCase("SR")) {
+				pstmt.setInt(3, 130000); 
+			} else if (grade.equalsIgnoreCase("R")) {
+				pstmt.setInt(3, 100000);
+			} else if (grade.equalsIgnoreCase("S")) {
+				pstmt.setInt(3, 90000);
+			}  
+			
+			//SQL 실행 요청 - INSERT, UPDATE, DELETE : executeUpdate()
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+	//	---------------------------------------------------------------------회원id로 삭제
+	public void deleteOne(String customer_id) {
+		int result = 0;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			String sql = "";
+			sql = "DELETE FROM PAYMENT WHERE CUSTOMER_ID = ? ";
+			pstmt = conn.prepareStatement(sql);
+
+			// ?(바인드변수) 위치에 값 설정
+			pstmt.setString(1, customer_id);
+
+			result = pstmt.executeUpdate(); //SQL문 실행
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+//	---------------------------------------------------------------------회원id로 티켓정보입력(join)
+	public void insertTicket(int concert_num, String customer_id, String grade) {
+		int result = 0 ;
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			//SQL문장을 작성해서 Statement에 전달하고 SQL문 실행 요청
+			StringBuilder sql = new StringBuilder();
+            sql.append(" INSERT INTO TICKET ");
+            sql.append("        (TICKET_NUM, PAYMENT_UID, CONCERT_DATE, CONCERT_NAME, CONCERT_NUM, HALL_NUM, SEAT_NUM, SEAT_PRICE, CUSTOMER_ID, RESERVATION_NUM) ");
+            sql.append(" VALUES (TICKET_NUM.NEXTVAL, ");
+	        sql.append(" (SELECT PAYMENT_UID FROM PAYMENT WHERE CUSTOMER_ID = '"+ customer_id +"') , ");
+	        sql.append(" (SELECT CONCERT_DATE FROM SCHEDULE_INFO  WHERE CONCERT_NUM = "+ concert_num +") , ");
+	        sql.append(" (SELECT CONCERT_NAME FROM SCHEDULE_INFO  WHERE CONCERT_NUM = "+ concert_num +") , ");
+	        sql.append(concert_num + " ," );
+	        sql.append(" (SELECT HALL_NUM FROM SCHEDULE_INFO WHERE  CONCERT_NUM = "+ concert_num +" ) , ");
+	        sql.append(" (SELECT SEAT_NUM FROM SEAT_INFO WHERE CUSTOMER_ID = '"+ customer_id +"' ) , ");
+	        sql.append(" (SELECT SEAT_PRICE FROM SEAT_INFO WHERE CUSTOMER_ID = '"+ customer_id +"' ) , ");
+	        sql.append("'"+ customer_id + "' ," );
+	        sql.append("(SELECT RESERVATION_NUM FROM PAYMENT WHERE CUSTOMER_ID = '" +customer_id+"') )");
+			
+		    pstmt = conn.prepareStatement(sql.toString());
+			
+			//SQL 실행 요청 - INSERT, UPDATE, DELETE : executeUpdate()
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}		
+//	---------------------------------------------------------------------회원id로 티켓정보불러오기(join)
+	public void selectTicketInfo(String customer_id) {
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			String sql = "";
+			sql += "SELECT t.ticket_num, t.hall_num, h.hall_location , t.concert_name, substr(t.seat_num,3,10), t.seat_price ";
+			sql += "  FROM TICKET T, SEAT_INFO S, HALL_INFO H ";
+			sql += " WHERE t.seat_num = s.seat_num";
+			sql += " AND h.concert_num = s.concert_num";
+			sql += " AND t.customer_id = '"+customer_id+"' " ;
+			pstmt = conn.prepareStatement(sql);
+            
+            // ? (바인드 변수)에 값 설정
+
+            rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                    String str = "";
+                    str += "티켓번호: "+rs.getInt(1) + "\n";
+                    str += "콘서트번호: "+rs.getInt(2) + "\n";
+                    str += "장소: "+rs.getString(3) + "\n";
+                    str += "콘서트제목: "+rs.getString(4) + "\n";
+                    str += "좌석: "+rs.getString(5) + "\n";
+                    str += "좌석가격: "+rs.getInt(6) ;
+				
+				System.out.println(str);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+	}
+	
+	//	-----------------------------------------------------------------------결제메세지1
+	//	static Scanner scan = new Scanner(System.in);
+	public void startPayment() {
+		while(true){
+			while (true) {
+				if (!startPayment2(concert_num, customer_id, grade)) {
+					break;
+				}
+				System.out.println();
+			}//while문 안쪽
+			System.out.println("---------------------------");
+
+			System.out.println(" [1.결제취소]   [2.나가기]   [3.메인페이지로]");
+			delete=Integer.parseInt(scan.nextLine());
+			if (delete == 1) {
+				deleteOne(customer_id);
+				System.out.println("결제가 취소되었습니다. 다시 진행하시겠습니까?(y/n) ");
+				tryYesNo = scan.nextLine();
+				if("n".equalsIgnoreCase(tryYesNo)) {
+					deleteData(customer_id);
+					System.out.println(" *** 즐거운 시간 되세요 :-) *** ");
+					break;
+				} else continue;
+			}
+			if (delete == 2) {
+				scan.close();
+				System.out.println(" *** 즐거운 시간 되세요 :-) *** ");
+			} 
+			if (delete == 3) {
+				joinStart();
+				SelectConcert();
+				startReserv();
+			} 
+			break;
+		}//while문 바깥
+	}
+	//	-----------------------------------------------------------------------결제메세지2
+	private boolean startPayment2(int concert_num, String customer_id, String grade) {
+
+		boolean isContinue = true;
+
+		//메뉴 출력
+		System.out.println(" [결제 하시겠습니까?] ");
+		System.out.println("1)현금결제   2)카드결제  3)종료 : ");
+
+		//작업선택
+		try {
+			select = Integer.parseInt(scan.nextLine());			
+		} catch (NumberFormatException e) {
+			System.out.println("[예외발생] 잘못된 값이 입력되었습니다.\n 메뉴(1,2) 숫자만 입력하세요");
+		}
+		if (select == 1) {
+			System.out.println("---------------------------");
+			System.out.println("1)현금결제가 완료되었습니다 ");
+			System.out.println("---------------------------");
+			insertOne(customer_id);
+			selectOne(customer_id);
+			System.out.println("---------------------------");
+			insertTicket(concert_num, customer_id, grade);
+			selectTicketInfo(customer_id);
+			isContinue = false;
+		}
+		if (select == 2) {
+			System.out.println("---------------------------");
+			System.out.println("2)카드결제가 완료되었습니다 ");
+			System.out.println("---------------------------");
+			insertOne(customer_id);
+			selectOne(customer_id);
+			System.out.println("---------------------------");
+			insertTicket(concert_num, customer_id, grade);
+			selectTicketInfo(customer_id);
+			isContinue = false;
+		}
+		if (select == 3) {
+			isContinue = false;
+		}
+		return isContinue;
+	}
+	//	------------------------------------------------------------------------------		
+	//INSERT문
+	public int insert(SEAT_INFO_VO seat) {
+		int result = 0;
+		
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO SEAT_INFO ");
+			sql.append(" VALUES(?, ?, ?, ?, ?, ?) ");
+			
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			
+			pstmt.setString(1, seat.getCustomer_id());
+			pstmt.setString(2, seat.getSeat_num());
+			pstmt.setString(3, seat.getSeat_grade());
+			pstmt.setInt(4, seat.getConcert_num());
+			pstmt.setInt(5, seat.getSeat_price());
+			pstmt.setString(6, seat.getHaveseat());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();			
+		} finally {
+			JDBC_Close.closeConnStmt(conn, pstmt);
+		}
+		return result;
+	}
+}
+

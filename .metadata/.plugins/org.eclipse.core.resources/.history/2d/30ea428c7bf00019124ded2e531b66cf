@@ -1,0 +1,26 @@
+package com.mystudy.ex04_inner_class;
+
+interface TestInter {
+	int DATA = 100;
+	void printData();
+}
+
+
+class TestInerImpl implements TestInter {
+	
+	public void printData() {
+		System.out.println(">>> 구현한 메소드 ");
+	}
+}
+
+
+
+
+
+
+class AnonymousClassTest {
+
+	
+}
+
+

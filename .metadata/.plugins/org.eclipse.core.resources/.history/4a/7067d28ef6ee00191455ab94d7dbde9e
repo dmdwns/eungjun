@@ -1,0 +1,7 @@
+package com.mystudy.ex04_interface2;
+
+//인터페이스 간에는 여러개를 상속 
+public interface I_WebPhone {
+
+	
+}

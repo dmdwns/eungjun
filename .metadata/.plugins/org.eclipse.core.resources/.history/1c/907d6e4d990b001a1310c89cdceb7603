@@ -1,0 +1,175 @@
+package orders;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import reservation.Picks;
+import reservation.PicksVO;
+
+//import Picks;
+import action.DateTimeAction;
+
+public class Orders {
+	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@192.168.0.72:1521:xe";
+	private static final String USER = "PROJECT";
+	private static final String PASSWORD = "PROJECTPW";
+
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	Picks p = new Picks();
+	DateTimeAction dta = new DateTimeAction();
+	Scanner scan = new Scanner(System.in);
+	static {
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+			System.out.println("[예외발생] 드라이버 로딩 실패!!!");
+		}
+	}
+
+	public int canPayment() {
+		// List<OrdersVO> list = new ArrayList<OrdersVO>();
+		
+		int sumPrice = 0;
+		int userPrice = 0;
+		int result = 0;
+//		boolean flag = false;
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT U.PRICE, SUM(P.MENU_PRICE) " + "FROM USERS U, PICKS P " + "WHERE U.USER_ID = P.USER_ID "
+					+ "GROUP BY U.PRICE");
+			pstmt = conn.prepareStatement(sql.toString());
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				sumPrice = rs.getInt("SUM(P.MENU_PRICE)");
+				userPrice = rs.getInt("PRICE");
+			}
+			System.out.println("-------------------------------");
+			if (sumPrice <= 0) {
+				System.out.println("*장바구니가 비어있습니다.*");
+				result = -1;
+			} else if (sumPrice > 0 && sumPrice <= userPrice) {
+				System.out.println(">>총 결제금액 : " + sumPrice + ", 카드 잔액 : " + userPrice);
+//				flag = true;
+				result = 1;
+			} else {
+				System.out.println(">>카드의 잔액이 부족합니다.\n>>총 결제금액 : " + sumPrice + ", 카드 잔액 : " + userPrice + ", 필요 금액 : "
+						+ (sumPrice - userPrice));
+			}
+
+			sql.append("SELECT RES_ID USER_ID PRICE MENU_ID MENU_NAME CARD_NUMBER MENU_COUNT FROM PICKS");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}
+//		return flag;
+		return result;
+	}
+
+	public void insertData(String id) {
+
+		try {
+			conn = DriverManager.getConnection(URL, USER, PASSWORD);
+			String visittime = "";
+			String user_id = "";
+			String menu_id = "";
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO ORDERS (RES_ID, USER_ID, MENU_PRICE, MENU_ID, MENU_NAME, CARD_NUMBER, MENU_COUNT)"
+					+ "SELECT RES_ID, USER_ID, MENU_PRICE, MENU_ID, MENU_NAME, CARD_NUMBER, MENU_COUNT FROM PICKS");
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.executeUpdate();
+
+			sql.delete(0, sql.length());
+			sql.append("SELECT RES_ID, USER_ID, MENU_PRICE, MENU_ID, MENU_NAME, CARD_NUMBER, MENU_COUNT FROM PICKS");
+			pstmt = conn.prepareStatement(sql.toString());
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				user_id = rs.getString("USER_ID");
+				menu_id = rs.getString("MENU_ID");
+				sql.delete(0, sql.length());
+				visittime = dta.time();
+				sql.append("UPDATE ORDERS SET ORDERTIME = ?, VISITTIME = ? WHERE USER_ID = ? AND MENU_ID = ?");
+				pstmt = conn.prepareStatement(sql.toString());
+				pstmt.setString(1, dta.nowString);
+				pstmt.setString(2, visittime);
+				pstmt.setString(3, user_id);
+				pstmt.setString(4, menu_id);
+				pstmt.executeUpdate();
+			}
+			selectAll(id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		}
+	}
+
+	public void selectAll(String id) {
+		String name = "";
+		List<PicksVO> list = new ArrayList<PicksVO>();
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT * FROM PICKS WHERE USER_ID = '" + id + "'");
+			pstmt = conn.prepareStatement(sql.toString());
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				list.add(new PicksVO(rs.getString("RES_ID"), rs.getString("USER_ID"), rs.getInt("MENU_PRICE"),
+						rs.getString("MENU_ID"), rs.getString("MENU_NAME"), rs.getString("CARD_NUMBER"),
+						rs.getInt("MENU_COUNT")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		for (PicksVO ovo : list) {
+			System.out.println("-------------------");
+			ovo.setRes_name(name);
+			reducePrice(ovo.getPrice(), ovo.getUser_id());
+		}
+		
+		p.dselectAll(id);
+		p.deleteAll(list);
+		System.out.println("예약(주문)이 완료 되었습니다.");
+		System.out.print("계속하려면 엔터를 눌러주세요...\n");
+		scan.nextLine();
+	}
+
+	public void reducePrice(int menuPrice, String userId) {
+		int price = 0;
+		StringBuilder sql = new StringBuilder();
+		StringBuilder sql2 = new StringBuilder();
+		try {
+			sql2.append("SELECT price FROM USERS WHERE USER_ID = '" + userId + "'");
+			pstmt = conn.prepareStatement(sql2.toString());
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				price = rs.getInt("price");
+				price -= menuPrice;
+			}
+
+			sql.append("UPDATE USERS SET PRICE = ? WHERE USER_ID = ?");
+			pstmt = conn.prepareStatement(sql.toString());
+
+			pstmt.setInt(1, price);
+			pstmt.setString(2, userId);
+
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+}

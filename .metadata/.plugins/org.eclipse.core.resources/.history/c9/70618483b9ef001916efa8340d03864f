@@ -1,0 +1,15 @@
+package com.mystudy.ex04_interface;
+
+public class TypeTest {
+
+	public static void main(String[] args) {
+	    Cat cat = new Cat();
+	    Dog dog = new Dog();
+	}
+	
+	
+	static void sound() {
+		
+	}
+
+}

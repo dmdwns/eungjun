@@ -1,0 +1,24 @@
+package com.mystudy.wrapper;
+
+public class Ex02_Wrapper_Character {
+
+	public static void main(String[] args) {
+		// Character 클래스 
+		char ch = 'a'; //'a'같지 않음  "a" :String
+		System.out.println(Character.isAlphabetic(ch));
+		System.out.println("Character.isAlphabetic('한') : " + Character.isAlphabetic('한'));
+		System.out.println("Character.isAlphabetic('0') : " + Character.isAlphabetic('0'));
+		System.out.println("Character.isAlphabetic('+') : " +Character.isAlphabetic('+'));
+		System.out.println("---------------------------------------");
+		System.out.println("Character.isLetter('0'): " + Character.isLetter('0') );
+		System.out.println("Character.isDigit('0'): " + Character.isDigit('0') );
+		System.out.println("Character.isUpperCase('A'): " + Character.isUpperCase('A') );
+		System.out.println("Character.isLowerCase('A'): " + Character.isLowerCase('A') );	
+		System.out.println("Character.isLowerCase('a'): " + Character.isLowerCase('a') );	
+		
+		
+		
+
+	}
+
+}

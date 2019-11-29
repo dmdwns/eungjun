@@ -1,0 +1,7 @@
+ 에러 또는 오류의 종류
+- 에러 (error) : 프로그램적으로 처리할 수 없음 (JVM에서 처리)
+- 예외 (Exception) : 프로그래머가 해결해야 하는 오류 
+
+예외 (Exception)
+- 예외의 최상위 클래스는 java.lang.Throwable
+- RuntimeException : 실행시 발생하는 Exception

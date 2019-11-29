@@ -1,0 +1,14 @@
+package com.mystudy.ex01_arrayList;
+
+import java.util.ArrayList;
+
+public class ArrayListExam {
+
+	public static void main(String[] args) {
+		ArrayList list1 = new ArrayList();
+		list.add("ȫ�浿");
+		
+		
+	}
+
+}

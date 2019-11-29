@@ -1,0 +1,28 @@
+package com.mystudy.ex01_exception;
+
+public class Exception_throws {
+
+	public static void main(String[] args) {
+		// throws : 예외를 던질 때 (위임, 전가 ) 사용
+		// 예외가 발생한 곳에서 처리하지 않고 예외를 던져서 다른 곳에서 처리하도록 함
+		// 호출한 곳에서 처리하도록 예외를 던짐
+		System.out.println("---- main() 시작 ------");
+		int num1 = 100;
+		int num2 = 50;
+		int result = 0 ;
+		
+		System.out.println(">> 연산처리 시작 ");
+		try {
+			result = div(num1, num2);
+			}catch(ArithmeticException e) {
+				
+			System.out.println("main() div throws 처리시 예외발생 " );
+			}
+		System.out.println(">> div() 연산결과 : " + result);
+		
+		System.out.println("---- main() 종료 ------");
+		
+
+	}
+
+}

@@ -1,0 +1,17 @@
+package com.mystudy.ex02_myexception;
+
+public class MyExceptionTest {
+  // 내가 안할꺼면 예외처리 던지기 
+  // 내가 직접 할꺼면 코드내에서  try catch 문으로 하기 	
+	public static void main(String[] args) {
+		System.out.println("---- main() 시작 ------");
+  //	throw new MyException();
+	    		
+        System.out.println("----- main() 종료 ------");
+	}
+	
+	static void firstMethod() {
+	   throw new MyException(" > ");
+	}
+
+}

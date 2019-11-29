@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;exam.array2&apos; to &apos;exam.array2dim&apos;&#x0D;&#x0A;- Original project: &apos;50_Exam&apos;&#x0D;&#x0A;- Original element: &apos;50_Exam/src/exam.array2&apos;&#x0D;&#x0A;- Renamed element: &apos;50_Exam/src/exam.array2dim&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;exam.array2&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;exam.array2" name="exam.array2dim" qualified="false" references="true" stamp="1570783710575" textual="false" version="1.0"/>
+</session>

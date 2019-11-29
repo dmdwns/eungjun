@@ -1,0 +1,83 @@
+package exam.array2dim;
+
+import java.text.DecimalFormat;
+
+public class SungjukExam {
+
+	public static void main(String[] args) {
+		
+		
+         
+
+		
+		//2차원 배열을 사용한 성적 처리
+				//실습문제. 
+				//  국어, 영어, 수학 점수 3개를 저장한 2차원 배열(A) 만들고
+				//  성적을 입력하고 개인별 총점과 평균을 계산 하여 화면에 데이터 출력
+				/*
+					
+					국어\t영어	  수학  총점     평균
+					--------------------------
+					100  90  80  270   90.0      소수점 이하 2번째자리 까지 
+					100  90  81  271   90.33
+					100  90  80  270   90.0
+					--------------------------
+				*/               //0   1   2 
+		int[][] A = {/*0*/ {100, 90, 85}, 
+	                       /*1*/ {100, 70, 75}, 
+	                       /*2*/ {95 , 85, 80} };
+		                          
+		int sum = A[0][0] +A[0][1]+A[0][2];
+		int sum2 = A[1][0] +A[1][1]+A[1][2];
+		int sum3 = A[2][0] +A[2][1]+A[2][2];
+		double avg = (double) (A[0][0] +A[0][1]+A[0][2])/3;  
+		double avg2 = (double) (A[1][0] +A[1][1]+A[1][2])/3;
+	    double avg3 = (double) (A[2][0] +A[2][1]+A[2][2])/3;
+	    int[] result = {sum, sum2, sum3};
+	    double[] result1 = {avg, avg2, avg3};
+	    
+	    
+	    System.out.println("  국어  영어   수학    총점    평균 ");
+	    System.out.println("---------------------------");
+	    for(int i = 0; i <=2; i++) {
+	    	for(int k = 0 ; k <=2; k++) {
+	    		System.out.print(" "+A[i][k]+"  ");
+	    	}
+	    	System.out.print(result[i]+"  ");
+		    System.out.println(Math.round(result1[i]*100)/100.0);	    
+	     }
+	    System.out.println("---------------------------");
+	
+
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+ //	    System.out.println("----------------------------");
+//	    System.out.print(A[0][0]+"  ");
+//	    System.out.print(A[0][1]+"  ");
+//	    System.out.print(A[0][2]+"  ");		
+//	    System.out.print(result[0]+"  ");
+//	    System.out.println(Math.round(result[0]*100)/100.0);
+//	    System.out.print(A[1][0]+"  ");
+//	    System.out.print(A[1][1]+"  ");
+//	    System.out.print(A[1][2]+"  ");		
+//	    System.out.print(result[1]+"  ");
+//	    System.out.println(Math.round(result[1]*100)/100.0);
+//	    System.out.print(A[2][0]+"  ");
+//	    System.out.print(A[2][1]+"  ");
+//	    System.out.print(A[2][2]+"  ");		
+//	    System.out.print(result[2]+"  ");
+//	    System.out.println(Math.round(result[2]*100)/100.0);
+//	    System.out.println("---------------------------");
+//	    
+	    
+	    
+	}
+
+}

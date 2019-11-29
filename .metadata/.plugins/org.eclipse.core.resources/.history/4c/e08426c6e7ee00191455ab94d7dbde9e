@@ -1,0 +1,11 @@
+package com.mystudy.ex03_interface;
+/* 전화기 
+ * 속성: 타입(type), 전화번호(phoneNO) 
+ * 기능
+ * - 전화정보확인 가능 
+ * 
+ * 
+ */
+public class Phone {
+
+}

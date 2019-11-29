@@ -1,0 +1,15 @@
+package com.mystudy.ex04_inner_class;
+
+public class StaticClassTest {
+	int a = 10;
+	private int b = 100;
+	
+	static int c = 200;
+	
+	static int sNum1 = 20;
+	
+	public static void main(String[] args) {
+		
+	}
+
+}

@@ -1,0 +1,15 @@
+package com.mystudy.ex01_class;
+
+public class PhoneTest {
+
+	public static void main(String[] args) {
+	   // Phone 객체 생성후 기능 테스트 
+	   System.out.println("==== phone ====");
+	   Phone ph1 = new Phone("010-1111-1111");
+	   ph1.view();
+	   ph1.call();
+	   
+
+	}
+
+}

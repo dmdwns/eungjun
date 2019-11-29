@@ -1,0 +1,12 @@
+package com.mystudy.ex03_sungjuk;
+
+public class StudentVO {
+	
+	// 필드 (속성) 
+	private String name;
+    private int kor;
+    private int eng;
+    private int math;
+    private int tot;
+    private double avg;
+}

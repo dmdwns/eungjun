@@ -1,0 +1,6 @@
+package com.mystudy.ex02_overriding;
+
+class Animal {
+ String name;	
+
+}

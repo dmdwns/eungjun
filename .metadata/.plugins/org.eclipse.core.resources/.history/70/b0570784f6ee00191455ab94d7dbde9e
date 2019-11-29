@@ -1,0 +1,5 @@
+package com.mystudy.ex04_interface2;
+
+public interface I_WebPhone {
+
+}

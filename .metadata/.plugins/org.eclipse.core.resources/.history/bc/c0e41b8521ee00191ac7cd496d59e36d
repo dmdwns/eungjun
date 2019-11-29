@@ -1,0 +1,15 @@
+package com.mystudy.ex01_bean;
+
+public class StudentMain {
+
+	public static void main(String[] args) {
+		Student stu = new Student();
+//		stu.name = "ȫ�浿 ";
+//		System.out.println(stu.name);
+		stu.setName("ȫ�浿2");
+		System.out.println(stu.getName());
+		
+
+	}
+
+}

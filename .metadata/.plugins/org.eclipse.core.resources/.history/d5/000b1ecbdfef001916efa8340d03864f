@@ -1,0 +1,12 @@
+package com.mystudy.ex02_myexception;
+
+// 예외만들기 : Exception 클래스를 상속받아 만들기 
+public class MyException extends Exception {
+	// 생성자 
+	public MyException() {
+		
+	}
+	
+     
+	
+}

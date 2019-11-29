@@ -1,0 +1,88 @@
+package com.mystudy.ex01_arrayList;
+
+import java.util.ArrayList;
+
+public class StudentManager {
+
+	public static void main(String[] args) {
+		/* 3명의 성적 처리 
+		 * 홍길동 , 100,  90 ,  81
+		 * 이순신,  95,   88 ,  92
+		 * 김유신,  90,   87,   77
+		 *
+		 *=========================
+		 *결과출력 (tab탭만큼 간격 처리 )  
+		        국어            영어        수학
+		 *홍길동   100    90    81            271 90.33
+		 *이순신,  95,   88 ,  92  
+		 * 김유신,  90,   87,   77
+		 *
+		 */
+		
+		//  생성자 배열객체를 어떻게 만들징..
+//	
+//		 담는법은 여깄음 
+	    // int [] nums = new int[3];
+	    // studentVO[] students = new StudentVO[3];
+        // students[0] = stu;
+		// students[1] = stu2;
+		// students[2] = stu3;
+		// stu 시리즈가 객체생성된 변수명 
+		//  printData ()메소드 쓰고난후  
+		// students[0].printData();
+		// students[1].printData();
+		// 
+		//  생성자는 리턴값이고 뭐고 없음 
+
+		ArrayList list1 = new ArrayList();
+		list1.add(0,"홍길동" );
+		list1.add(1, 100 );
+		list1.add(2, 90 );
+		list1.add(3, 81 );
+		
+		ArrayList list2 = new ArrayList();
+		list2.add(0,"이순신");
+		list2.add(1 , 95);
+		list2.add(2, 88);
+		list2.add(3, 92);
+		
+		ArrayList list3 = new ArrayList();
+		list3.add(0 , "김유신 ");
+		list3.add(1, 90);
+		list3.add(2, 87);
+		list3.add(3, 77);
+//		김유신,  90,   87,   77
+		
+	
+	    
+	    String a1 =(String)list1.get(0); 
+        int a2 = (int)list1.get(1);
+        int a3 = (int)list1.get(2);
+        int a4 = (int)list1.get(3);
+        String b1 =(String)list1.get(0); 
+        int b2 = (int)list1.get(1);
+        int b3 = (int)list1.get(2);
+        int b4 = (int)list1.get(3);
+        String c1 =(String)list1.get(0); 
+        int c2 = (int)list1.get(1);
+        int c3 = (int)list1.get(2);
+        int c4 = (int)list1.get(3);
+	   
+		StudentVO p0 = new StudentVO(list1.get(0),list1.get(1),list1.get(2),list1.get(3));
+		StudentVO p1 = new StudentVO(list2.get(0),list2.get(1), list2.get(2), list2.get(3));
+		StudnetVO p2 = new StudentVO(list3.get(0), list3.get(2), list3.get(3), list3.get(4));
+		
+		
+		System.out.println();
+		System.out.println(p0.getName()+"	"+p0.getKor()+"	"+p0.getEng()+"	"+p1.getMath()+
+			"	"+ p0.getTot()+"	"+   Math.round(p0.getAvg()*100)/100.0	);
+		System.out.println(p1.getName()+"	"+p1.getKor()+"	"+p1.getEng()+"	"+p2.getMath()+
+				"	"+ p1.getTot()+"	"+ Math.round(p1.getAvg()*100)/100.0	);
+		System.out.println(p2.getName()+"	"+p2.getKor()+"	"+p2.getEng()+"	"+p2.getMath()+
+				"	"+ p2.getTot()+"	"+ Math.round(p2.getAvg()*100)/100.0	);
+		
+		
+		
+	}
+
+}

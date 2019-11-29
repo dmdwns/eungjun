@@ -1,0 +1,290 @@
+package com.soo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import com.kang.CinemaOrdersDAO;
+import com.kang.CinemaOrdersVO;
+
+public class SignUp {
+
+private String custId;
+private Scanner sc = new Scanner(System.in);
+ 	CustomerDAO dao = new CustomerDAO();
+ 	CinemaOrdersDAO cdao = new CinemaOrdersDAO();
+ 	ArrayList<CinemaOrdersVO> list = new ArrayList<>();
+ public void sulg() {
+	 while(true) {
+
+		 System.out.println("==================================================================");
+		 System.out.println("                         1.·Î±×ÀÎ "+" 2.È¸¿ø°¡ÀÔ");
+		 System.out.println("==================================================================");
+		 System.out.println(">>¹øÈ£¸¦ ¼±ÅÃÇØ ÁÖ¼¼¿ä");
+		 String chooseNum = sc.nextLine();
+		 if("1".equals(chooseNum)) {
+			 System.out.println("== ·Î±×ÀÎ ==");
+			 login();
+			 return;
+		 }else if("2".equals(chooseNum)){
+			 System.out.println("== È¸¿ø°¡ÀÔ ==");
+			 signup();
+			 continue;
+		 }else {
+			 System.out.println("Àß¸ø´©¸£¼Ì½À´Ï´Ù. ´Ù½Ã ¼±ÅÃÇØ ÁÖ¼¼¿ä");
+		 }
+	 }
+	}
+ public void login() {
+	 	
+		System.out.print("id:");
+		String id = sc.nextLine();
+		System.out.print("pw:");
+		String pw =sc.nextLine();
+		 if(dao.existIdPw(id, pw)) {
+			System.out.println("·Î±×ÀÎ µÇ¾ú½À´Ï´Ù.");
+			custId = id;
+			return;
+		} else {
+			tryAgain();
+
+		}
+}
+
+public void tryAgain() {
+	System.out.println("È¸¿øÁ¤º¸ ºÒÀÏÄ¡. È¸¿ø°¡ÀÔ ÇÏ½Ã°Ú½À´Ï±î?" +
+			"\n" + "¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä(1.yes/2.no) ");
+	while(true) {
+		
+		String tryYesNo = sc.nextLine();
+		if("1".equals(tryYesNo)) {
+			System.out.println("== È¸¿ø°¡ÀÔ ==");
+			signup();
+			return;
+		} else if ("2".equals(tryYesNo)) {
+			System.out.println("== ·Î±×ÀÎ ==");
+			login();
+			return;
+		} else {
+			System.out.println("¹øÈ£¸¦ Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇÏ¼¼¿ä");
+		}
+	}
+}
+
+
+public boolean mypage() {
+
+	while(true) {
+		System.out.println("==================================================================");
+		System.out.println("          1.¿¹¸Å³»¿ªÈ®ÀÎÇÏ±â " + " 2.¿¹¸Å³»¿ªÃë¼Ò " + " 3.È¸¿øÁ¤º¸ ¼öÁ¤ " + " 4.È¸¿øÅ»Åð");
+		System.out.println("==================================================================");
+		System.out.println(">>¹øÈ£¸¦ ¼±ÅÃÇØ ÁÖ¼¼¿ä");
+		String chooseNum2 = sc.nextLine();
+		if("1".equals(chooseNum2)) {
+				list = cdao.selectMypage(custId);
+			cdao.tmi(list);
+			if(list.size() == 0) {
+				System.out.println("¿¹¸Å³»¿ªÀÌ ¾ø½À´Ï´Ù.");
+			}
+			return true;
+		} else if ("2".equals(chooseNum2)) {
+			System.out.print("¿¹¸Å¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä: ");
+			int orderNo = Integer.parseInt(sc.nextLine());
+			int result = cdao.deleteData(custId, orderNo);
+			if(result >= 1) {
+				System.out.println("¿¹¸Å°¡ Ãë¼ÒµÇ¾ú½À´Ï´Ù");
+			} else {
+				System.out.println("Àß¸øµÈ ¿¹¸Å¹øÈ£·Î Ãë¼Ò°¡ ºÒ°¡ÇÕ´Ï´Ù");
+			}
+			return true;
+			
+		} else if ("3".equals(chooseNum2)) {
+			updateInfo();
+			return true;
+		} else if ("4".equals(chooseNum2)) {
+			if(tryAgainDelete()) {
+				custId = null;
+				return false;
+			}
+			return true;
+		}
+	}
+}
+
+ public void signup() {
+	
+		 String id = checkId();
+		 String pw = checkPw();
+		 String name = checkName();
+		 String ph = checkPh();
+		 String ad = checkAd();
+		 String email = checkEmail();
+
+		 Customer cust = new Customer(id, pw, name, ph, ad, email);
+		 dao.insertData(cust);
+		 
+		
+ }
+
+private String checkId() {
+	System.out.println("¾ÆÀÌµð´Â ¿µ¹® ¼ýÀÚ Æ÷ÇÔ 4-13ÀÚ¸®·Î ÀÔ·ÂÇÏ¼¼¿ä.");
+	String ptId = "^[a-zA-Z0-9]{4,13}$";
+	while(true) {
+		System.out.print("ID :");
+		 String id = sc.nextLine();
+		 if(id.matches(ptId)) {
+			 if (dao.isExsitId(id)) {
+				 System.out.println("¾ÆÀÌµðÁßº¹ ´Ù¸¥¾ÆÀÌµð¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+				 continue;
+			 }
+			 return id;
+		 } else {
+			 System.out.println("¾ÆÀÌµð´Â ¿µ¹® ¼ýÀÚ Æ÷ÇÔ 6-13ÀÚ¸®ÀÔ´Ï´Ù.´Ù½ÃÀÔ·ÂÇÏ¼¼¿ä");
+		 }
+
+	}
+}
+
+ private String checkPw() {
+	 System.out.println("ºñ¹Ð¹øÈ£´Â ¹Ýµå½Ã Æ¯¼ö¹®ÀÚ,¿µ¹®,¼ýÀÚ¸¦ ÇÑ±ÛÀÚ ÀÌ»ó Æ÷ÇÔÇÏ¿© 6-13ÀÚ¸®±îÁö ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+	 	String ptPw = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@!%*#?&^+~()-])[A-Za-z\\d$@!%*#?&^+~()-]{6,13}$";//_¾ð´õ¹Ù µé¾î°¡¸é Àû¿ë¾ÈµÊ.
+	 while (true) {
+		 System.out.print("PW :");
+		 String pw = sc.nextLine();
+	if(pw.matches(ptPw)) {
+		System.out.println(">ºñ¹Ð¹øÈ£»óÅÂ ¾çÈ£");
+
+	} else {
+		System.out.println(">ºñ¹Ð¹øÈ£´Â ¹Ýµå½Ã Æ¯¼ö¹®ÀÚ,¿µ¹®,¼ýÀÚ Æ÷ÇÔ6-13ÀÚ¸®±îÁö ÀÔ·Â°¡´ÉÇÕ´Ï´Ù.");
+		continue;
+	}
+	System.out.print("PWÀçÈ®ÀÎ :");
+	String pw2 = sc.nextLine();
+
+	 if (pw.equals(pw2)) {
+		 System.out.println(">ºñ¹Ð¹øÈ£ÀÏÄ¡");
+		 return pw;
+     } else {
+
+    	 System.out.println(">ºñ¹Ð¹øÈ£ ºÒÀÏÄ¡. ´Ù½ÃÀÔ·ÂÇØÁÖ¼¼¿ä");
+    	 continue;
+     }
+  }
+
+ }
+
+ private String checkName() {
+
+	String ptN = "^[°¡-ÆRa-zA-Z]+$";
+	 while(true) {
+		 System.out.print("ÀÌ¸§ :");
+		 String name = sc.nextLine();
+		 if(name.matches(ptN)) {
+			 return name;
+		 } else {
+			 System.out.println(">ÀÌ¸§Àº 2-20±ÛÀÚÀÇ ÇÑ/¿µ ¹®ÀÚ¸¸ °¡´ÉÇÕ´Ï´Ù.´Ù½ÃÀÔ·ÂÇÏ¼¼¿ä.");
+			 continue;
+		 }
+	 }
+ }
+
+private String checkPh() {
+	String ptPh = "^[0-9]{3}-?[0-9]{3,4}-?[0-9]{3,4}$";
+	while(true) {
+		System.out.print("ÈÞ´ëÆù ¹øÈ£ :");
+		 String ph = sc.nextLine();
+
+	if(ph.matches(ptPh)) {
+		return ph;
+	}else {
+		System.out.println(">¹øÈ£Çü½Ä¿¡ ¾Ë¸ÂÁö ¾Ê½À´Ï´Ù. ´Ù½ÃÀÔ·ÂÇÏ¼¼¿ä");
+		continue;
+	}
+	}
+}
+
+private String checkAd() {
+	String ptAd = "^[\\s°¡-ÆR0-9a-zA-Z+-]{10,}$";
+	while(true) {
+		System.out.print("°ÅÁÖÁö ÁÖ¼Ò :");
+		 String ad = sc.nextLine();
+
+	if(ad.matches(ptAd)) {
+		return ad;
+	}else {
+		System.out.println(">ÁÖ¼ÒÇü½Ä¿¡ ¸ÂÁö¾Ê½À´Ï´Ù.");
+		continue;
+	}
+	}
+}
+
+
+private String checkEmail() {
+	String ptEm = "^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+	while(true) {
+		System.out.print("emailÁÖ¼Ò :");
+
+		 String email = sc.nextLine();
+
+	if(email.matches(ptEm)) {
+		return email;
+	}else {
+		System.out.println(">ÀÌ¸ÞÀÏ Çü½Ä¿¡ ¾Ë¸ÂÁö ¾Ê½À´Ï´Ù. ´Ù½ÃÀÔ·ÂÇÏ¼¼¿ä");
+		continue;
+	}
+	}
+}
+
+public String getCustId() {
+	return custId;
+}
+
+public void updateInfo() {
+		System.out.println("============================ È¸¿øÁ¤º¸ ¼öÁ¤ ============================");
+		System.out.println("     1.ºñ¹Ð¹øÈ£  2.ÀÌ¸§  3.ÈÞ´ëÆù ¹øÈ£  4.°ÅÁÖÁö ÁÖ¼Ò  5.emailÁÖ¼Ò  6.ÆäÀÌÁö ¹þ¾î³ª±â");
+		System.out.println("==================================================================");
+		System.out.println(">>¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+		String chooseNum = sc.nextLine();
+		if("1".equals(chooseNum)) {
+			dao.updateData(new Customer(custId, checkPw()));
+			System.out.println("ºñ¹Ð¹øÈ£°¡ º¯°æµÇ¾ú½À´Ï´Ù.");
+		} else if("2".equals(chooseNum)) {
+			dao.updateData(new Customer(custId, null, checkName(), null, null, null));
+			System.out.println("ÀÌ¸§ÀÌ º¯°æµÇ¾ú½À´Ï´Ù.");
+		} else if("3".equals(chooseNum)) {
+			dao.updateData(new Customer(custId, null, null, checkPh(), null, null));
+			System.out.println("ÈÞ´ëÆù ¹øÈ£°¡ º¯°æµÇ¾ú½À´Ï´Ù.");
+		} else if("4".equals(chooseNum)) {
+			dao.updateData(new Customer(custId, null, null, null, checkAd(), null));
+			System.out.println("ÁÖ¼Ò°¡ º¯°æµÇ¾ú½À´Ï´Ù.");
+		} else if ("5".equals(chooseNum)) {
+			dao.updateData(new Customer(custId, null, null, null, null, checkEmail()));
+			System.out.println("ÀÌ¸ÞÀÏÁÖ¼Ò°¡ º¯°æµÇ¾ú½À´Ï´Ù.");
+		} else if ("6".equals(chooseNum)) {
+			
+		}
+}
+
+public void deleteInfo() {
+	System.out.println("ºñ¹Ð¹øÈ£¸¦ ÀÔ·ÂÇÏ½Ã¿À");
+	System.out.print("password: ");
+	String pw = sc.nextLine();
+	getCustId();
+	cdao.deleteData(custId);
+	 dao.deleteData(getCustId() ,pw);
+	 return;
+
+}
+public boolean tryAgainDelete() {
+	System.out.println("Å»Åð ½Ã ¿¹¸Å³»¿ªµµ »ç¶óÁý´Ï´Ù. Å»Åð ÇÏ½Ã°Ú½À´Ï±î? (1.yes/2.no)");
+	System.out.println("¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+	String tryYesNo = sc.nextLine();
+	if("1".equalsIgnoreCase(tryYesNo)) {
+		System.out.println("== È¸¿ø Å»Åð ==");
+		deleteInfo();
+		return true;
+	}
+	return false;
+}
+
+}

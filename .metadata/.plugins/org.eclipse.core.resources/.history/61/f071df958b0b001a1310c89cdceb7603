@@ -1,0 +1,95 @@
+package menu;
+
+import java.util.Scanner;
+
+//import Picks;
+//import play.Test;
+import orders.Orders_Test;
+import play.Display;
+import reservation.Picks;
+
+public class Menu_Test {
+
+	public static void menuStart(String userid, boolean idvalue) {
+
+		Scanner scan = new Scanner(System.in);
+		Menu m = new Menu();
+		Picks p = new Picks(); // picks
+		Display d = new Display();
+		// yes no 선택 저장 변수
+		String yesno;
+
+		m.kindChoice(userid);
+
+		while (true) {
+			if (!idvalue) {
+				try {
+					int choice = -1;
+					System.out.println("\n장바구니에 메뉴를 추가하려면 로그인을 해야합니다.");
+					System.out.println("로그인 하시겠습니까? 1.예/2.아니요");
+					choice = Integer.parseInt(scan.nextLine());
+					if (choice == 1) {
+						d.login();
+						if (Display.id == null || Display.id == "") {
+
+						} else {
+							idvalue = true;
+							m.userId = Display.id;
+						}
+					} else {
+						System.out.println(">>메인메뉴로 돌아갑니다.");
+						System.out.print("계속하려면 엔터를 눌러주세요...\n");
+						scan.nextLine();
+						return;
+					}
+
+				} catch (NumberFormatException e) {
+					System.out.println("\n숫자만 입력해주시기 바랍니다.\n");
+				}
+			} else {
+
+				System.out.println(">>이 메뉴를 장바구니에 추가하시겠습니까? (Y/N)");
+				yesno = scan.nextLine();
+
+				if (yesno.equalsIgnoreCase("y")) {
+					p.picksMenu(m.resId, m.userId, m.menuId); // picks
+					while (true) {
+						System.out.println(">>장바구니에 추가하였습니다. 바로 주문하시겠습니까? (Y/N)");
+						yesno = scan.nextLine();
+
+						if (yesno.equalsIgnoreCase("y")) {
+							System.out.println(">>주문페이지로 이동합니다.");
+							System.out.println("\n-------------------\n");
+							Orders_Test ortest = new Orders_Test();
+							ortest.ordersStart(userid);
+							break;
+						} else if (yesno.equalsIgnoreCase("n")) {
+							System.out.println(">>메인메뉴로 돌아갑니다.");
+							System.out.print("계속하려면 엔터를 눌러주세요...\n");
+							scan.nextLine();
+							System.out.println("========================");
+							break;
+						} else {
+							System.out.print("\n==============\n");
+							System.out.print("※다시입력해주세요.※\n");
+							System.out.print("==============\n");
+						}
+					}
+					break;
+
+				} else if (yesno.equalsIgnoreCase("n")) {
+					System.out.println(">>장바구니 추가를 취소하셨습니다.");
+					System.out.print("계속하려면 엔터를 눌러주세요...\n");
+					scan.nextLine();
+					System.out.println("========================");
+					break;
+				} else {
+					System.out.print("\n==============\n");
+					System.out.print("※다시입력해주세요.※\n");
+					System.out.print("==============\n");
+				}
+			}
+		}
+	}
+
+}

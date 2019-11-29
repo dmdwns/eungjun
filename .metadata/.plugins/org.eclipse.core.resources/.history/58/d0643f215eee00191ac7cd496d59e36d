@@ -1,0 +1,13 @@
+package com.mystudy.ex02_extends;
+/* 클래스의 상속(extends) 실습 
+ * 실습1: Phone 클래스 상속 확장 (extends) 
+ * WebPhone 클래스 작성  
+ * 
+ * 
+ * 
+ */
+
+public class WebPhone {
+	
+
+}

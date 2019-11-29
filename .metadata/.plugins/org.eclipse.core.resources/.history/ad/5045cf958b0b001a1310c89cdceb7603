@@ -1,0 +1,240 @@
+package search;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import menu.JDBC_Close;
+import menu.MenuVO;
+import play.Display;
+import reservation.JDBC_close;
+import reservation.Picks;
+import reservation.PicksVO;
+
+public class Search {
+	
+	String search;
+	static String res_id;
+	static String menuId;
+	static String res_kind_id;
+	Scanner scan = new Scanner(System.in);
+	//접속 변수들
+	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@192.168.0.72:1521:xe";
+	private static final String USER = "PROJECT";
+	private static final String PASSWORD = "PROJECTPW";
+	
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+	//드라이버 접속
+	static {
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+			System.out.println("드라이버 접속 실패");
+		}
+	}
+	 
+	public List<PicksVO> searchRes() {
+		List<PicksVO> list = new ArrayList<>();
+		Scanner sca = new Scanner(System.in);
+		//DB연결 - Connection 객체 생성(DB와 연결된)
+		try {
+				conn = DriverManager.getConnection(URL,USER,PASSWORD);
+				//preparedStatement 객체 생성하고 SQL문 실행
+				String ex = "exit";
+				while(true) {
+					StringBuilder sql = new StringBuilder();
+					
+					sql.append("SELECT r.res_id, R.RES_NAME, k.res_kind_id, K.RES_KIND_NAME, rownum FROM restaurants R, MENU K ");
+					sql.append("WHERE R.res_name LIKE ? ");
+					sql.append("AND r.res_kind_id = k.res_kind_id ");
+					
+					pstmt = conn.prepareStatement(sql.toString());
+					System.out.println("검색할 식당을 입력해주세요. 메인으로 가기.exit\n>> ");
+					String search = "%"+sca.next()+"%";
+					if(search.equalsIgnoreCase("%exit%")) {
+						return list;
+					}
+					
+					
+					pstmt.setString(1, search);
+					rs = pstmt.executeQuery();
+					
+					//SQL 문 실행 결과에 대한 처리
+					while(rs.next()) {
+						
+						list.add(new PicksVO(rs.getString("res_id"), 
+								rs.getString("res_name"),
+								rs.getString("res_kind_name"),
+								rs.getString("res_kind_id"),
+								rs.getInt("rownum")));
+					}
+				if(list.size() == 0) {
+					
+					System.out.println("검색된 식당이 없습니다.");
+					System.out.println();
+				} else {
+					for(PicksVO vo : list) {
+						System.out.println(vo.getOrder_number()+".");
+						System.out.println("식당이름 : "+vo.getRes_name());
+						System.out.println("분류 : "+vo.getRes_kind_name());
+						System.out.println();
+					}
+					System.out.println();
+					
+					System.out.print("식당 메뉴보기	0번 메인으로\n 번호 입력 >> ");
+					Scanner s = new Scanner(System.in);
+					int dd = 0;
+					dd = Integer.parseInt(s.nextLine());
+					
+					for(PicksVO vo : list) {
+						if(vo.getOrder_number() == dd) {
+							res_id = vo.getRes_id();
+							res_kind_id = vo.getRes_kind_id();
+							menuChoice(dd, res_kind_id, res_id);
+							break;
+						} else if(dd == 0) {
+							break;
+						} 
+					}
+					break;
+				}
+			}
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			//사용객체 close 처리
+			JDBC_close.closeConnStmtRs(conn, pstmt, rs);
+		} 
+		
+		return list;
+	}
+	
+	public void menuChoice(int choice, String resKId, String resId) {
+		Scanner scan = new Scanner(System.in);
+		List<MenuVO> list = new ArrayList<MenuVO>();
+		int num = 1;
+		String table = "RESTAURANTS_MENU";
+		String resIdN = namePrint("RES_ID", "RES_NAME", "RESTAURANTS", resId);
+		
+		while (true) {
+		System.out.println("\n[종류 : \""+resKId+"\" - 매장 : \""+resIdN+"\" ]");
+		System.out.println("(번호) (메뉴)      (가격)");
+		System.out.println("--------------------------------------------------");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT RES_KIND_ID, RES_ID, MENU_NAME, PRICE, MENU_ID FROM RESTAURANTS_MENU ");
+		sql.append("WHERE RES_ID = '"+resId+"'");
+		
+			try {
+				num = 1;
+				list.removeAll(list);
+				pstmt = conn.prepareStatement(sql.toString());
+				rs = pstmt.executeQuery();
+				
+				//값 불러와서 list에 저장
+				while (rs.next()) {
+					list.add(new MenuVO(rs.getInt("RES_KIND_ID"), rs.getString("RES_ID")
+							, rs.getString("MENU_NAME")
+							, rs.getInt("PRICE")
+							, rs.getString("MENU_ID")));
+				}
+				
+				//출력
+				for (MenuVO mv : list) {
+					System.out.printf("%2d. ", num);
+					System.out.printf("%5s\t", mv.getMenuName());
+					System.out.printf("%5s\n", mv.getMenuPrice());
+					num++;
+				}
+				System.out.println("0. 취소");
+				System.out.print(">>메뉴를 선택하세요 : ");
+				choice = scan.nextInt();
+
+				if (choice == 0) {
+					JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+					return;
+				}
+				
+				String menuId = "";
+				String column = "MENU_ID";
+				
+
+				int num222 = dataCount(table, column, resId+"_", choice);
+				if (num222 == 0) {
+					System.out.print("\n=====================\n");
+					System.out.print("※올바른 항목을 선택해 주세요.※\n");
+					System.out.print("=====================\n");
+//					System.out.println(num222 + "그리고 " + resId+"_");
+				} else {
+					menuId = resId + "_" + choice;
+					this.menuId = menuId;					
+				}
+				System.out.print(">>이 메뉴를 장바구니에 추가하시겠습니까? 1.예/2.아니요 \n >> ");
+				int cc = scan.nextInt();
+				if(cc == 1) {
+					if(Display.idvalue) {
+						Picks picks = new Picks();
+						picks.picksMenu(resId, Display.id, menuId);
+						break;
+					}else {
+						System.out.println("\n========================");
+						System.out.println("※로그인후 이용해주시기 바랍니다.※");
+						System.out.println("========================\n");
+						System.out.print("계속하려면 엔터를 눌러주세요...\n");
+						scan.nextLine();
+						break;
+					}
+				} else {
+					break;
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+		}
+		JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+		
+	}
+	public String namePrint(String findColumn, String wantColumn, String table, String num) {
+		StringBuilder sql = new StringBuilder();
+		String result = null;
+		sql.append("SELECT "+wantColumn+" From "+table+" WHERE "+findColumn+" = '"+num+"'");
+		try {
+			pstmt = conn.prepareStatement(sql.toString());
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				result = rs.getString(wantColumn);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	public int dataCount(String table, String column, String kind, int choice) {
+		int result = 0;
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) FROM "+table+" WHERE "+column+" = '"+kind+choice+"'");
+		try {
+			pstmt = conn.prepareStatement(sql.toString());
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				result = rs.getInt("COUNT(*)");				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+		
+	}
+}

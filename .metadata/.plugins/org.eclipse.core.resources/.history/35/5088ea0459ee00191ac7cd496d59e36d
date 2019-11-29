@@ -1,0 +1,10 @@
+package com.mystudy.ex02_extends;
+
+ class PhoneTest {
+
+	public static void main(String[] args) {
+		
+
+	}
+
+}

@@ -1,0 +1,381 @@
+package com.projectone.account.remittance;
+
+import java.util.List;
+import java.util.Scanner;
+
+import com.projectone.account.quick.QuickDAO;
+import com.projectone.common.CommonVO;
+import com.projectone.common.OptCreate;
+import com.projectone.common.PayInfoMainDAO;
+import com.projectone.common.ProjectOneConstant;
+import com.projectone.jdbc.vo.AccountVO;
+import com.projectone.jdbc.vo.QuickTransferVO;
+import com.projectone.jdbc.vo.RemittanceVO;
+import com.projectone.show.remittance.PrintRemittanceMenu;
+
+public class Remittance {
+
+	QuickDAO quickDao = new QuickDAO();
+	RemittanceDAO dao = new RemittanceDAO();
+	
+	//이체성공여부
+	boolean isTransfer = false;
+	boolean isAccountNumber = false;
+	String strAccountNumber = null;
+	int selectAccount = 0;
+	int accountNumber = 0;
+	
+	//비밀번호 체크 - 길이도 체크하고 - 계좌idx랑 번호도 체크. 5번
+	boolean isPasswordCheck = false;
+	int passwordCheck = 0;
+	
+	String accountPassword = null;	
+	
+	//계좌비밀번호체크 
+	boolean accountPasswordCheck = false;
+	int pwdcheck = 0;
+	
+	//이체금액
+	String transferMoney = null;
+	boolean isTransferMoneyCheck = false;
+	
+	int withdrawLimit = 0;  	//1회 출금액
+	int creditLimit =  0;		//일일 거래 한도금액
+	int accountTotalMoney = 0;	//계좌 총 잔액
+	//실제 계좌 거래 금액
+	int memberCreditLimit = 0;
+	
+	//opt
+	boolean isOptCreate = false;
+	
+	//opt 생성
+	String createOpt = null;
+	
+	//opt 입력
+	String optNumber = null;
+	
+	//이체 받을 계좌
+	String depositAccount = null;
+	boolean depositAccountCheck = false;
+	
+	//송금할 번호
+	int depositAccountIdx = 0;
+	//이체할 금액
+	long intTransferMoney = 0;
+		
+	Scanner scan = new Scanner(System.in);
+	
+
+	
+	public void service(int memberIdx) {
+		
+		new PrintRemittanceMenu().printRemittanceMenu();
+		
+		//회원이 가지고 있는 계좌 보여주기
+		accountView(memberIdx);
+		
+		//계좌 선택 / 비밀번호 / 이체금액 / 입금될 계좌번호 //OPT 생성 //OPT랑 맞지 않으면 이체 실패
+		isTransfer = transferAccount(memberIdx);
+		
+		if(isTransfer==false) {
+			
+			System.out.println("*");
+			System.out.println("* 계좌 이체 실패");
+			
+		}else {
+			System.out.println("*");
+			System.out.println("* 계좌 이체 성공");
+			
+		}
+		
+		
+		//이체금액 -> 1회 이체 금액, 일일 거래내역 한도 체크
+		
+		//출금내역 저장
+		
+		//출금 처리 계좌 정보에서 잔액 업데이트
+		
+		//입금내역 저장
+		
+		//입금처리 계좌 정보에서 잔액 업데이트
+		
+		
+		
+	}
+	
+	//이체될 계좌선택
+	public void accountView(int memberIdx) {
+		
+		//회원의 등록된 계좌
+		List<AccountVO> list = new PayInfoMainDAO().SelectAccList2(memberIdx);
+		//=>CommonVO.accountList
+		
+		String blank="";
+		String accountState = null;
+
+		System.out.println("번호\t 계좌번호\t\t\t 잔액\t\t   1회출금한도\t\t 일일거래한도\t\t 계좌상태");
+		System.out.println("_______________________________________________________________________________________________________");
+
+		//for(AccountVO memberAccountList : list) {
+		for(AccountVO memberAccountList : list) {
+
+			System.out.println();
+			System.out.print(memberAccountList.getIdx()+"\t");
+
+			System.out.print(memberAccountList.getAccNumber().substring(0,4)
+					+"-"+memberAccountList.getAccNumber().substring(4,6)
+					+"-"+memberAccountList.getAccNumber().substring(6)
+					+"\t");
+
+			System.out.printf("% 10d원\t",memberAccountList.getAccTotalMoney());
+			System.out.print("       ");
+			System.out.printf("% 10d원\t",memberAccountList.getWithDrawLimit());
+			System.out.print("     ");
+			System.out.printf("% 10d원\t",memberAccountList.getCreditLimit());
+			System.out.print("     ");
+			System.out.print(accountState(memberAccountList.getAccState()));
+			System.out.println();
+
+		}
+		
+	}
+	
+	public String accountState(String status) {
+		
+		String str = null;
+		
+		switch(status) {
+		
+		case "100" : str="정상"; break;
+		case "200" : str="정지"; break;
+		default : str="압류";
+		
+		}
+		
+		return str;
+		
+	}
+	
+	//계좌이체
+	public boolean transferAccount(int memberIdx) {
+		
+		boolean isSuccess = false;
+		
+		while(accountNumber==0) {
+			
+			//계좌선택
+			while(isAccountNumber==false) {
+				
+				//숫자만 맞는지 체크
+				System.out.println();
+				System.out.print("* 계좌선택>> ");
+				strAccountNumber = scan.nextLine();
+				
+				if(ProjectOneConstant.isNumberCheck(strAccountNumber)==true) {
+
+					accountNumber = Integer.parseInt(strAccountNumber);
+					isAccountNumber = true;
+
+				}else {
+					System.out.println("*");
+					System.out.println("* 숫자 형식으로 입력이 가능합니다");
+					System.out.print("*");
+				}
+				
+			}
+			
+			//숫자로 받고 나서 입력한 번호가 계좌가 맞는지 체크
+			selectAccount = dao.selectAccountCheck(accountNumber);
+			
+			if(selectAccount==0) {
+				System.out.println("*");
+				System.out.println("* 입력하신 번호로 조회가 되는 계좌 목록이 없습니다. 다시 선택해 주세요");
+				System.out.print("*");
+				accountNumber = 0;
+				isAccountNumber = false;
+			}
+			
+			
+		}
+
+		//비밀번호 체크
+		
+		//비밀번호 체크 (계좌, 비밀번호);
+		while(accountPasswordCheck == false) {
+			
+			if(passwordCheck==0) {
+				System.out.println("*");
+				System.out.print("* 비밀번호 입력>> ");
+				accountPassword = scan.nextLine();
+			}else {
+				System.out.println("*");
+				System.out.println("* 비밀번호 입력 ("+passwordCheck+"회 오류) - 5회 오류이면 계좌가 정지 됩니다 ");
+				System.out.print("* 비밀번호 입력>> ");
+				accountPassword = scan.nextLine();
+			}
+			
+			if(ProjectOneConstant.isNumberCheck(accountPassword)==false) {
+				System.out.println("*");
+				System.out.println("* 숫자 형식으로 입력이 가능합니다");
+				continue;
+
+			}
+			
+			if(accountPassword.length()!=4) {
+				System.out.println("*");
+				System.out.println("* 비밀번호는 네자리로 입력해 주세요");
+				continue;
+				
+			}
+			
+			accountPasswordCheck = new RemittanceDAO().accountPasswordChk(accountNumber, accountPassword);
+			
+			passwordCheck++;
+			
+			if(passwordCheck==ProjectOneConstant.ACCCOUNT_PASSWORD_CHECK) {
+				System.out.println("*");
+				System.out.println("* 계좌 비밀 번호 오류 5회. 계좌가 정지 됩니다.");
+				
+				//계좌정지DAO
+				dao.accountStop(accountNumber); 
+				
+				isSuccess = false;
+				return isSuccess;
+			}
+	
+		}
+		
+		//이체금액
+		while(isTransferMoneyCheck==false) {
+			System.out.println("*");
+			System.out.print("* 이체 금액 입력>> ");
+			transferMoney = scan.nextLine();
+			
+			if(ProjectOneConstant.isNumberCheck(transferMoney)==false) {
+				System.out.println("*");
+				System.out.println("* 숫자 형식으로 입력이 가능합니다");
+				continue;
+
+			}
+			
+			intTransferMoney = Long.parseLong(transferMoney);
+			
+			List<QuickTransferVO> withDrawAccount = quickDao.infoAccount3(accountNumber); //출금계좌확인
+			
+			withdrawLimit = withDrawAccount.get(0).getWithdrawLimit(); 			//1회 출금액
+			creditLimit = withDrawAccount.get(0).getCreditLimit(); 				//일일 거래 한도금액
+			accountTotalMoney = withDrawAccount.get(0).getAccountTotalMoney();	//계좌 총금액
+			
+			List<QuickTransferVO> creditAccountLimit = quickDao.accountCreditLimit(accountNumber); //출금계좌확인
+			memberCreditLimit = creditAccountLimit.get(0).getMemberCreditLimit();
+			
+			//(입력한금액+회원거래내역<일일 거래 한도금액)
+			if(intTransferMoney>accountTotalMoney) {
+				//입금 금액이 잔액보다 많을때
+				System.out.println("*");
+				System.out.println("* 요청하신 계좌의 잔액이 부족합니다");
+				continue;
+			}else if(intTransferMoney>withdrawLimit) {
+				System.out.println("*");
+				System.out.println("* 이체하실려는 금액이 1회 이체 한도 금액을 초과했습니다");
+				continue;
+			}else if( (intTransferMoney+memberCreditLimit)>creditLimit) {
+				System.out.println("*");
+				System.out.println("* 1일 거래 한도 금액을 초과했습니다!!!");
+				continue;
+			}	
+			
+			isTransferMoneyCheck = true;
+		}
+		
+		//이체할 계좌번호
+		while(depositAccountCheck==false)
+		{
+			System.out.println("*");
+			System.out.println("* 계좌 번호는 -없이 숫자로만 입력이 가능합니다. ");
+			System.out.print("* 이체 할 계좌번호를 입력하세요>> ");
+			depositAccount = scan.nextLine();
+			
+			//숫자처리
+			if(ProjectOneConstant.isNumberCheck(depositAccount)==true && depositAccount.length()==13) {
+
+				depositAccountCheck = true;
+
+			}else {
+				System.out.println("*");
+				System.out.println("* 숫자 형식으로만 입력이 가능하며 계좌는 13자리여야 합니다");
+
+			}
+			
+			//송금 할 계좌번호가 우리 은행꺼인지.. 아닌지. 체크하고 우리꺼라면 idx 갖고 오기
+			depositAccountIdx = dao.isDepositAccount(depositAccount);
+			
+			if(depositAccountIdx==0) {
+				System.out.println("*");
+				System.out.println("* 입력하신 계좌는 형식에 맞지 않거나 당행에 존재 하지 않은 계좌입니다.");
+				System.out.println("* 정확하게 다시 입력해 주세요.");
+				depositAccountCheck = false;
+			}
+			//조건추가-출금계좌와 이체대상이 동일할경우 다시입력
+			for(AccountVO accVO : CommonVO.accountList) {
+				if(accVO.getAccNumber().equals(depositAccount) && accVO.getIdx()==accountNumber) {
+					System.out.println("*");
+					System.out.println("* 출금 계좌와 이체 대상계좌가 동일합니다");
+					System.out.println("* 확인하시고 다시 입력해 주세요.");
+					depositAccountCheck = false;
+					break;
+				}
+			}
+		}
+		
+		//opt 보안 번호
+		while(isOptCreate==false){
+			
+			try {
+				createOpt = OptCreate.create();
+				isOptCreate=true;
+				break;
+			} catch (Exception e) {
+				isOptCreate=false;
+				System.out.println("* OPT가 생성이 되지 않았습니다.");
+			}
+			
+		}
+		System.out.println("*");
+		System.out.println("* 계좌 이체 보안 번호 :"+ createOpt);
+		System.out.print("* 계좌 이체 보안 번호를 입력하세요>> ");
+		optNumber = scan.nextLine();
+		
+		if(createOpt.equals(optNumber)) {
+			
+			boolean isSuccessOpt = false;
+			
+			//이체 등록
+			
+			RemittanceVO accountInfo = new RemittanceVO(accountNumber, depositAccountIdx, intTransferMoney, createOpt);
+			
+			isSuccessOpt = dao.transferMoney(accountInfo);
+			
+			if(isSuccessOpt==true) {
+				isSuccess = true;
+			}
+		}
+
+		
+		
+		//출금내역 저장
+		
+		//출금 처리 계좌 정보에서 잔액 업데이트
+		
+		//입금내역 저장
+		
+		//입금처리 계좌 정보에서 잔액 업데이트
+			
+		
+		return isSuccess;
+		
+	}
+	
+	
+	
+}

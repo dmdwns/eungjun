@@ -1,0 +1,14 @@
+package com.mystudy.ex01_class;
+
+public class Mp3Phone {
+	private String type; 
+	private String phoneNo;
+	
+	public Mp3Phone(String phone) {
+	    type = "Mp3Phone е╦ют";
+	    this.phoneNo = phoneNo;
+	}
+	
+	
+
+}

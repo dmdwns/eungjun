@@ -1,0 +1,53 @@
+package orders;
+import java.util.Scanner;
+
+import action.AccountManager;
+
+public class Orders_Test {
+
+		//결제를 눌렀을때 호출
+		//1.결제 가능 여부 확인
+		//1-1.결제가 가능하면 다음으로 진행
+		//1-2.결제가 불가능 하면 오류메시지 뜨고 다시 장바구니(또는 결제창)으로 돌아감
+		//2.PICKS의 모든 정보를 ORDERS에 저장(PICKS제거는 아직)
+		//3.ORDERS에 저장이 완료되면 결제 완료 출력 후 결제 내역 출력
+	public void ordersStart(String id) {
+		
+		Orders or = new Orders();
+		AccountManager acm = new AccountManager();
+		
+		Scanner scan = new Scanner(System.in);
+		String yesno = null;
+		int result = or.canPayment();
+		
+		if(result == 1) {
+			System.out.println(">>결제가 가능합니다.");
+			System.out.println("-------------------------------");
+			System.out.print("\n계속하려면 엔터를 눌러주세요...\n");
+			scan.nextLine();
+			or.insertData(id);
+		} else if (result == -1) {
+			return;
+		}
+		else {
+			System.out.print("충전하시겠습니까? (Y/N) : ");
+			yesno = scan.nextLine();
+			
+			if (yesno.equalsIgnoreCase("y")) {
+				System.out.println("\n>>입출금 페이지로 이동합니다.\n");
+				System.out.println("==================================\n");
+				acm.moneyManager(id);
+				or.insertData(id);
+			} else {
+				System.out.println("[결제취소]");
+				System.out.println(">>메인메뉴로 돌아갑니다.");
+				System.out.print("계속하려면 엔터를 눌러주세요...\n");
+				scan.nextLine();
+			}
+		}		
+	}
+		
+		
+	
+
+}

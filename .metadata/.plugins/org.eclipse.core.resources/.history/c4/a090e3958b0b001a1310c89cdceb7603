@@ -1,0 +1,320 @@
+package action;
+
+import java.io.EOFException;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import user.UserDAO;
+import user.UserDTO;
+
+public class UserAction {
+
+	public void userJoin() {
+		
+		UserDTO udto = null;
+		UserDAO udao = new UserDAO();
+		Scanner scan = new Scanner(System.in);
+		AccountManager acm = new AccountManager();
+		Command cd = new Command();
+		
+		int select = 0;
+		
+		 String id;
+		 String password;
+		 String name;
+		 String phone;
+		 String email;
+		 String cnum;
+		 String address;
+		 int price;
+		
+		 final String lang = "^[a-zA-Z°¡-ÆR]{1,12}$";
+		 final String langNum = "^[a-zA-Z°¡-ÆR0-9]{7,15}$";
+		 final String onlyNum = "^[0-9]{16}$";
+		 final String cprice = "^[0-9]{0,10}$";
+		 final String emailForm = "^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$";
+		 final String phoneForm = "^010-\\d{4}-\\d{4}$";
+		 
+		 
+		while(true) {
+			
+		System.out.println("-------------------- È¸ ¿ø °¡ ÀÔ --------------------");
+		System.out.println(">> 1. È¸¿ø°¡ÀÔ  2. È¸¿ø Á¤º¸ º¯°æ  3. È¸¿ø Å»Åğ  0. ¸ŞÀÎÈ­¸éÀ¸·Î");
+		System.out.println("-------------------------------------------------");
+		System.out.println(">> ÁøÇàÇÏ½Ç ÀÛ¾÷À» ¼±ÅÃÇØÁÖ¼¼¿ä.");
+		select = Integer.parseInt(scan.nextLine()); 
+		
+		try {
+		while (true) {
+			switch(select) {
+			case 1 : 
+				while(true) {
+					System.out.println("¾ÆÀÌµğ¸¦ ÀÔ·ÂÇÏ¼¼¿ä(¿µ¹® ´ë¼Ò¹®ÀÚ ±¸ºĞ¾øÀÌ 7 ~15ÀÚ, ¼ıÀÚÆ÷ÇÔ) : ");
+					id = scan.nextLine();
+					if(id.matches(langNum)) {
+						if (udao.checkId(id)) {
+							System.out.println("ÀÌ¹Ì Á¸ÀçÇÏ´Â ¾ÆÀÌµğ ÀÔ´Ï´Ù.");
+						} else {
+							break;
+						}
+					} else {
+						System.out.println("¾ÆÀÌµğ¸¦ È®ÀÎÇØÁÖ¼¼¿ä.");
+					}
+				}
+				while(true) {
+					System.out.print("ÀÌ¸§À» ÀÔ·ÂÇÏ¼¼¿ä : ");
+					name = scan.nextLine();
+					if(name.matches(lang)) {
+						break;
+					} else {
+						System.out.println("ÀÌ¸§À» È®ÀÎÇØÁÖ¼¼¿ä.");
+					}
+			}
+				while(true) {
+					System.out.print("ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä(¿µ¹® ´ë¼Ò¹®ÀÚ ±¸ºĞ¾øÀÌ 7 ~15ÀÚ, ¼ıÀÚÆ÷ÇÔ) :");
+					password = scan.nextLine();
+					if(password.matches(langNum)) {
+						break;
+					} else {
+						System.out.println("´Ù½Ã ÀÔ·Â ¹Ù¶ø´Ï´Ù.");
+					}
+				}
+				while(true) {
+					System.out.println("ÁÖ¼Ò¸¦ ÀÔ·ÂÇÏ¼¼¿ä :");
+					address = scan.nextLine();
+					if(address.matches(langNum)) {
+						break;
+					} else {
+						System.out.println("´Ù½Ã ÀÔ·Â ¹Ù¶ø´Ï´Ù.");
+					}
+				}
+				while(true) {
+					System.out.print("EmailÀ» ÀÔ·ÂÇÏ¼¼¿ä(aaa@aaa.aaa Çü½Ä) :");
+					email = scan.nextLine();
+					if(email.matches(emailForm)) {
+						if (udao.checkEmail(email)) {
+							System.out.println("ÀÌ¹Ì Á¸ÀçÇÏ´Â ÀÌ¸ŞÀÏ ÀÔ´Ï´Ù.");
+						} else {
+							break;
+						}
+					} else {
+						System.out.println("´Ù½Ã ÀÔ·Â ¹Ù¶ø´Ï´Ù.");
+					} 
+				}
+				while(true) {
+					System.out.print("Ä«µå¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä(¼ıÀÚ 16ÀÚ¸®) :");
+					cnum = scan.nextLine();
+					if(cnum.matches(onlyNum)) {
+						if (udao.checkCnum(cnum)) {
+							System.out.println("ÀÌ¹Ì Á¸ÀçÇÏ´Â Ä«µå¹øÈ£ ÀÔ´Ï´Ù.");
+						} else {
+							break;
+						}
+					} else {
+						System.out.println("´Ù½Ã ÀÔ·Â ¹Ù¶ø´Ï´Ù.");
+					}
+				}
+				while(true) {
+					System.out.print("ÇÚµåÆù ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä(010-0000-0000 Çü½Ä) : ");
+					phone = scan.nextLine();
+					if(phone.matches(phoneForm)) {
+						if (udao.checkCnum(phone)) {
+							System.out.println("ÀÌ¹Ì Á¸ÀçÇÏ´Â ÇÚµåÆù¹øÈ£ ÀÔ´Ï´Ù.");
+						} else {
+							break;
+						}
+					} else {
+						System.out.println("´Ù½Ã ÀÔ·Â ¹Ù¶ø´Ï´Ù.");
+					}
+				}
+				while(true) {
+					System.out.print("ÃæÀü±İ¾×À» ÀÔ·ÂÇÏ¼¼¿ä :");
+					price = Integer.parseInt(scan.nextLine()); 
+					if((Integer.toString(price).matches(cprice))) {
+						break;
+					} else {
+						System.out.println("´Ù½Ã ÀÔ·Â ¹Ù¶ø´Ï´Ù.");
+					}
+				}
+				
+				udto = new UserDTO(id, name, password, address, email, cnum, phone, price);
+				udao.join(udto);
+				break;
+	//-------------------------------------------------------------------------------------		
+			
+			case 2 :
+				while (true) {
+				System.out.println("¾ÆÀÌµğ¸¦ ÀÔ·ÂÇÏ¼¼¿ä! : ");
+				id = scan.nextLine();
+				System.out.println("ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä :");
+				password = scan.nextLine();
+				if (!udao.checkIdPassword(id, password)) {
+					System.out.println("Á¸ÀçÇÏÁö ¾Ê´Â È¸¿øÁ¤º¸ ÀÔ´Ï´Ù.");
+				} else {
+					break;
+				}
+				}
+				
+				while(true) {
+					System.out.println("---------------------------------------------- È¸¿ø Á¤º¸ º¯°æ -------------------------------------------");
+					System.out.println(">> 1. ÀÌ¸§ º¯°æ  2. ºñ¹Ğ¹øÈ£ º¯°æ  3. ÁÖ¼Ò º¯°æ  4. Email º¯°æ 5. Ä«µå¹øÈ£ º¯°æ 6. ÇÚµåÆù ¹øÈ£ º¯°æ 7. ÀÔÃâ±İ °ü¸® 0. ÀÌÀüÈ­¸éÀ¸·Î" );
+					System.out.println("-----------------------------------------------------------------------------------------------------");
+					select = Integer.parseInt(scan.nextLine());
+					
+					if(select == 1) {
+						while(true) {
+						System.out.println("º¯°æÇÒ ÀÌ¸§À» ÀÔ·ÂÇÏ¼¼¿ä : ");
+						name = scan.nextLine();
+						if(name.matches(lang)) {
+							udao.updateName(name, id);
+							System.out.println("ÀÌ¸§ÀÌ " + name +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+							break;
+						} else {
+							System.out.println("ÀÌ¸§À» È®ÀÎÇØÁÖ¼¼¿ä.");
+						}
+					}
+					}
+					if(select == 2) {
+						while(true) {
+							System.out.println("º¯°æÇÒ ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä : ");
+							password = scan.nextLine();
+							if(password.matches(langNum)) {
+								udao.updatePassword(password, id);
+								System.out.println("ºñ¹Ğ¹øÈ£°¡ " + password +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+								break;
+							} else {
+								System.out.println("ºñ¹Ğ¹øÈ£¸¦ È®ÀÎÇØÁÖ¼¼¿ä.");
+							}
+						}
+					}
+					if(select == 3) {
+						while(true) {
+							System.out.println("º¯°æÇÒ ÁÖ¼Ò¸¦ ÀÔ·ÂÇÏ¼¼¿ä : ");
+							address = scan.nextLine();
+							if(address.matches(langNum)) {
+								udao.updateAddress(address, id);
+								System.out.println("ÁÖ¼Ò°¡ " + address +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+								break;
+							} else {
+								System.out.println("ÁÖ¼Ò¸¦ È®ÀÎÇØÁÖ¼¼¿ä.");
+							}
+						}
+					}
+					if(select == 4) {
+						while(true) {
+							System.out.println("º¯°æÇÒ ÀÌ¸ŞÀÏÀ» ÀÔ·ÂÇÏ¼¼¿ä : ");
+							email = scan.nextLine();
+							if(email.matches(emailForm)) {
+								udao.updateEmail(email, id);
+								System.out.println("ÀÌ¸ŞÀÏÀÌ " + email +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+								break;
+							} else {
+								System.out.println("ÀÌ¸ŞÀÏÀ» È®ÀÎÇØÁÖ¼¼¿ä.");
+							}
+						}
+					}
+					if(select == 5) {
+						while(true) {
+							System.out.println("º¯°æÇÒ Ä«µå¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä : ");
+							cnum = scan.nextLine();
+							if(cnum.matches(onlyNum)) {
+								udao.updateCnum(cnum, id);
+								System.out.println("Ä«µå¹øÈ£°¡ " + cnum +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+								break;
+							} else {
+								System.out.println("Ä«µå¹øÈ£¸¦ È®ÀÎÇØÁÖ¼¼¿ä.");
+							}
+						}
+					}
+					if(select == 6) {
+						while(true) {
+							System.out.println("º¯°æÇÒ Ä«µå¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä : ");
+							phone = scan.nextLine();
+							if(phone.matches(phoneForm)) {
+								udao.updatePhone(phone, id);
+								System.out.println("ÇÚµåÆù¹øÈ£°¡ " + phone +"À¸·Î º¯°æµÇ¾ú½À´Ï´Ù.");
+								break;
+							} else {
+								System.out.println("ÇÚµåÆù ¹øÈ£¸¦ È®ÀÎÇØÁÖ¼¼¿ä.");
+							}
+						}
+					}
+					if(select == 7) {
+						// AccountManager »ç¿ë
+						acm.moneyManager(id);
+						break;
+					}
+					if(select == 0) {
+						System.out.println("ÀÌÀüÈ­¸éÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+						break;
+					}
+					if(select != 0 || select != 1 || select != 2 || select != 3 || select != 4 ||select != 5 ||select != 6 ||select != 7  ) {
+						System.out.println("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù.");
+					}
+				}
+				break;
+			//--------------------------------------------------
+			case 3 :
+				while(true) {
+				System.out.println("¾ÆÀÌµğ¸¦ ÀÔ·ÂÇÏ¼¼¿ä : ");
+				id = scan.nextLine();
+				System.out.println("ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä :");
+				password = scan.nextLine();
+				price = udao.accountPrice(id); 
+				if (!udao.checkIdPassword(id, password)) {
+					System.out.println("Á¸ÀçÇÏÁö ¾Ê´Â È¸¿ø Á¤º¸ÀÔ´Ï´Ù.");
+				} else {
+					try {
+					while(true) {
+					System.out.println("°èÁÂ¿¡ ÀÜ¾×ÀÌ "+price+"³²¾Æ ÀÖ½À´Ï´Ù. È¸¿ø Å»Åğ ½Ã ¸ğµç ÀÜ¾×ÀÌ ¼ÒÁøµË´Ï´Ù.");
+					System.out.println("------------- È¸¿ø Å»Åğ¸¦ ÇÏ½Ã°Ú½À´Ï±î? -------------");
+					System.out.println(" >> 1. Å»Åğ ÁøÇà 2. ÀÌÀü ¸Ş´º");
+					select = Integer.parseInt(scan.nextLine());
+					
+						switch(select) {
+						case 1 :
+							udto = new UserDTO(id, password);
+							udao.delete(udto);
+							System.out.println("Á¤»óÀûÀ¸·Î È¸¿ø Å»Åğ°¡ ÁøÇàµÇ¾ú½À´Ï´Ù.");
+							break;
+						case 2 :
+							System.out.println("ÀÌÀü ¸Ş´º·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+							break;
+						default :
+							System.out.println("Àß¸øÀÔ·ÂÇÏ¼Ì½À´Ï´Ù.");
+						}
+						
+						break;
+						
+					}
+					} catch (Exception e) {
+						System.out.println("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù!!.");
+					}
+				}
+				if(select == 2) {
+					
+					break;
+					}
+				
+				}
+				break;
+		//-------------------------------------------------------		
+			case 0 : 
+				System.out.println("¸ŞÀÎ ÆäÀÌÁö·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+				cd.start();
+				break;
+		//-----------------------------------------------------------
+			default :
+				System.out.println("Àß¸øÀÔ·ÂÇÏ¼Ì½À´Ï´Ù~~.");
+				
+		} 
+			break;
+    }
+		} catch (Exception e) {
+			System.out.println("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù!@!.");
+		}
+		}	
+	}	
+}
+
+

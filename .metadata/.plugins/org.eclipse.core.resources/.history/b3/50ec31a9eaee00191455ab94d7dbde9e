@@ -1,0 +1,14 @@
+package com.mystudy.ex03_interface;
+// 인터페이스는 추상체
+public interface I_Phone {
+	// 클래스 자리에 interface쓰면 인터페이스됨 
+	// 여기저기서 가져다 씀 
+	// 정보를 제공하거나..받거나..
+	// {} 없음 :추상메소드(abstract method) 
+	// public abstract 메소드임 
+	public abstract String getType(); // 중괄호가 없음 메소드지만 
+	public String getPhoneNO(); // abstract가 생략되어 있음 
+	void call(); // public abstract 키워드가 생략되어있음
+	// 그래도 public abstract의 속성이 있음 
+	//인터페이스 안의 메소드는 전부다 추상메소드임  
+}

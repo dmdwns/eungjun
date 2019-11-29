@@ -1,0 +1,43 @@
+package com.projectone.account.management;
+
+import com.projectone.common.CommonVO;
+import com.projectone.common.ProjectOneConstant;
+import com.projectone.show.management.PrintDeleteAccountMenu;
+
+public class DeleteAccount {
+	/*
+	 * 계좌 삭제를 선택하면 입력된 계좌가 나타나고. 계좌를 선택하고 해당 계좌 비밀번호를 누르면 삭제 처리 단 잔액이 있으면 출금을 먼저 하셔야
+	 * 합니다. 라는 메시지 출력후 삭제 처리 안됨
+	 */
+	public void DeleteAcc() {
+
+		if (!new PrintDeleteAccountMenu().printDeleteAccountMenu()) {
+			// 계좌삭제 메뉴 문구 출력 및
+			// 현재 계좌 생성 수를 확인하여 boolean값을 반환받아온다.
+			return;
+		}
+
+		ProjectOneConstant.accountView();
+
+		//계좌선택
+		int selectAccount = new AccountUtil().deleteAccount();
+
+		if (selectAccount == 0) {
+			return;
+		}
+		
+		
+		if (!new AccountUtil().checkDeleteAccount()) {
+			return;
+		}
+
+		// accList.get(selectAcc-1)의 상태값을 정지로 바꾸는 UPDATE DAO호출
+		// AccountLog와 Account테이블값 변경
+		new ManagementDAO().UpdateDeleteAccount(CommonVO.accountList.get(selectAccount - 1),
+				ProjectOneConstant.ACCOUNT_STATE[1]);
+
+		new ManagementDAO().InsertAccountLog(CommonVO.accountList.get(selectAccount - 1), "정지",
+				ProjectOneConstant.MODIFY_STATE[3]);
+		CommonVO.accountList.get(selectAccount - 1).setAccState(ProjectOneConstant.ACCOUNT_STATE[1]);
+	}
+}

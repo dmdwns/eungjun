@@ -1,0 +1,54 @@
+
+
+import java.util.List;
+import java.util.Scanner;
+
+public class PicksTest {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Picks picks = new Picks();
+		
+		String res_id = "K1";
+		String user_id = "soh445";
+		String menu_id = "K1_1";
+		//PicksVO vo = picks.picksMenu(res_id, user_id, menu_id);
+		
+		
+		
+		
+		
+		
+		//picks.insertOne(vo);
+		List<PicksVO> list = picks.selectAll(user_id);
+		
+		
+		for(PicksVO va: list) {
+			System.out.println(va);
+			System.out.println();
+			}
+		
+		
+		System.out.println("삭제할 상품을 정해주세요");
+		int user = scan.nextInt();
+		for(PicksVO va: list) {
+			if(va.getOrder_number() == user) {
+				System.out.println(va.getMenu_id());
+				menu_id =  va.getMenu_id();
+			}
+		}
+		picks.deleteOne(user_id, menu_id);	
+		
+		
+
+//		
+//		int cnt = picks.deleteOne(user_id, menu_id);
+//		System.out.println(cnt);
+//	
+//	System.out.println("vo"+vo.toString());	
+//	int cnt = picks.insertOne(vo);
+		
+	}
+}
+
+

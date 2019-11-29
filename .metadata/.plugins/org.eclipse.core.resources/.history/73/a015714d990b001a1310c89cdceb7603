@@ -1,0 +1,130 @@
+package menu;
+
+public class MenuVO {
+	private int resKindId;
+	private String resKindName;
+	
+	private String resName;
+	private String resAddress;
+	private String resTel;
+	private String resId;
+	private int resTable;
+	
+	private String menuName;
+	private int menuPrice;
+	private String menuId;
+	
+	public MenuVO(int resKindId, String resKindName) {
+		super();
+		this.resKindId = resKindId;
+		this.resKindName = resKindName;
+	}
+	
+	public MenuVO(int resKindId, String resName, String resAddress, String resTel, String resId, int resTable) {
+		super();
+		this.resKindId = resKindId;
+		this.resName = resName;
+		this.resAddress = resAddress;
+		this.resTel = resTel;
+		this.resId = resId;
+		this.resTable = resTable;
+	}
+
+	public MenuVO(int resKindId, String resId, String menuName, int menuPrice, String menuId) {
+		super();
+		this.resKindId = resKindId;
+		this.resId = resId;
+		this.menuName = menuName;
+		this.menuPrice = menuPrice;
+		this.menuId = menuId;
+	}
+
+	
+	
+	public int getResKindId() {
+		return resKindId;
+	}
+
+	public void setResKindId(int resKindId) {
+		this.resKindId = resKindId;
+	}
+
+	public String getResKindName() {
+		return resKindName;
+	}
+
+	public void setResKindName(String resKindName) {
+		this.resKindName = resKindName;
+	}
+
+	public String getResName() {
+		return resName;
+	}
+
+	public void setResName(String resName) {
+		this.resName = resName;
+	}
+
+	public String getResAddress() {
+		return resAddress;
+	}
+
+	public void setResAddress(String resAddress) {
+		this.resAddress = resAddress;
+	}
+
+	public String getResTel() {
+		return resTel;
+	}
+
+	public void setResTel(String resTel) {
+		this.resTel = resTel;
+	}
+
+	public String getResId() {
+		return resId;
+	}
+
+	public void setResId(String resId) {
+		this.resId = resId;
+	}
+
+	public int getResTable() {
+		return resTable;
+	}
+
+	public void setResTable(int resTable) {
+		this.resTable = resTable;
+	}
+
+	public String getMenuName() {
+		return menuName;
+	}
+
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
+
+	public int getMenuPrice() {
+		return menuPrice;
+	}
+
+	public void setMenuPrice(int menuPrice) {
+		this.menuPrice = menuPrice;
+	}
+
+	public String getMenuId() {
+		return menuId;
+	}
+
+	public void setMenuId(String menuId) {
+		this.menuId = menuId;
+	}
+
+
+	
+	
+	
+	
+	
+}

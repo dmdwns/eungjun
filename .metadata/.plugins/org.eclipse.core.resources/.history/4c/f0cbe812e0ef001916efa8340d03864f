@@ -1,0 +1,11 @@
+package com.mystudy.ex02_myexception;
+
+public class MyExceptionTest {
+
+	public static void main(String[] args) {
+		System.out.println("---- main() 시작 ------");
+		
+        System.out.println("----- main() 종료 ------");
+	}
+
+}

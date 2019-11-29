@@ -1,0 +1,30 @@
+package com.mystudy.ex02_vo;
+/* 자바빈(JavaBean) 형태의 클래스 작성 
+ *  VO(Value Object) : 값을 저장하기 위한 클래스(객체) 
+ *  DTO(Data Transfer Object): 값을 저장해서 전달하기 위한 클래스 (객체)
+ *  -> VO ,Vo  DTO ,Dto 
+ *  // 둘다 의미상 같다 저장용임  
+ * 
+ */
+
+public class StudentVO {
+	// 필드선언 -----------------------------------
+	private String name; 
+    private int kor;
+	private int eng;
+	private int math;
+	
+	private int tot;   
+	private double avg; 
+	
+	// 생성자 선언 -------------------------------
+	
+	
+	
+	// 메소드 선언 -------------------------------
+	
+	
+	
+	
+	
+}

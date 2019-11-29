@@ -1,0 +1,15 @@
+package com.mystudy.ex04_interface2;
+
+public class PhoneTest {
+
+	public static void main(String[] args) {
+		// Phone Mp3 객체생성후 기능테스 트 
+        System.out.println("===== Phone ====");
+        Phone ph1 = new Phone("010-1111-1111");
+        ph1.view();
+        ph1.call();
+        ph1.receiveCall();
+        ph1.sendMsg();
+	}
+
+}

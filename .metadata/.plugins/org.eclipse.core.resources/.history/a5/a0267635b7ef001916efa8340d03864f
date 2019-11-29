@@ -1,0 +1,6 @@
+package com.mystudy.ex04_interface;
+
+// 인터페이스 
+public interface I_Animal {
+
+}

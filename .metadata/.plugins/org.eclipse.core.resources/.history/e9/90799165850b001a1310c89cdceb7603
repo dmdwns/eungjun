@@ -1,0 +1,45 @@
+package com.reservation;
+
+import java.util.Scanner;
+
+import com.kang.Reserve;
+import com.soo.SignUp;
+
+public class MovieReservation {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		SignUp su = new SignUp();
+		boolean isTrue = true;
+		
+		
+		su.sulg();
+
+		Reserve r = new Reserve(su.getCustId());
+
+	
+		while (isTrue) {
+			System.out.println("==================================================================");
+			System.out.println("                     1.예매하기 " + " 2.마이페이지 " + "3.종료");
+			System.out.println("==================================================================");
+			System.out.println(">>번호를 선택해주세요.");
+			String  chooseNum = sc.nextLine();
+
+			if ("1".equals(chooseNum)) {
+				r.TheaterChoice();
+			} else if ("2".equals(chooseNum)) {
+				if(!su.mypage()) {
+					su.sulg();
+					continue;
+				}
+			} else if ("3".equals(chooseNum)) {
+				System.out.println("종료되었습니다");
+				break;
+			} else {
+				System.out.println("잘못누르셨습니다. 다시 선택해 주세요");
+				continue;
+			}
+		}
+
+	}
+}

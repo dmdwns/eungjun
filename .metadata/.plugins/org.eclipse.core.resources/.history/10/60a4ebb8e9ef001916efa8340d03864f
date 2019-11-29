@@ -1,0 +1,5 @@
+package com.mystudy.ex03_sungjuk;
+
+public class SungjukProcessException {
+
+}

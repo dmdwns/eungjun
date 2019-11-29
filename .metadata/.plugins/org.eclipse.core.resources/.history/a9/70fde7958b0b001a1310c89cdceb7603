@@ -1,0 +1,73 @@
+package account;
+
+public class AccountDTO {
+
+	private String cnum;
+	private String password;
+	private int price;
+	private int balance;
+	
+	public AccountDTO() {
+		
+	}
+	
+	
+	public AccountDTO(String cnum, String password, int price, int balance) {
+		super();
+		this.cnum = cnum;
+		this.password = password;
+		this.price = price;
+		this.balance = balance;
+	}
+
+
+	public String getCnum() {
+		return cnum;
+	}
+
+
+	public void setCnum(String cnum) {
+		this.cnum = cnum;
+	}
+
+
+	public String getPassword() {
+		return password;
+	}
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+	public int getPrice() {
+		return price;
+	}
+
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+
+	public int getBalance() {
+		return balance;
+	}
+
+
+	public void setBalance(int balance) {
+		this.balance = balance;
+	}
+
+
+	@Override
+	public String toString() {
+		return "AccountDTO [cnum=" + cnum + ", password=" + password + ", price=" + price + ", balance=" + balance
+				+ "]";
+	}
+	
+	
+	
+	
+}

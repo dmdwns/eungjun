@@ -1,0 +1,20 @@
+package miniproject_Join;
+
+public class AllTest {
+
+	public static void main(String[] args) {
+		
+//		CustomerDAO dao = new CustomerDAO ();
+//		CustomerLogVO vo = new CustomerLogVO("", "");
+//		ConcertInfoDVO dao2 = new ConcertInfoDVO();
+		ConcertAll ca = new ConcertAll();
+		
+//		CustomerLogMethod clm = new CustomerLogMethod();
+		ca.joinStart(); //회원가입
+		ca.inputIdPw(); //로그인
+		ca.SelectConcert(); //콘서트 티켓 조회
+		ca.startReserv(); //메뉴선택+결제화면
+		ca.startPayment();
+		
+	}
+}

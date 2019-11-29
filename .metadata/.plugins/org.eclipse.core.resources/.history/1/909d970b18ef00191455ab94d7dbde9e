@@ -1,0 +1,5 @@
+package com.mystudy.ex02_overriding;
+
+public class Cat {
+
+}

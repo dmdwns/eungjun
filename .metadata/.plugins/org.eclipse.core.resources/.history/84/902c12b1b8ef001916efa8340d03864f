@@ -1,0 +1,6 @@
+package com.mystudy.ex04_interface;
+
+public class Cat extends Animal {
+  
+	public void sound();
+}

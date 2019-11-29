@@ -1,0 +1,19 @@
+package school;
+
+public class Student extends People {
+
+	public Student(String name, String ssn, int studentNo) {
+	
+	}
+
+    
+}
+//	public int studentNo;
+//  public String name;
+//  public String ssn;
+//  public Student(String name, String ssn, int studentNo) {
+//	super(name,ssn);
+//	this.studentNo = studentNo;
+//	
+//}
+

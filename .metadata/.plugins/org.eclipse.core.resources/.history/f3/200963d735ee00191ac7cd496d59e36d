@@ -1,0 +1,9 @@
+package com.mystudy.ex02_vo;
+
+public class StudentManager {
+
+	public static void main(String[] args) {
+		
+	}
+
+}

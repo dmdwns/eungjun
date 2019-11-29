@@ -1,0 +1,134 @@
+package com.mystudy.split;
+
+public class Ex02_StringTokenizer {
+
+	
+	public static void main(String[] args) {
+		
+		
+		/* 문자열 다루기
+		0.문자열 데이터
+		  String str1 = "홍길동 이순신   이순신 Tom 홍길동";
+		  String str2 = "    TOM    을지문덕 김유신 연개소문";
+		1. 위의 문자열을 StringBuilder 변수 sb를 이용해서 하나의 문자열로 만들고,  append 메소드 한번쓰기 
+		2-1. sb의 문자열을 빈칸(" ")을 구분자로 잘라서(이름만 추출) 화면 출력(데이타확인)
+		     (String.split() 또는 StringTokenizer 클래스 사용)
+		      예) 홍길동 이순신 이순신 Tom 홍길동 TOM...  이름만 출력 
+		2-2. 문자열을 저장할 수 있는 배열변수(names)에 저장  
+		스트링 배열을 만들어서 넣기  
+		3. 배열에 있는 값을 구분자 콤마(,)로 구분하여 한라인에 출력(StringBuilder 사용)
+		      예) 홍길동,이순신,이순신,Tom,홍길동,TOM...
+		         Stringbuilder 변수에 저장되어 있고  클래스 내부에서   , 구분으로 
+		4. 데이터의 첫글자만 추출해서 콤마(,)로 구분하여 한라인에 출력(StringBuilder 사용)
+		      예) 홍,이,이,T,홍,T,을... 
+		      
+		5. 배열의 문자열중 이름의 글자수가 4 이상인 값을 "인덱스번호:이름" 출력
+		      예) 인덱스번호:을지문덕
+		********************************/
+		
+		String str1 = "홍길동 이순신   이순신 Tom 홍길동";
+		String str2 = "    TOM    을지문덕 김유신 연개소문";
+	    String str3 =  str1.concat(str2);
+		StringBuilder sb = new StringBuilder(str3); 
+	    // 스트링뷸더라는 타입
+		
+		
+		// toString을쓰면  StringBuilder 에서 String 타입으로감  
+		String[] strSplit = sb.toString().split(" ");
+		// 데이터 타입을 받아오고 주고 할때를 생각
+	    for(int i = 0 ; i <= 16 ; i++) {
+	    	System.out.println(i + " : -" + strSplit[i] +"-");
+	    	
+	    }  
+	    // nextToken을 써서 해야 좋다고함 ;
+	    // 그래야 빈칸갯수를 잡을 수 있음 ;
+	    
+	    
+	    String str4 =  str1.concat(str2);
+	    StringBuilder sc = new StringBuilder(str4); 
+		String[] strSplit1 = sc.toString().split(" ");
+				
+		
+		
+        // 배열넘김 ;; 
+	    // 배열이 없음;
+	    System.out.println();
+	    System.out.println("============================");
+	    System.out.println(", 기준으로 출력 :");
+       
+        for(int i = 0 ; i <= 16 ; i++) {
+			System.out.print(strSplit[i]+",");
+		}
+        
+        
+        System.out.println();
+        System.out.println("============================");
+        System.out.println();
+        
+        System.out.println("첫글자 출력   , 기준    (노가다로함)"  );
+	 	// 솔직히 잘 모르겠다; 이건;;
+        
+                
+//        System.out.println("첫글자 출력   , 기준  "  );
+//	 	for(int i = 0 ; i <= 16 ; i++) {
+//	 	  strSplit[i] = strSplit[i].substring(0,1);
+//	 	System.out.print(strSplit[i]+",");
+//	 	}	
+        // 글자 있는 데이터만 뽑기. -> 으음..
+        
+        
+        
+        
+            strSplit[0] = strSplit[0].substring(0,1);
+	 		strSplit[1] = strSplit[1].substring(0,1);
+	 		strSplit[4] = strSplit[4].substring(0,1);
+	 		strSplit[5] = strSplit[5].substring(0,1);
+	 		strSplit[6] = strSplit[6].substring(0,1);
+	 		strSplit[10] = strSplit[10].substring(0,1);
+	 		strSplit[14] = strSplit[14].substring(0,1);
+	 		strSplit[15] = strSplit[15].substring(0,1);
+	 		strSplit[16] = strSplit[16].substring(0,1);
+	 		
+	 		System.out.print(strSplit[0]+",");
+	 		System.out.print(strSplit[1]+",");
+	 		System.out.print(strSplit[4]+",");
+	 		System.out.print(strSplit[5]+",");
+	 		System.out.print(strSplit[6]+",");
+	 		System.out.print(strSplit[10]+",");
+	 		System.out.print(strSplit[14]+",");
+	 		System.out.print(strSplit[15]+",");
+	 		System.out.print(strSplit[16]+",");
+	 		
+	 		
+	 	
+	 		
+	 	System.out.println();
+	 	System.out.println("============================");
+	 	System.out.println();      
+        
+	 	
+	 	System.out.print("4개 글자인것 :");
+	 	System.out.println();
+			for(int i = 0 ; i <= 16 ; i++) {
+				if (strSplit1[i].length() == 4 ) {
+				System.out.println("strSplit["+i+"] : "+ strSplit1[i]);
+		 		}
+		 	}
+	    
+			
+			
+			
+	    
+	    
+	    
+	    
+	    
+	
+	
+	}
+
+	
+	
+	
+	
+}

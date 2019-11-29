@@ -1,0 +1,5 @@
+package com.mystudy.jdbc_dao;
+
+public class JDBC_Close {
+
+}

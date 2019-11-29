@@ -1,0 +1,91 @@
+package com.mystudy.ex03_sungjuk;
+
+public class StudentVO {
+	
+	// 필드 (속성) 
+	private String name;
+    private int kor;
+    private int eng;
+    private int math;
+    private int tot;
+    private double avg;
+	
+    // 생성자 만들기 (기본)
+    // 기본생성자 
+    // name, kor, eng, math 값을 전달 받는 생성자
+    // 전체 필드값을 받는 생성자 
+    
+    public StudentVO ( ){
+    	
+    }
+    
+    public StudentVO( String name, int kor, int eng, int math) {
+    	this.name=name;
+    	this.kor=kor;
+    	this.eng = eng;
+		this.math = math;
+    }
+    
+    
+    
+    public StudentVO(String name, int kor, int eng, int math, int tot, double avg) {
+		super();
+		this.name = name;
+		this.kor = kor;
+		this.eng = eng;
+		this.math = math;
+		this.tot = tot;
+		this.avg = avg;
+	}
+
+	// 메소드 만들기 (실습) : getter, setter 만들기 
+    
+    public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getKor() {
+		return kor;
+	}
+	public void setKor(int kor) {
+		this.kor = kor;
+	}
+	public int getEng() {
+		return eng;
+	}
+	public void setEng(int eng) {
+		this.eng = eng;
+	}
+	public int getMath() {
+		return math;
+	}
+	public void setMath(int math) {
+		this.math = math;
+	}
+	public int getTot() {
+		return tot;
+	}
+	public void setTot(int tot) {
+		this.tot = tot;
+	}
+	public double getAvg() {
+		return avg;
+	}
+	public void setAvg(double avg) {
+		this.avg = avg;
+	}
+
+	   
+    
+    
+    // toString() 작성 : 오버라이드로 
+    
+	@Override
+	public String toString() {
+		return "StudentVO [name=" + name + ", kor=" + kor + ", eng=" + eng + ", math=" + math + ", tot=" + tot
+				+ ", avg=" + avg + "]";
+	}
+    
+}

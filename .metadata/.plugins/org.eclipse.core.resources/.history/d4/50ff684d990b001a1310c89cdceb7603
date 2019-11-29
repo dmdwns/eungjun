@@ -1,0 +1,319 @@
+package play;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import Business.BusinessClass;
+import action.AccountManager;
+import action.InfoChangeAction;
+import action.JoinAction;
+import menu.Menu_Test;
+import orders.JDBC_Close;
+import orders.Orders;
+import orders.Orders_Test;
+import reservation.PicksTest;
+import reservation.RecommendTest;
+import search.Search;
+import user.UserDAO;
+
+
+
+public class Display {
+	
+		private static final String DRIVER = "oracle.jdbc.OracleDriver";
+		private static final String URL = "jdbc:oracle:thin:@192.168.0.72:1521:xe";
+		private static final String USER = "PROJECT";
+		private static final String PASSWORD = "PROJECTPW";
+
+		JoinAction ja = new JoinAction();
+		InfoChangeAction ica = new InfoChangeAction();
+		AccountManager acm = new AccountManager();
+		UserDAO udao = new UserDAO();
+		
+
+		Scanner sc = new Scanner(System.in);
+		public static boolean idvalue = false;
+		public static String id = "";
+		int choice = 0;
+		int count = 0;
+		String pass;
+
+		private Connection conn;
+		private PreparedStatement pstmt;
+		private ResultSet rs;
+		private PreparedStatement st ;
+
+		// 드라이버 로딩 처리
+		// static 초기화 (한번만 실행?)
+		static {
+			try {
+				Class.forName(DRIVER);
+				System.out.println(">> JDBC 드라이버 로딩 성공");
+			} catch (ClassNotFoundException e) {
+				System.out.println("[예외발생] 드라이버 로딩 실패!!!");
+			}
+		}
+		
+		
+		
+		public void start() {
+			while (true) {
+				int ch = menu(idvalue);
+
+				switch (ch) {
+				case 1: 
+					if (id == null || id.equals("")) {// 회원가입
+						ja.userJoin();
+					break;
+					} else if (udao.checkIdPassword(id, pass)) {// 내정보
+						ica.userJoin(id);
+					break;
+				
+				}
+				case 2: 
+					if (id == null || id.equals("")) {
+						
+						login();
+						
+					} else /*if (udao.checkIdPassword(id, pass))*/{
+						System.out.println("로그아웃");
+						id = "";
+						idvalue = false;
+					}
+					break;
+				
+				case 3: 
+//					Menu_Test mt = new Menu_Test();
+					Menu_Test.menuStart(id, idvalue);
+					break;
+				case 4:
+					RecommendTest.Recommendp();
+					break;
+				case 5:
+					PicksTest.Picskp();
+					break;
+				case 6:
+					if (id == null || id.equals("")) {// 
+						login();
+						break;
+					} else if (udao.checkIdPassword(id, pass)) {// 
+						acm.moneyManager(id);
+						break;
+					}
+				case 7:
+					if (id == null || id.equals("")) {
+						idcheck();
+						break;						
+					} else {
+						System.out.println("다시입력해주세요");
+						break;
+					}
+				case 0:
+					System.out.println("\n=================");
+					System.out.println("이용해 주셔서 감사합니다");
+					System.out.println("=================\n");
+					break;
+				case 8:
+					BusinessClass b = new BusinessClass();
+					b.Business();
+					break;
+				case 9:
+					Search s = new Search();
+					s.searchRes();
+					break;
+				case 10:
+					Orders_Test ot = new Orders_Test();
+					ot.ordersStart(id);
+					break;
+				default:
+					System.out.println("다시입력해주세요");
+				}
+				if (ch == 0) {
+					break;
+				}
+			}
+
+		}
+		
+		public int menu(boolean idvalue) {
+			int ch = 0;
+			Scanner scan = new Scanner(System.in);
+
+			try {
+				String SignUp = "1.회원가입 \n";
+				String login = "2.로그인\n";
+				String member = "7.계정  / 비밀번호 찾기\n";
+				String Business = "8.입점문의 / 기업회원\n";
+				String search = "9.검색 \n";
+				String order = "";
+				String id = "";
+				if (idvalue == true) {
+					SignUp = "1.회원정보수정 \n";
+					login = "2.로그아웃(" + this.id + ")\n";
+					member = "";
+					Business = "";
+					search = "";
+					order = "10.장바구니 주문\n";
+				}
+				System.out.println("┌─────────────────────────────┐");
+				System.out.println("│             저기요                        │ ");
+				System.out.println("└─────────────────────────────┘");
+
+				System.out.printf(SignUp + login + id + "3.메뉴\n" + "4.추천메뉴\n" + "5.장바구니 조회\n" + "6.포인트관리\n"
+						+member+Business+search+order+"0.종료\n");
+				System.out.print(">>선택:");
+				ch = scan.nextInt();
+				scan.nextLine();
+
+			} catch (Exception e) {
+				System.out.println("다시입력하세요");
+			}
+
+			return ch;
+		}
+		public void login() {
+			try {
+				System.out.println("사용자  아이디 : ");
+				this.id = sc.nextLine();
+				System.out.println("비밀번호 : ");
+				pass = sc.nextLine();
+				if (!udao.checkIdPassword(id, pass)) {
+					System.out.println("존재하지 않는 회원정보 입니다.");
+					id = null;
+				} else {
+				 checkExist(id,pass);
+				}
+				}catch (Exception e) {
+					System.out.println("다시 입력하세요");
+				}
+	 		   }
+		//로그인 체크
+		public String checkExist(String id, String pass) {
+			String result = "";
+			
+			count++;
+			try {
+				
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				
+				st = conn.prepareStatement("select * from users where user_id = ?"
+						 + "and password = ?");
+						
+						st.setString(1, id);
+						st.setString(2, pass);
+						
+						rs = st.executeQuery();
+				if (rs.next()) {
+
+					result = rs.getString("USER_ID");
+					idvalue= true;
+				} else if (count < 5) {
+					System.out.println("남은횟수"+(5-count));
+					login();
+									
+				}
+				count = 0;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  finally {
+				JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+			}
+			return result;
+		}
+		private void idcheck() {
+			System.out.println("무엇을 찾으시겠습니까?\n1.ID   \n2.PASSWORD   \n3.뒤로가기");
+			System.out.print(">>");
+			int check = Integer.parseInt(sc.nextLine());
+
+			switch (check) {
+			case 1:
+				System.out.println("ID찾기(이름,핸드폰번호필요)");
+				System.out.print("이름: ");
+				String name = sc.nextLine();
+				System.out.print("핸드폰번호 : ");
+				String phone = sc.nextLine();
+				
+				getId(name, phone);
+				break;
+			case 2:
+				System.out.println("비밀번호찾기(이름,ID,핸드폰번호필요) ");
+				System.out.print("사용자  아이디 : ");
+				id = sc.nextLine();
+				System.out.print("이름 : ");
+				String nameP = sc.nextLine();
+				System.out.print("핸드폰번호 : ");
+				String phoneP = sc.nextLine();
+				getpassword(id,nameP,phoneP);
+				break;
+			case 3:
+				System.out.println("돌아갈께요");
+				break;
+			default:
+				System.out.println("다시입력하세요");
+				idcheck();
+				break;
+
+			}
+		}
+
+		
+		public void getId(String name, String phone) {
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				st = conn.prepareStatement("select user_id from users where  user_name = ? and phone = ?");
+				st.setString(1,name);
+				st.setString(2,phone);
+				
+				rs = st.executeQuery();
+
+				if (rs.next()) {
+					System.out.println(">>확인되었습니다.");
+					System.out.println(rs.getNString("USER_ID"));
+
+				} else {
+					System.out.println("일치하는 이름, 핸드폰번호가 없습니다.");
+					System.out.println("처음부터 다시 입력해주세요 ");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+			}
+		}
+
+		public void getpassword(String id,String name, String phoneP) {
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				st = conn.prepareStatement("select PASSWORD from users where user_id = ? and user_name = ? and phone = ?");
+				st.setString(1,id);
+				st.setString(2, name);
+				st.setString(3, phoneP);
+				rs = st.executeQuery();
+
+				if (rs.next()) {
+					System.out.println(">>확인되었습니다.");
+					System.out.println(rs.getNString("PASSWORD"));
+				} else {
+					System.out.println("일치하는 ID,이름, 핸드폰번호가 없습니다.");
+					System.out.println("처음부터 다시 입력해주세요 ");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				JDBC_Close.closeConnStmtRs(conn, pstmt, rs);
+			}
+		}
+
+		
+}
+	
+	
+	
+	
+	
+

@@ -1,0 +1,19 @@
+package com.mystudy.wrapper;
+
+public class Ex02_Wrapper_Character {
+
+	public static void main(String[] args) {
+		// Character 클래스 
+		char ch = 'a'; //'a'같지 않음  "a" :String
+		System.out.println(Character.isAlphabetic(ch));
+		System.out.println("Character.isAlphabetic('한')" + Character.isAlphabetic('한'));
+		
+		
+		
+		
+		
+		
+
+	}
+
+}

@@ -1,0 +1,6 @@
+package com.mystudy.ex04_interface;
+
+// 인터페이스 (기본적으로 모두가 추상체)
+public interface I_Animal {
+
+}

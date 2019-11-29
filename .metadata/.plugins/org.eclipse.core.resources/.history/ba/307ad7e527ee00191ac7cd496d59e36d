@@ -1,0 +1,30 @@
+package com.mystudy.ex01_bean;
+
+public class StudentMain {
+
+	public static void main(String[] args) {
+		Student stu = new Student();
+//		stu.name = "홍길동 ";
+//		System.out.println(stu.name);
+		stu.setName("홍길동2");  //값을 읽고
+		System.out.println(stu.getName());  // 값을 설정 
+		
+		stu.setKor(100);
+		System.out.println("국어점수" +stu.getKor());
+
+		stu.setMath(90);
+		System.out.println("수학점수" +stu.getMath());
+
+		stu.setEng(85);
+		System.out.println("영어점수" +stu.getEng());
+
+		
+		
+		System.out.println("총점" +stu.getTot());
+
+		
+		
+		
+	}
+
+}

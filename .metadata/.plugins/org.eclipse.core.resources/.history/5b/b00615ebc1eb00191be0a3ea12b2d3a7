@@ -1,0 +1,10 @@
+package com.mystudy.stringbuilder;
+
+public class Ex02_StringBuilder {
+
+	public static void main(String[] args) {
+		// StringBuilder Å¬·¡½º 
+
+	}
+
+}

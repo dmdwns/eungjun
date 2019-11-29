@@ -1,0 +1,113 @@
+package com.mystudy.ex02_vo;
+/* 자바빈(JavaBean) 형태의 클래스 작성 
+ *  VO(Value Object) : 값을 저장하기 위한 클래스(객체) 
+ *  DTO(Data Transfer Object): 값을 저장해서 전달하기 위한 클래스 (객체)
+ *  -> VO ,Vo  DTO ,Dto 
+ *  // 둘다 의미상 같다 저장용임  
+ * 
+ */
+
+public class StudentVO {
+	// 필드선언 -----------------------------------
+	private String name; 
+    private int kor;
+	private int eng;
+	private int math;
+	
+	private int tot;   
+	private double avg; 
+	
+	// 생성자 선언 -------------------------------
+	// 생성자 : 성명 , 국어, 영어, 수학점수를 입력받는 생성자  
+	// 생성자에서 값이 전달되면 
+	// 총점, 평균 값 자동 계산 처리 
+	public StudentVO(String name, int kor , int eng, int math) {
+		this.name = name;
+		this.kor = kor;
+		this.eng = eng;
+		this.math = math;
+	}
+	// 메소드 선언 --------------------------------
+		// setter  getter 작성 
+		// 국어, 영어, 수학 점수가 변경되면 총점 ,평균 재계산 처리   computeTotAvg() 를 호출
+		// 국어, 영어, 수학점수는 0 ~100 까지만 값 입력 
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getKor() {
+		return kor;
+	}
+
+	public void setKor(int kor) {
+		if (kor >= 0 && kor <= 100 ) {
+			this.kor = kor;
+			computeTOtAvg();
+		} else {
+			System.out.println("잘못된 입력입니다 ");
+		    return;
+		}
+		
+		
+	}
+
+	public int getEng() {
+		return eng;
+	}
+
+	public void setEng(int eng) {
+		if (eng >= 0 && eng <= 100 ) {
+			this.eng = eng;
+			computeTOtAvg();
+		} else {
+			System.out.println("잘못된 입력입니다 ");
+		    return;
+		}
+	}
+
+	public int getMath() {
+		return math;
+	}
+
+	public void setMath(int math) {
+		if (math>= 0 && math <= 100 ) {
+			this.math = math;
+			computeTOtAvg();
+		} else {
+			System.out.println("잘못된 입력입니다 ");
+		    return;
+		}
+	     
+	    
+	
+	}
+
+	public int getTot() {
+		return tot;
+	}
+
+	public double getAvg() {
+		return avg;
+	}
+
+	
+	
+	// computeTotAvg() 추가 : tot, avg 값 재계산 처리 
+	
+
+	public void computeTOtAvg() {
+		this.tot = kor+eng+math;
+		this.avg = tot/3;
+		}
+	
+	
+
+	
+			
+	
+}

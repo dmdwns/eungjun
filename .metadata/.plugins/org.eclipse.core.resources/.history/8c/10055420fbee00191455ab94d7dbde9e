@@ -1,0 +1,41 @@
+package com.mystudy.ex05_interface2;
+
+// 인터페이스 구성요소
+// 상수변수: public static final 변수
+// - 추상메소드 : public abstract 메소드 
+
+
+
+//자바 8 (JDK8)에서 추가된 요소   
+// 인터페이스 : 추상체
+// public default 메소드
+// public static 메소드
+
+
+interface I_Phone {
+    // 상수화된 변수 : 인터페이스에 정의된 모든 변수는 
+	public static final boolean SUCCESS_CALL =true;
+	// final이 붙으면 상수가 된다 
+	// 
+ 
+	boolean FAIL_CALL = true; // public static final 생략가능
+	
+	
+	//{} 없음 : 추상메소드(abstract method)
+	//public abstract 메소드임
+	public abstract String getType();
+	public String getPhoneNo(); //abstract 생략가능
+	
+	void call(); //public abstract 생략가능
+	void receiveCall(); //public abstract 생략가능
+	void view(); //public abstract 생략가능
+	
+	void sendMsg();
+	void receiveMsg();
+}
+
+
+
+
+
+

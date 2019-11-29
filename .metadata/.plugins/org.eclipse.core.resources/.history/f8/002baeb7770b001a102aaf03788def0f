@@ -1,0 +1,246 @@
+package com.projectone.show.quick;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import com.projectone.account.quick.QuickDAO;
+import com.projectone.common.OptCreate;
+import com.projectone.common.ProjectOneConstant;
+import com.projectone.jdbc.vo.QuickTransferVO;
+
+public class PrintQuickAccountList {
+
+	QuickDAO dao = new QuickDAO();
+	Scanner scan = new Scanner(System.in); 
+		
+	boolean isContinue = false;
+	static String memberId = null;
+	//선택할 빠른 이제 번호
+	int selectNumber  = 0;
+	String strselectNumber = null;
+	boolean isstrselectNumber = false;
+	//입금금액
+	long depositMoney  = 0;
+	//선택여부
+	String choice = null;
+	
+	//1회 거래 출금금액
+	int withdrawLimit = 0;
+	//일일 거래 제한 금액(계좌상)
+	int creditLimit = 0;
+	//송금할 계좌 잔액
+	int accountTotalMoney = 0;
+	//실제 계좌 거래 금액
+	int memberCreditLimit = 0;	
+	
+	//OTP 코드
+	String otpCode = null;
+	//송금받을 번호
+	String remitAccountNumber = null;
+	
+	//계좌번호
+	int accountIdx = 0;
+	
+	//송금처리여부
+	boolean isTransfer = false;
+
+	public void AccountList(String userId) {
+		
+		String memberId = userId;
+		List<QuickTransferVO> list = dao.selectAll();
+		
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println("*****************************************************");
+		System.out.println("*");
+		System.out.println("* 빠른이체 등록 계좌 리스트");
+		System.out.println("*");
+		System.out.println("______________________________________________________________");
+		System.out.println();
+		System.out.println("번호\t 별칭\t\t 출금될계좌\t\t\t 이체계좌번호");
+		System.out.println("______________________________________________________________");
+		
+		System.out.println();
+		for (QuickTransferVO qtv : list ) {
+			
+			System.out.println(qtv.getIdx()+"\t"+qtv.getAccountAlias()+"\t\t"+qtv.getAccountNumber()+"\t\t"+qtv.getRemitAccountNumber()+"\t\t\t   "+qtv.getRegDateTime().substring(0,10));
+		}
+		System.out.println();
+		System.out.println("______________________________________________________________");
+		
+		while(isContinue==false) {
+			isContinue = inputAccountMoney(memberId);
+		}
+	
+		
+	}
+	
+	private boolean inputAccountMoney(String memberId) {
+		
+		boolean isChoice = false;
+		int selectCount = 0;
+		
+		//송금금액 체크
+		boolean depositMoneyChk = false;
+		
+		
+		while(selectNumber==0) {
+			
+//			System.out.println();
+//			System.out.print("목록번호 선택:");
+//			selectNumber = Integer.parseInt(scan.nextLine());
+			
+			//숫자 맞는지 체크
+			while(isstrselectNumber==false) {
+
+				//숫자만 맞는지 체크
+				System.out.println();
+				System.out.print("* 목록번호 선택>> ");
+				strselectNumber = scan.nextLine();
+
+				if(ProjectOneConstant.isNumberCheck(strselectNumber)==true) {
+
+					selectNumber = Integer.parseInt(strselectNumber);
+					isstrselectNumber = true;
+
+				}else {
+					System.out.println("*");
+					System.out.println("숫자 형식으로 입력이 가능합니다");
+					System.out.print("*");
+
+				}
+			}
+				
+			
+			//목록 선택시 해당 정상적인 목록인지 체크
+			selectCount = dao.selectDeleteCheck(selectNumber);
+			
+			if(selectCount==0) {
+				System.out.println("*");
+				System.out.println("* 입력하신 목록으로는 조회가 되는 빠른 이체 목록이 없습니다.\n다시 선택해 주세요");
+				System.out.print("*");
+				selectNumber = 0;
+				isstrselectNumber = false;
+			}
+			
+		}
+		
+		while(depositMoneyChk==false) {
+			System.out.println("*");
+			System.out.print("* 송금할 금액>> ");
+			
+			String strdepositMoney = scan.nextLine();
+			//송금받은 금액
+			
+			if(ProjectOneConstant.isNumberCheck(strdepositMoney)==false) {
+				System.out.println("*");
+				System.out.println("* 숫자 형식으로 입력이 가능합니다");
+				continue;
+
+			}
+			
+			depositMoney = Long.parseLong(strdepositMoney);
+			
+			depositMoneyChk = true;
+			
+		}
+		
+		
+		//System.out.print("송금 하시겠습니까?( Y:예, N:아니오) :");
+		//choice = scan.nextLine();
+		
+		
+		//if(choice.equalsIgnoreCase("N") || !choice.equalsIgnoreCase("Y") ) {
+		//	isChoice = true;
+		//}else {
+			
+			
+			List<QuickTransferVO> withDrawAccount = dao.infoAccount(selectNumber); //출금계좌확인
+		
+			withdrawLimit = withDrawAccount.get(0).getWithdrawLimit(); //1회 출금액
+			creditLimit = withDrawAccount.get(0).getCreditLimit(); //일일 거래 한도금액
+			accountTotalMoney = withDrawAccount.get(0).getAccountTotalMoney();
+			
+			//송금 받을 번호
+			remitAccountNumber = withDrawAccount.get(0).getRemitAccountNumber();
+			//
+			accountIdx = withDrawAccount.get(0).getAccountIdx();
+			
+			//계좌 거래금액
+			List<QuickTransferVO> creditAccountLimit = dao.accountCreditLimit(withDrawAccount.get(0).getAccountIdx()); //출금계좌확인
+			memberCreditLimit = creditAccountLimit.get(0).getMemberCreditLimit();
+			
+			
+			
+			//(입력한금액+회원거래내역<일일 거래 한도금액)
+			if(depositMoney>accountTotalMoney) {
+				//입금 금액이 잔액보다 많을때
+				System.out.println("*");
+				System.out.println("* 요청하신 계좌의 잔액이 부족합니다");
+			}else if(depositMoney>withdrawLimit) {
+				System.out.println("*");
+				System.out.println("* 이체하실려는 금액이 1회 이체 한도 금액을 초과했습니다");
+			}else if( (depositMoney+memberCreditLimit)>creditLimit) {
+				System.out.println("*");
+				System.out.println("* 1일 거래 한도 금액을 초과했습니다!!!");
+			}else {
+				boolean isCreate = false;
+				
+				//opt 생성 유무
+				while(isCreate==false){
+					
+					try {
+						otpCode = OptCreate.create();
+						isCreate=true;
+					} catch (Exception e) {
+						isCreate=false;
+						System.out.println("*");
+						System.out.println("* OPT가 생성이 되지 않았습니다.");
+					}
+					
+				}
+				
+				//송금 처리
+				isTransfer = tranferMoney(accountIdx,accountTotalMoney,remitAccountNumber,otpCode,depositMoney);
+				
+				if(isTransfer==false) {
+					System.out.println("*");
+					System.out.println("* 이체실패! 관리자에게 문의하세요");
+				}else {
+					System.out.println("*");
+					System.out.println("* 이체완료");
+				}
+			}
+			
+			isChoice = true;
+		
+			 
+					
+		//}
+		
+		return isChoice;
+		
+	}
+	
+	//출금DAO 연결
+	public boolean tranferMoney(int accountIdx,int accountTotalMoney, String remitAccountNumber,String otpCode,long depositMoney) { 
+		
+		
+		List<QuickTransferVO> insertList = new ArrayList<QuickTransferVO>();
+		
+		insertList.add(new QuickTransferVO(accountIdx,accountTotalMoney,remitAccountNumber,otpCode,depositMoney));
+		
+		int cnt = dao.insertList(insertList);
+		
+		if(cnt!=0) {
+			isTransfer = true;
+		}
+		
+		return isTransfer;
+	}
+	
+
+	
+}

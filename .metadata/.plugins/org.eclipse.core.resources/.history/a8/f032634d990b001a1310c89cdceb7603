@@ -1,0 +1,119 @@
+package reservation;
+
+public class RecommendVO {
+	
+	private String res_kind_id;
+	private String res_kind_name;
+	private String res_id;
+	private String res_name;
+	private String menu_id;
+	private String menu_name;
+	private int rownum;
+	private int price;
+	
+	
+	
+	
+	
+	public RecommendVO(String res_name, String menu_name, int price,int rownum ) {
+		super();
+		this.res_name = res_name;
+		this.menu_name = menu_name;
+		this.rownum = rownum;
+		this.price = price;
+	}
+
+	public RecommendVO(String res_kind_id, String res_kind_name, String res_id, String res_name, String menu_id,
+			String menu_name) {
+		super();
+		this.res_kind_id = res_kind_id;
+		this.res_kind_name = res_kind_name;
+		this.res_id = res_id;
+		this.res_name = res_name;
+		this.menu_id = menu_id;
+		this.menu_name = menu_name;
+	}
+
+
+	public int getRownum() {
+		return rownum;
+	}
+
+	public void setRownum(int rownum) {
+		this.rownum = rownum;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public String getRes_kind_id() {
+		return res_kind_id;
+	}
+
+	public void setRes_kind_id(String res_kind_id) {
+		this.res_kind_id = res_kind_id;
+	}
+
+	public String getRes_kind_name() {
+		return res_kind_name;
+	}
+
+	public void setRes_kind_name(String res_kind_name) {
+		this.res_kind_name = res_kind_name;
+	}
+
+	public String getRes_id() {
+		return res_id;
+	}
+
+	public void setRes_id(String res_id) {
+		this.res_id = res_id;
+	}
+
+	public String getRes_name() {
+		return res_name;
+	}
+
+	public void setRes_name(String res_name) {
+		this.res_name = res_name;
+	}
+
+	public String getMenu_id() {
+		return menu_id;
+	}
+
+	public void setMenu_id(String menu_id) {
+		this.menu_id = menu_id;
+	}
+
+	public String getMenu_name() {
+		return menu_name;
+	}
+
+	public void setMenu_name(String menu_name) {
+		this.menu_name = menu_name;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "식당이름 : "+ res_name+ 
+				"\n 메뉴 이름 : " + menu_name +
+				"\n 가격 : " + price 
+				;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

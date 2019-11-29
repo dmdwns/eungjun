@@ -1,0 +1,106 @@
+package action;
+
+import java.util.Scanner;
+
+import account.AccountDAO;
+import account.AccountDTO;
+
+public class AccountManager {
+
+	
+	
+	Scanner scan = new Scanner(System.in);
+	AccountDTO adto = null;
+	AccountDAO adao = new AccountDAO();
+	
+	String cnum;
+	String password;
+	int select = 0;
+	int price;
+	int balance;
+	
+	 final String cprice = "^[0-9]{0,10}$";
+	
+	
+	public void moneyManager(String id) {
+		
+		while(true) {
+		System.out.println("카드 번호를 입력 하세요(숫자 16자리) : ");
+		cnum = scan.nextLine();
+		System.out.println("비밀번호를 입력 하세요. : ");
+		password = scan.nextLine();
+		if(!adao.checkCnumPassword(cnum, password, id)) {
+			System.out.println("일치하는 정보가 존재하지 않습니다.");
+		} else {
+			balance = adao.balance(cnum);
+			System.out.println(balance);
+		  break;
+		}
+		}
+		
+		while (true) {
+			System.out.println("---------------------------------");
+			System.out.println("1. 입금 2. 출금 3. 잔액 확인 0. 이전페이지로");
+			System.out.println("---------------------------------");
+			System.out.println(">> 진행하실 작업을 선택해주세요.");
+			
+			while(true) {
+				try {
+				 select = Integer.parseInt(scan.nextLine());
+				 break;
+				}catch (Exception e) {
+					System.out.println("[주의] 숫자값만 입력하세요");
+				}
+			}
+			
+			while(true) {
+				switch(select) {
+				case 1 :
+					System.out.println("입금하실 금액을 입력해 주세요");
+					price = Integer.parseInt(scan.nextLine());
+					if(Integer.toString(price).matches(cprice)) {
+						balance += price;
+						adao.depositWithdraw(balance, cnum);
+						System.out.println("입금이 정상 저리되었습니다.");
+						System.out.println("보유 잔액은 : "+balance+"입니다." );
+						break;
+					} else {
+						System.out.println("숫자를 입력하세요");
+						break;
+					}
+					
+		//---------------------------------------------------------------			
+				case 2 :
+					System.out.println("출금하실 금액을 입력해 주세요");
+					price = Integer.parseInt(scan.nextLine());
+					if(Integer.toString(price).matches(cprice)) {
+						if(balance >= price) {
+							balance -= price;
+							adao.depositWithdraw(balance, cnum);
+							System.out.println("출금이 정상 처리되었습니다.");
+							System.out.println("보유 잔액은 : "+balance+"입니다." );
+							break;
+						} else {
+							System.out.println("잔액이 부족합니다.");
+							break;
+						}
+					} 
+		//-------------------------------------------------------
+				case 3 : 
+					System.out.println("잠시만 기다려 주세요. 잔액 확인중...");
+					System.out.println("잔액 : " + balance);
+					break;
+		//-------------------------------------------------------
+				case 0 :
+					System.out.println("이전페이지로 이동합니다.");
+					break;
+				}
+				break;
+			}
+			if (select == 0) {
+			break;
+			}
+		}
+	}
+	
+}

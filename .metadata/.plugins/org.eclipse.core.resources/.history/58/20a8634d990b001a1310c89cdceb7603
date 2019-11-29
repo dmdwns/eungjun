@@ -1,0 +1,114 @@
+package reservation;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
+import play.Display;
+
+public class Recommend extends Display{
+
+	Random random = new Random();
+	Scanner scan = new Scanner(System.in);
+	private static final String DRIVER = "oracle.jdbc.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@192.168.0.72:1521:xe";
+	private static final String USER = "PROJECT";
+	private static final String PASSWORD = "PROJECTPW";
+	
+	private Connection conn;
+	private PreparedStatement pstmt;
+	private ResultSet rs;
+	
+		static {
+			try {
+				Class.forName(DRIVER);
+				
+			} catch (ClassNotFoundException e) {
+				System.out.println("드라이버 접속 실패");
+			}
+		}
+	
+	public List<PicksVO> recommendmenu(int res_kind_id) {
+		List<PicksVO> list = new ArrayList<>();
+		
+		try {
+			conn = DriverManager.getConnection(URL,USER,PASSWORD);
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT R.RES_ID, r.res_name, M.MENU_ID, m.menu_name, m.price, rownum FROM menu K, restaurants R, restaurants_menu M  ");
+			sql.append(" WHERE K.RES_KIND_ID = m.res_kind_id ");
+			sql.append(" AND r.res_id = m.res_id ");
+			sql.append(" AND k.res_kind_id = ? ");
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setInt(1, res_kind_id);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				list.add(new PicksVO(rs.getString("res_name"),
+						rs.getInt("price"),
+						rs.getString("menu_name"),
+						rs.getInt("rownum"),
+						rs.getString("RES_ID"),
+						rs.getString("MENU_ID")
+						));
+			}
+			int ran = random.nextInt(list.size())+1;
+			String res_id = null;
+			String menu_id = null;
+			String user_id = Display.id;
+			
+			for(PicksVO vo : list) {
+				if(vo.getOrder_number() == ran) {
+					System.out.println(vo.getRes_name());
+					System.out.println(vo.getMenu_name());
+					System.out.println(vo.getPrice());
+					res_id = vo.getRes_id();
+					menu_id = vo.getMenu_id();
+				}
+			}
+			int choice = 0;
+			while(true) {
+				try {
+					System.out.print("음식을 담으시겠습니까? 1예/2.아니요 \n >>");
+					Scanner s = new Scanner(System.in);
+					 choice = s.nextInt();
+					 break;
+				} catch (InputMismatchException e) {
+					System.out.println("잘못된 입력입니다");
+				}
+			}
+			
+			if(choice == 1) {
+				if(!Display.id.equalsIgnoreCase("")) {
+					Picks picks = new Picks();
+					picks.picksMenu(res_id, user_id, menu_id);
+				} else {
+					System.out.println("로그인 해야 이용가능합니다");
+				}
+		    } else {
+		    	start();
+		    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			
+			JDBC_close.ConnPstmt(conn, pstmt);
+		}
+		
+		
+		
+		return list;
+	}
+	
+	
+}

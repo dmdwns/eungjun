@@ -1,0 +1,7 @@
+package com.mystudy.ex03_interface;
+
+
+// 인터페이스를 구현하는 방식으로 클래스 작성 
+public class Phone1 {
+
+}

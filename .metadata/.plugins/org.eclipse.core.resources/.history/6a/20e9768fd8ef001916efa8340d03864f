@@ -1,0 +1,12 @@
+package com.mystudy.ex01_exception;
+
+public class Exception_throws {
+
+	public static void main(String[] args) {
+		// throws : 예외를 던질 때 (위임, 전가 ) 사용
+		
+		
+
+	}
+
+}

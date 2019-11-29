@@ -1,0 +1,57 @@
+package action;
+
+import java.util.Scanner;
+
+public class Command {
+	Scanner sc  = new Scanner(System.in);
+	int ch = 0;
+	UserAction ua = new UserAction();
+	
+	
+	
+				
+		
+			public void start() {
+		while(true) {
+			System.out.println("선택해라잉");
+			ch = Integer.parseInt(sc.nextLine()); 
+				switch(ch) { 
+				case 1://회원 가입
+					ua.userJoin();
+					
+					break;
+				case 2: //로그인 
+				
+					System.out.println("다시 로그인 하세요");
+					break;
+					
+					
+				case 3:
+					
+					
+					break;
+					
+				case 4:
+					
+				case 5:
+					
+				case 6:
+					
+				case 7://id , 비밀번호 찾기 
+					
+					break;
+					
+				case 0:
+					
+					break;
+				default :
+					
+				}	
+	
+	}
+
+	}
+
+		
+	
+}

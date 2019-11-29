@@ -1,0 +1,27 @@
+package com.mystudy.ex04_interface;
+
+public class TypeTest {
+
+	public static void main(String[] args) {
+	    Cat cat = new Cat();
+	    Dog dog = new Dog();
+	
+//	    eat(cat);
+	    sound(cat);
+	    sound(dog);
+	    Animal an = new Cat();
+	}
+	
+	
+	static void sound(Animal animal) {
+		animal.sound();
+	}
+	
+	static void eat(Animal animal) {
+		animal.eat();
+	}
+	
+	
+	
+	
+}

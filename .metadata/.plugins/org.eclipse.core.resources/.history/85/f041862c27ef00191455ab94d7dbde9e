@@ -1,0 +1,22 @@
+package com.mystudy.ex02_overriding;
+
+class Animal {
+ String name; // 아름 ,명칭
+ int legCnt; //다리 갯수 
+ 
+ 
+ 
+ void eat() {
+	 System.out.println(" >> 먹는다 ");
+ }
+ void sleep() {
+	 System.out.println(">> 잠을 잔다 ");
+ }
+  // 메소드재정의란 부모클래스의 메소드가 자식클래스에서 동일한 이름이지만 재정의 되는것 
+ void sound() {
+	 System.out.println(">> 울음없음 ");
+	 
+ }
+ 
+
+}

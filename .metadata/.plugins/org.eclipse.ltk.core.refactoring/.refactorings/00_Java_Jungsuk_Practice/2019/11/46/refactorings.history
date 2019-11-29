@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;CustomerManager.java&apos; to &apos;27_JDBC_DAO/src/com.mystudy.jdbc_dao&apos;&#x0D;&#x0A;- Original project: &apos;00_Java_Jungsuk_Practice&apos;&#x0D;&#x0A;- Destination element: &apos;27_JDBC_DAO/src/com.mystudy.jdbc_dao&apos;&#x0D;&#x0A;- Original element: &apos;CustomerManager.java&apos;" description="Copy compilation unit" destination="=27_JDBC_DAO/src&lt;com.mystudy.jdbc_dao" element1="/src&lt;{CustomerManager.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1573720316012" units="1" version="1.0"/>
+</session>

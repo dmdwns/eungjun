@@ -1,0 +1,47 @@
+package action;
+
+import java.util.Scanner;
+
+public class UserCompany {
+
+	Scanner scan = new Scanner(System.in);
+	
+	int select;
+	Command cd = new Command();
+	
+	public void joinType() {
+		
+		while(true) {
+		System.out.println("-------------------- 회 원 가 입 --------------------");
+		System.out.println(">> 1. 일반 회원가입  2. 기업 회원가입   0. 메인화면으로");
+		System.out.println("-------------------------------------------------");
+		System.out.println(">> 진행하실 작업을 선택해주세요.");
+		select = Integer.parseInt(scan.nextLine()); 
+		
+		while(true) {
+			switch(select) {
+			case 1 :
+				// 일반 회원 가입 form으로 이동
+				
+				break;
+				
+			case 2 :
+				// 기업 회원 가입 form으로 이동
+				
+				break;
+			case 0 :
+				System.out.println("메일화면으로 이동합니다.");
+				cd.start();
+				break;
+				
+			default :
+				System.out.println("잘못 입력하셨습니다.");
+			}
+			break;
+		}
+		
+		}
+		
+	}
+	
+}

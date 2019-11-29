@@ -1,0 +1,17 @@
+package com.mystudy.ex02_extends;
+
+public class WebPhoneTest {
+
+	public static void main(String[] args) {
+		
+		WebPhone a = new WebPhone("010-2222-2222");
+          
+		
+		a.view();
+		a.call();
+		a.receiveCall();
+		a.webSearch();
+	
+	}
+
+}

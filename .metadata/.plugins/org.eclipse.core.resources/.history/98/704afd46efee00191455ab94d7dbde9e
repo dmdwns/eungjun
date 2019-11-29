@@ -1,0 +1,48 @@
+package com.mystudy.ex04_interface2;
+
+// 인터페이스 (interface) 구현 (implements)하는 방식으로 클래스 만들기 
+public class Phone implements I_Phone {
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPhoneNO() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void call() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void receiveCall() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void view() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendMsg() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void receiveMsg() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

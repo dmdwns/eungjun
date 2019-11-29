@@ -1,0 +1,52 @@
+package com.mystudy.ex01_arrayList;
+
+public class StudentManager {
+
+	public static void main(String[] args) {
+		/* 3명의 성적 처리 
+		 * 홍길동 , 100,  90 ,  81
+		 * 이순신,  95,   88 ,  92
+		 * 김유신,  90,   87,   77
+		 *
+		 *=========================
+		 *결과출력 (tab탭만큼 간격 처리 )  
+		        국어            영어        수학
+		 *홍길동   100    90    81            271 90.33
+		 *이순신,  95,   88 ,  92  
+		 * 김유신,  90,   87,   77
+		 *
+		 */
+		
+		//  생성자 배열객체를 어떻게 만들징..
+//	
+//		 담는법은 여깄음 
+	    // int [] nums = new int[3];
+	    // studentVO[] students = new StudentVO[3];
+        // students[0] = stu;
+		// students[1] = stu2;
+		// students[2] = stu3;
+		// stu 시리즈가 객체생성된 변수명 
+		//  printData ()메소드 쓰고난후  
+		// students[0].printData();
+		// students[1].printData();
+		// 
+		//  생성자는 리턴값이고 뭐고 없음 
+
+		
+		StudentVO p0= new StudentVO ("홍길동", 100, 90, 81);
+		StudentVO p1= new StudentVO ("이순신", 95,  88, 92);
+		StudentVO p2= new StudentVO ("김유신", 90,  87, 77);
+		
+		System.out.println();
+		System.out.println(p0.getName()+"	"+p0.getKor()+"	"+p0.getEng()+"	"+p1.getMath()+
+			"	"+ p0.getTot()+"	"+   Math.round(p0.getAvg()*100)/100.0	);
+		System.out.println(p1.getName()+"	"+p1.getKor()+"	"+p1.getEng()+"	"+p2.getMath()+
+				"	"+ p1.getTot()+"	"+ Math.round(p1.getAvg()*100)/100.0	);
+		System.out.println(p2.getName()+"	"+p2.getKor()+"	"+p2.getEng()+"	"+p2.getMath()+
+				"	"+ p2.getTot()+"	"+ Math.round(p2.getAvg()*100)/100.0	);
+		
+		
+		
+	}
+
+}

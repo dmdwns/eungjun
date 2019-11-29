@@ -1,0 +1,111 @@
+package com.projectone.show.quick;
+
+import java.util.List;
+
+import com.projectone.account.quick.QuickDAO;
+import com.projectone.common.CommonVO;
+import com.projectone.jdbc.vo.AccountVO;
+import com.projectone.jdbc.vo.QuickTransferVO;
+
+public class PrintQuickSign {
+
+	public void mainView() {
+		
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println("*****************************************************");
+		System.out.println("*");
+		System.out.println("* 빠른 이체 계좌 등록을 하시면 계좌와 비밀번호 입력 없이 바로 이체가 가능합니다");
+		System.out.println("*");
+		System.out.println("_______________________________________________________");
+		System.out.println();
+		
+	}
+	
+	public void accountView(String userId) {
+		
+		//회원의 등록된 계좌
+		//List<AccountVO> list = new PayInfoMainDAO().SelectAccList();
+		//=>CommonVO.accountList
+		
+		String blank="";
+		String accountState = null;
+		
+		System.out.println("번호\t 계좌번호\t\t\t 잔액\t\t   1회출금한도\t\t 일일거래한도\t 계좌상태");
+		
+		//for(AccountVO memberAccountList : list) {
+		for(AccountVO memberAccountList : CommonVO.accountList) {
+			
+			
+			System.out.print(memberAccountList.getIdx()+"\t");
+			
+			System.out.print(memberAccountList.getAccNumber().substring(0,4)
+					+"-"+memberAccountList.getAccNumber().substring(4,6)
+					+"-"+memberAccountList.getAccNumber().substring(6)
+					+"\t");
+			
+			System.out.printf("% 10d원\t",memberAccountList.getAccTotalMoney());
+			System.out.print("       ");
+			System.out.printf("% 10d원\t",memberAccountList.getWithDrawLimit());
+			System.out.print("     ");
+			System.out.printf("% 10d원\t",memberAccountList.getCreditLimit());
+			System.out.print("     ");
+			System.out.print(accountState(memberAccountList.getAccState()));
+			
+			
+			
+			
+			System.out.println();
+			
+		}
+		
+		
+	}
+	
+	public String accountState(String status) {
+		
+		String str = null;
+		
+		switch(status) {
+		
+		case "100" : str="정상"; break;
+		case "200" : str="정지"; break;
+		default : str="압류";
+		
+		}
+		
+		return str;
+		
+	}
+	
+	
+public void quickView(String userId) {
+		
+		//회원의 등록된 계좌
+		List<QuickTransferVO> list = new QuickDAO().quickAccountView(22);
+		
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println("*****************************************************");
+		System.out.println("*");
+		System.out.println("* 등록된 빠른 이체 계좌 중 삭제하실 계좌를 선택합니다 ");
+		System.out.println("*");
+		System.out.println("______________________________________________________________");
+		System.out.println();
+		System.out.println("번호\t 별칭\t\t 출금될계좌\t\t 이체계좌번호\t\t\t 등록일");
+		System.out.println("______________________________________________________________");
+		
+		System.out.println();
+		for (QuickTransferVO qtv : list ) {
+			
+			System.out.println(qtv.getIdx()+"\t"+qtv.getAccountAlias()+"\t\t"+qtv.getAccountNumber()+"\t\t"+qtv.getRemitAccountNumber()+"\t\t\t   "+qtv.getRegDateTime().substring(0,10));
+		}
+		System.out.println();
+		System.out.println("______________________________________________________________");
+		
+		
+	}
+	
+}

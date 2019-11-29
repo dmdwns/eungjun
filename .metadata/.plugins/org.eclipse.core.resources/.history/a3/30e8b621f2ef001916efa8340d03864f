@@ -1,0 +1,29 @@
+package com.mystudy.ex04_inner_class;
+
+public class StaticClassTest {
+	int a = 10;
+	private int b = 100;
+	
+	static int c = 200;
+	static int sum = 0;
+	static int sNum1 = 20;
+	static int sNum2 = 20;
+	// static은 static만 가능하다 객체생성이고 뭐고 없이;;
+	static void sum() {
+		sum = Inner.d + sNum2;
+	}
+	
+	// 스태틱내부클래스 (Inner class 중 static 클래스)
+	static class Inner {
+		static int d = 1000;
+		int e = 2000;
+		void printData() {
+			
+		}
+	}
+	
+	public static void main(String[] args) {
+		
+	}
+
+}

@@ -1,0 +1,27 @@
+package com.mystudy.ex01_arrayList;
+
+import java.util.ArrayList;
+
+public class StudentManager2 {
+
+	public static void main(String[] args) {
+		/* 3명의 성적 처리 
+		 * 홍길동 , 100,  90,  81
+		 * 이순신,  95,   88,  92
+		 * 김유신,  90,   87,   77
+		 *
+		 *=========================
+		 *결과출력 (tab탭만큼 간격 처리 )  
+		              국어        영어      수학
+		 * 홍길동,  100    90    81            271 90.33
+		 * 이순신,  95,   88,   92  
+		 * 김유신,  90,   87,   77
+		 *
+		 *
+		 *
+		 */
+		
+
+	}
+
+}
